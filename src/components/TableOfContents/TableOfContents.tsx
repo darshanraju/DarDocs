@@ -99,8 +99,6 @@ export function TableOfContents() {
     }
   }, []);
 
-  if (headings.length === 0) return null;
-
   if (!isExpanded) {
     return (
       <button
@@ -124,16 +122,20 @@ export function TableOfContents() {
       </button>
 
       <nav className="toc-nav">
-        {headings.map((heading) => (
-          <button
-            key={heading.id}
-            onClick={() => scrollToHeading(heading)}
-            className={`toc-item ${activeId === heading.id ? 'toc-item-active' : ''}`}
-            style={{ paddingLeft: `${(heading.level - 1) * 16 + 8}px` }}
-          >
-            {heading.text}
-          </button>
-        ))}
+        {headings.length === 0 ? (
+          <div className="toc-empty">No headings yet</div>
+        ) : (
+          headings.map((heading) => (
+            <button
+              key={heading.id}
+              onClick={() => scrollToHeading(heading)}
+              className={`toc-item ${activeId === heading.id ? 'toc-item-active' : ''}`}
+              style={{ paddingLeft: `${(heading.level - 1) * 16 + 8}px` }}
+            >
+              {heading.text}
+            </button>
+          ))
+        )}
       </nav>
     </div>
   );

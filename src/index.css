@@ -269,12 +269,12 @@
   display: flex;
 }
 
-/* Slash command menu styles (Lark-inspired dark theme) */
+/* Slash command menu styles (Lark-inspired light theme) */
 .slash-command-menu {
-  background: #2c2c2e;
-  border: 1px solid #3a3a3c;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
   padding: 0.5rem 0;
   max-height: 420px;
   overflow-y: auto;
@@ -285,7 +285,7 @@
 .slash-command-category {
   padding: 0.625rem 1rem 0.375rem;
   font-size: 0.8125rem;
-  color: #8b8b8e;
+  color: #9ca3af;
   font-weight: 500;
 }
 
@@ -300,7 +300,7 @@
 
 .slash-command-item:hover,
 .slash-command-item.is-selected {
-  background-color: #3a3a3c;
+  background-color: #f3f4f6;
 }
 
 .slash-command-item-icon {
@@ -315,7 +315,7 @@
 .slash-command-item-title {
   font-weight: 400;
   font-size: 0.9375rem;
-  color: #e5e7eb;
+  color: #1f2937;
 }
 
 /* Table controls */
@@ -467,6 +467,12 @@
 .toc-item-active {
   color: #3370ff;
   font-weight: 500;
+}
+
+.toc-empty {
+  padding: 8px 12px;
+  font-size: 0.8125rem;
+  color: #9ca3af;
 }
 
 /* Selection styles */
