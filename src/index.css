@@ -316,6 +316,67 @@
   z-index: 50;
 }
 
+/* Table edge insert buttons (Lark-style) */
+.table-edge-btn {
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  outline: none;
+}
+
+.table-edge-btn-column {
+  width: 20px;
+  flex-direction: column;
+}
+
+.table-edge-btn-row {
+  height: 20px;
+  flex-direction: row;
+}
+
+.table-edge-line {
+  background-color: transparent;
+  transition: background-color 0.15s ease;
+}
+
+.table-edge-line-vertical {
+  width: 2px;
+  flex: 1;
+}
+
+.table-edge-line-horizontal {
+  height: 2px;
+  flex: 1;
+}
+
+.table-edge-plus {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3370ff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.table-edge-btn:hover .table-edge-plus {
+  opacity: 1;
+}
+
+.table-edge-btn:hover .table-edge-line {
+  background-color: #3370ff;
+}
+
 /* Selection styles */
 ::selection {
   background-color: rgba(51, 112, 255, 0.2);
