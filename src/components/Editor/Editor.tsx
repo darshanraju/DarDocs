@@ -2,11 +2,10 @@ import { useCallback, useEffect, useState, useRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import type { JSONContent } from '@tiptap/react';
 import { getExtensions } from './extensions';
-import { EditorToolbar } from './EditorToolbar';
 import { SlashCommandMenu } from './SlashCommandMenu';
 import { useDocumentStore } from '../../stores/documentStore';
 import { debounce } from 'lodash-es';
-import { EDITOR_SAVE_DEBOUNCE_MS } from '../../lib/constants';
+import { EDITOR_SAVE_DEBOUNCE_MS, EDITOR_PLACEHOLDER } from '../../lib/constants';
 
 interface EditorProps {
   isViewMode?: boolean;
@@ -36,7 +35,8 @@ export function Editor({ isViewMode = false }: EditorProps) {
       editable: !isViewMode,
       editorProps: {
         attributes: {
-          class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none max-w-none',
+          class: 'prose prose-sm focus:outline-none max-w-none min-h-[300px]',
+          'data-placeholder': EDITOR_PLACEHOLDER,
         },
       },
       onUpdate: ({ editor }) => {
@@ -99,31 +99,9 @@ export function Editor({ isViewMode = false }: EditorProps) {
     updatePosition();
   }, [editor, slashMenuOpen, slashQuery]);
 
-  // Keyboard shortcut: Ctrl+K for link
-  useEffect(() => {
-    if (!editor) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        // Link modal is handled in EditorToolbar
-      }
-    };
-
-    window.document.addEventListener('keydown', handleKeyDown);
-    return () => window.document.removeEventListener('keydown', handleKeyDown);
-  }, [editor]);
-
   return (
-    <div ref={editorContainerRef} className="flex flex-col h-full">
-      {!isViewMode && <EditorToolbar editor={editor} />}
-      <div
-        className={`flex-1 overflow-y-auto ${isViewMode ? 'bg-gray-50' : 'bg-white'}`}
-      >
-        <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-          <EditorContent editor={editor} className="min-h-[500px]" />
-        </div>
-      </div>
+    <div ref={editorContainerRef} className="relative">
+      <EditorContent editor={editor} />
       <SlashCommandMenu
         editor={editor}
         query={slashQuery}

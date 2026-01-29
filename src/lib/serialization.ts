@@ -1,13 +1,13 @@
-import type { OpenDocsDocument } from './documentSchema';
-import { OPENDOCS_EXTENSION } from './constants';
+import type { DarDocsDocument } from './documentSchema';
+import { DARDOCS_EXTENSION } from './constants';
 
 // Serialize document to JSON string
-export function serializeDocument(doc: OpenDocsDocument): string {
+export function serializeDocument(doc: DarDocsDocument): string {
   return JSON.stringify(doc, null, 2);
 }
 
 // Deserialize JSON string to document
-export function deserializeDocument(json: string): OpenDocsDocument {
+export function deserializeDocument(json: string): DarDocsDocument {
   const parsed = JSON.parse(json);
 
   // Validate document structure
@@ -20,7 +20,7 @@ export function deserializeDocument(json: string): OpenDocsDocument {
     parsed.boards = {};
   }
 
-  return parsed as OpenDocsDocument;
+  return parsed as DarDocsDocument;
 }
 
 // Generate filename from document title
@@ -33,11 +33,11 @@ export function generateFilename(title: string): string {
     .replace(/-+/g, '-')
     .trim();
 
-  return `${sanitized || 'untitled'}${OPENDOCS_EXTENSION}`;
+  return `${sanitized || 'untitled'}${DARDOCS_EXTENSION}`;
 }
 
 // Download document as file
-export function downloadDocument(doc: OpenDocsDocument): void {
+export function downloadDocument(doc: DarDocsDocument): void {
   const json = serializeDocument(doc);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
