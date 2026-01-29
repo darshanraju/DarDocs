@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Lark-style system font stack */
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI",
+    "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC",
+    "WenQuanYi Micro Hei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 /* Editor-specific styles */
 .ProseMirror {
   outline: none;
