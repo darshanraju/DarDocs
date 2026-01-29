@@ -12,6 +12,7 @@ export function TableOfContents() {
   const [headings, setHeadings] = useState<TocHeading[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const observerRef = useRef<MutationObserver | null>(null);
+  const observedElRef = useRef<Element | null>(null);
 
   const extractHeadings = useCallback(() => {
     const editorEl = window.document.querySelector('.ProseMirror');
@@ -33,15 +34,26 @@ export function TableOfContents() {
     setHeadings(extracted);
   }, []);
 
+  // Set up MutationObserver with re-attachment when the editor element changes
   useEffect(() => {
-    const timer = setTimeout(extractHeadings, 100);
-
-    const setupObserver = () => {
+    const attachObserver = () => {
       const editorEl = window.document.querySelector('.ProseMirror');
+
+      // If the element hasn't changed, skip re-attachment
+      if (editorEl === observedElRef.current) return;
+
+      // Disconnect old observer
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
+
       if (!editorEl) {
-        setTimeout(setupObserver, 200);
+        observedElRef.current = null;
         return;
       }
+
+      observedElRef.current = editorEl;
 
       observerRef.current = new MutationObserver(() => {
         extractHeadings();
@@ -52,12 +64,26 @@ export function TableOfContents() {
         subtree: true,
         characterData: true,
       });
+
+      // Extract immediately when we attach to a new element
+      extractHeadings();
     };
 
-    setupObserver();
+    // Initial attach
+    attachObserver();
+
+    // Poll to detect if the .ProseMirror element was replaced (editor re-created)
+    // and to catch any mutations the observer might miss
+    const interval = setInterval(() => {
+      const currentEl = window.document.querySelector('.ProseMirror');
+      if (currentEl !== observedElRef.current) {
+        attachObserver();
+      }
+      extractHeadings();
+    }, 800);
 
     return () => {
-      clearTimeout(timer);
+      clearInterval(interval);
       observerRef.current?.disconnect();
     };
   }, [extractHeadings]);
