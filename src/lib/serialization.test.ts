@@ -4,10 +4,10 @@ import {
   deserializeDocument,
   generateFilename,
 } from './serialization';
-import type { OpenDocsDocument } from './documentSchema';
+import type { DarDocsDocument } from './documentSchema';
 
 describe('Serialization Utilities', () => {
-  const createMockDocument = (overrides?: Partial<OpenDocsDocument>): OpenDocsDocument => ({
+  const createMockDocument = (overrides?: Partial<DarDocsDocument>): DarDocsDocument => ({
     version: '1.0',
     metadata: {
       id: 'test-id-123',
@@ -163,61 +163,61 @@ describe('Serialization Utilities', () => {
     it('should generate filename from simple title', () => {
       const result = generateFilename('My Document');
 
-      expect(result).toBe('my-document.opendocs.json');
+      expect(result).toBe('my-document.dardocs.json');
     });
 
     it('should convert to lowercase', () => {
       const result = generateFilename('MY DOCUMENT');
 
-      expect(result).toBe('my-document.opendocs.json');
+      expect(result).toBe('my-document.dardocs.json');
     });
 
     it('should replace spaces with hyphens', () => {
       const result = generateFilename('Document With Spaces');
 
-      expect(result).toBe('document-with-spaces.opendocs.json');
+      expect(result).toBe('document-with-spaces.dardocs.json');
     });
 
     it('should remove special characters', () => {
       const result = generateFilename('Document!@#$%^&*()Title');
 
-      expect(result).toBe('documenttitle.opendocs.json');
+      expect(result).toBe('documenttitle.dardocs.json');
     });
 
     it('should handle multiple consecutive spaces', () => {
       const result = generateFilename('Document    With    Spaces');
 
-      expect(result).toBe('document-with-spaces.opendocs.json');
+      expect(result).toBe('document-with-spaces.dardocs.json');
     });
 
     it('should handle multiple consecutive hyphens', () => {
       const result = generateFilename('Doc---Title');
 
-      expect(result).toBe('doc-title.opendocs.json');
+      expect(result).toBe('doc-title.dardocs.json');
     });
 
     it('should handle empty title', () => {
       const result = generateFilename('');
 
-      expect(result).toBe('untitled.opendocs.json');
+      expect(result).toBe('untitled.dardocs.json');
     });
 
     it('should handle title with only special characters', () => {
       const result = generateFilename('!@#$%');
 
-      expect(result).toBe('untitled.opendocs.json');
+      expect(result).toBe('untitled.dardocs.json');
     });
 
     it('should handle title with numbers', () => {
       const result = generateFilename('Document 123');
 
-      expect(result).toBe('document-123.opendocs.json');
+      expect(result).toBe('document-123.dardocs.json');
     });
 
     it('should handle accented characters by removing them', () => {
       const result = generateFilename('Café Résumé');
 
-      expect(result).toBe('caf-rsum.opendocs.json');
+      expect(result).toBe('caf-rsum.dardocs.json');
     });
 
     it('should handle leading/trailing whitespace in title', () => {
@@ -226,7 +226,7 @@ describe('Serialization Utilities', () => {
 
       // The implementation converts spaces to hyphens first, resulting in leading/trailing hyphens
       expect(result).toMatch(/document/);
-      expect(result).toContain('.opendocs.json');
+      expect(result).toContain('.dardocs.json');
     });
   });
 

@@ -1,22 +1,22 @@
 import { create } from 'zustand';
 import type { JSONContent } from '@tiptap/react';
-import type { OpenDocsDocument, DocumentMetadata } from '../lib/documentSchema';
+import type { DarDocsDocument, DocumentMetadata } from '../lib/documentSchema';
 import { createNewDocument } from '../lib/documentSchema';
 
 interface DocumentStore {
   // Current document state
-  document: OpenDocsDocument | null;
+  document: DarDocsDocument | null;
   hasUnsavedChanges: boolean;
 
   // Document operations
   createDocument: (title?: string) => void;
-  loadDocument: (doc: OpenDocsDocument) => void;
+  loadDocument: (doc: DarDocsDocument) => void;
   updateContent: (content: JSONContent) => void;
   updateMetadata: (metadata: Partial<DocumentMetadata>) => void;
   markSaved: () => void;
 
   // Getters
-  getDocument: () => OpenDocsDocument | null;
+  getDocument: () => DarDocsDocument | null;
 }
 
 export const useDocumentStore = create<DocumentStore>((set, get) => ({
@@ -31,7 +31,7 @@ export const useDocumentStore = create<DocumentStore>((set, get) => ({
     });
   },
 
-  loadDocument: (doc: OpenDocsDocument) => {
+  loadDocument: (doc: DarDocsDocument) => {
     set({
       document: doc,
       hasUnsavedChanges: false,

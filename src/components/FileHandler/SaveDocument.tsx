@@ -4,7 +4,7 @@ import { Button, Tooltip } from '../UI';
 import { useDocumentStore } from '../../stores/documentStore';
 import { useBoardStore } from '../../stores/boardStore';
 import { downloadDocument } from '../../lib/serialization';
-import type { OpenDocsDocument } from '../../lib/documentSchema';
+import type { DarDocsDocument } from '../../lib/documentSchema';
 
 export function SaveDocument() {
   const { document, hasUnsavedChanges, markSaved } = useDocumentStore();
@@ -18,7 +18,7 @@ export function SaveDocument() {
 
     try {
       // Combine document with board states
-      const fullDocument: OpenDocsDocument = {
+      const fullDocument: DarDocsDocument = {
         ...document,
         boards: getAllBoards(),
         metadata: {

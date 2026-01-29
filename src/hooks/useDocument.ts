@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useDocumentStore } from '../stores/documentStore';
 import { useBoardStore } from '../stores/boardStore';
 import { downloadDocument } from '../lib/serialization';
-import type { OpenDocsDocument } from '../lib/documentSchema';
+import type { DarDocsDocument } from '../lib/documentSchema';
 
 export function useDocument() {
   const {
@@ -32,7 +32,7 @@ export function useDocument() {
   );
 
   const openDocument = useCallback(
-    (doc: OpenDocsDocument) => {
+    (doc: DarDocsDocument) => {
       if (hasUnsavedChanges) {
         const confirmed = confirm('You have unsaved changes. Open another document anyway?');
         if (!confirmed) return false;
@@ -52,7 +52,7 @@ export function useDocument() {
     if (!document) return false;
 
     try {
-      const fullDocument: OpenDocsDocument = {
+      const fullDocument: DarDocsDocument = {
         ...document,
         boards: getAllBoards(),
         metadata: {

@@ -14,7 +14,7 @@ export function useFileSystem() {
     if (!fileInputRef.current) {
       const input = document.createElement('input');
       input.type = 'file';
-      input.accept = ACCEPTED_FILE_TYPES.opendocs;
+      input.accept = ACCEPTED_FILE_TYPES.dardocs;
       fileInputRef.current = input;
     }
 
