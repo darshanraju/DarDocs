@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Toaster } from 'sonner';
 import { Editor } from './components/Editor/Editor';
 import { DocumentViewer } from './components/Viewer/DocumentViewer';
+import { TableOfContents } from './components/TableOfContents/TableOfContents';
 import { useDocumentStore } from './stores/documentStore';
 
 function App() {
@@ -35,10 +36,13 @@ function App() {
   );
 
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex h-screen bg-white">
+      {/* Table of Contents sidebar */}
+      <TableOfContents />
+
       {/* Main content */}
       <main className="flex-1 overflow-hidden bg-white">
-        <div className="h-full overflow-y-auto">
+        <div id="main-scroll-container" className="h-full overflow-y-auto">
           <div className="max-w-[720px] mx-auto px-6 py-8">
             {/* Title */}
             <input
@@ -48,7 +52,7 @@ function App() {
               onChange={handleTitleChange}
               onKeyDown={handleTitleKeyDown}
               placeholder="Enter title here"
-              className="w-full text-4xl font-semibold text-gray-900 placeholder-gray-300 border-none outline-none mb-4 bg-transparent"
+              className="doc-title-input"
             />
 
             {/* Editor */}
