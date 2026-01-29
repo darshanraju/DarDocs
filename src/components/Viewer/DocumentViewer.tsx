@@ -46,7 +46,7 @@ export function DocumentViewer() {
       editable: false,
       editorProps: {
         attributes: {
-          class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-xl focus:outline-none max-w-none',
+          class: 'prose prose-sm focus:outline-none max-w-none min-h-[300px]',
         },
       },
     },
@@ -62,30 +62,15 @@ export function DocumentViewer() {
 
   if (!document) {
     return (
-      <div className="flex items-center justify-center h-full bg-gray-50">
-        <p className="text-gray-500">No document loaded</p>
+      <div className="flex items-center justify-center h-full">
+        <p className="text-gray-400">No document loaded</p>
       </div>
     );
   }
 
   return (
-    <div className="h-full overflow-y-auto bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {/* Document title */}
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          {document.metadata.title}
-        </h1>
-
-        {/* Document metadata */}
-        <div className="text-sm text-gray-500 mb-8">
-          <span>Last updated: {new Date(document.metadata.updatedAt).toLocaleString()}</span>
-        </div>
-
-        {/* Document content */}
-        <div className="bg-white rounded-lg shadow-sm p-8">
-          <EditorContent editor={editor} />
-        </div>
-      </div>
+    <div className="relative">
+      <EditorContent editor={editor} />
     </div>
   );
 }

@@ -2,7 +2,7 @@ import type { JSONContent } from '@tiptap/react';
 import type { TLEditorSnapshot } from 'tldraw';
 
 // Main document structure
-export interface OpenDocsDocument {
+export interface DarDocsDocument {
   version: "1.0";
   metadata: DocumentMetadata;
   content: JSONContent;
@@ -52,7 +52,7 @@ export type MarkType =
   | 'highlight';
 
 // Create a new empty document
-export function createNewDocument(title: string = 'Untitled Document'): OpenDocsDocument {
+export function createNewDocument(title: string = 'Untitled Document'): DarDocsDocument {
   const now = new Date().toISOString();
   return {
     version: '1.0',

@@ -56,7 +56,7 @@ export function LoadDocument() {
       <input
         ref={fileInputRef}
         type="file"
-        accept={ACCEPTED_FILE_TYPES.opendocs}
+        accept={ACCEPTED_FILE_TYPES.dardocs}
         onChange={handleFileSelect}
         className="hidden"
       />
