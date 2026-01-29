@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronsLeft, AlignLeft } from 'lucide-react';
 
 interface TocHeading {
-  id: string;
+  domIndex: number;
   text: string;
   level: number;
 }
@@ -10,39 +10,51 @@ interface TocHeading {
 export function TableOfContents() {
   const [isExpanded, setIsExpanded] = useState(true);
   const [headings, setHeadings] = useState<TocHeading[]>([]);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const observerRef = useRef<MutationObserver | null>(null);
   const observedElRef = useRef<Element | null>(null);
+  const extractingRef = useRef(false);
+
+  const getHeadingElements = useCallback((): NodeListOf<Element> | null => {
+    const editorEl = window.document.querySelector('.ProseMirror');
+    if (!editorEl) return null;
+    return editorEl.querySelectorAll('h1, h2, h3');
+  }, []);
 
   const extractHeadings = useCallback(() => {
-    const editorEl = window.document.querySelector('.ProseMirror');
-    if (!editorEl) return;
+    // Guard against re-entrant calls from MutationObserver
+    if (extractingRef.current) return;
+    extractingRef.current = true;
 
-    const headingEls = editorEl.querySelectorAll('h1, h2, h3');
-    const extracted: TocHeading[] = [];
+    try {
+      const headingEls = getHeadingElements();
+      if (!headingEls) {
+        extractingRef.current = false;
+        return;
+      }
 
-    headingEls.forEach((el, index) => {
-      const level = parseInt(el.tagName[1]);
-      const text = el.textContent?.trim() || '';
-      if (!text) return;
+      const extracted: TocHeading[] = [];
 
-      const id = `toc-heading-${index}`;
-      if (!el.id) el.id = id;
-      extracted.push({ id: el.id, text, level });
-    });
+      headingEls.forEach((el, index) => {
+        const level = parseInt(el.tagName[1]);
+        const text = el.textContent?.trim() || '';
+        if (!text) return;
+        extracted.push({ domIndex: index, text, level });
+      });
 
-    setHeadings(extracted);
-  }, []);
+      setHeadings(extracted);
+    } finally {
+      extractingRef.current = false;
+    }
+  }, [getHeadingElements]);
 
   // Set up MutationObserver with re-attachment when the editor element changes
   useEffect(() => {
     const attachObserver = () => {
       const editorEl = window.document.querySelector('.ProseMirror');
 
-      // If the element hasn't changed, skip re-attachment
       if (editorEl === observedElRef.current) return;
 
-      // Disconnect old observer
       if (observerRef.current) {
         observerRef.current.disconnect();
         observerRef.current = null;
@@ -65,15 +77,11 @@ export function TableOfContents() {
         characterData: true,
       });
 
-      // Extract immediately when we attach to a new element
       extractHeadings();
     };
 
-    // Initial attach
     attachObserver();
 
-    // Poll to detect if the .ProseMirror element was replaced (editor re-created)
-    // and to catch any mutations the observer might miss
     const interval = setInterval(() => {
       const currentEl = window.document.querySelector('.ProseMirror');
       if (currentEl !== observedElRef.current) {
@@ -96,34 +104,39 @@ export function TableOfContents() {
     if (!scrollContainer) return;
 
     const handleScroll = () => {
+      const headingEls = getHeadingElements();
+      if (!headingEls) return;
+
       const containerTop = scrollContainer.getBoundingClientRect().top;
-      let currentActive: string | null = null;
+      let currentActive: number | null = null;
 
       for (const heading of headings) {
-        const el = window.document.getElementById(heading.id);
+        const el = headingEls[heading.domIndex];
         if (el) {
           const rect = el.getBoundingClientRect();
           if (rect.top <= containerTop + 120) {
-            currentActive = heading.id;
+            currentActive = heading.domIndex;
           }
         }
       }
 
-      setActiveId(currentActive);
+      setActiveIndex(currentActive);
     };
 
     scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
 
     return () => scrollContainer.removeEventListener('scroll', handleScroll);
-  }, [headings]);
+  }, [headings, getHeadingElements]);
 
   const scrollToHeading = useCallback((heading: TocHeading) => {
-    const el = window.document.getElementById(heading.id);
+    const headingEls = getHeadingElements();
+    if (!headingEls) return;
+    const el = headingEls[heading.domIndex];
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, []);
+  }, [getHeadingElements]);
 
   if (!isExpanded) {
     return (
@@ -153,9 +166,9 @@ export function TableOfContents() {
         ) : (
           headings.map((heading) => (
             <button
-              key={heading.id}
+              key={`${heading.domIndex}-${heading.text}`}
               onClick={() => scrollToHeading(heading)}
-              className={`toc-item ${activeId === heading.id ? 'toc-item-active' : ''}`}
+              className={`toc-item ${activeIndex === heading.domIndex ? 'toc-item-active' : ''}`}
               style={{ paddingLeft: `${(heading.level - 1) * 16 + 8}px` }}
             >
               {heading.text}
