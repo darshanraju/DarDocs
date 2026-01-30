@@ -25,6 +25,11 @@ export function deserializeDocument(json: string): DarDocsDocument {
     parsed.comments = [];
   }
 
+  // Ensure customCommands array exists (backward compat)
+  if (!parsed.customCommands) {
+    parsed.customCommands = [];
+  }
+
   return parsed as DarDocsDocument;
 }
 

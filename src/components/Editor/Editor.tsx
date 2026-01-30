@@ -3,6 +3,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import type { JSONContent, Editor as TiptapEditor } from '@tiptap/react';
 import { getExtensions } from './extensions';
 import { SlashCommandMenu } from './SlashCommandMenu';
+import { CustomCommandBuilder } from './CustomCommandBuilder';
 import { FloatingToolbar } from './FloatingToolbar';
 import { TableEdgeControls } from '../Blocks/TableBlock/TableEdgeControls';
 import { useDocumentStore } from '../../stores/documentStore';
@@ -142,6 +143,7 @@ export function Editor({ isViewMode = false, onEditorReady }: EditorProps) {
           />
         </>
       )}
+      <CustomCommandBuilder editor={editor} />
     </div>
   );
 }

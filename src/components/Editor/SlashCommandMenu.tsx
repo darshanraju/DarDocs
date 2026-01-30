@@ -15,9 +15,11 @@ import {
   PenTool,
   Image as ImageIcon,
   Video,
+  Plus,
 } from 'lucide-react';
 import { useBoardStore } from '../../stores/boardStore';
 import { useWhiteboard2Store } from '../Whiteboard2/whiteboardStore';
+import { useCustomCommandStore } from '../../stores/customCommandStore';
 import { readFileAsDataURL } from './extensions/MediaBlock/mediaUtils';
 
 interface SlashCommand {
@@ -36,7 +38,7 @@ interface SlashCommandMenuProps {
   position: { top: number; left: number };
 }
 
-const commands: SlashCommand[] = [
+const builtInCommands: SlashCommand[] = [
   {
     name: 'Text',
     icon: <Type className="w-5 h-5" style={{ color: '#3370ff' }} />,
@@ -180,6 +182,42 @@ export function SlashCommandMenu({
   position,
 }: SlashCommandMenuProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const customCommands = useCustomCommandStore((s) => s.commands);
+  const openBuilder = useCustomCommandStore((s) => s.openBuilder);
+
+  // Build the full command list: built-in + saved custom commands + "Create Custom Command"
+  const commands: SlashCommand[] = useMemo(() => {
+    const list: SlashCommand[] = [...builtInCommands];
+
+    // Saved custom commands
+    for (const cmd of customCommands) {
+      list.push({
+        name: cmd.name,
+        icon: <span className="text-lg leading-none">{cmd.icon || '⚡'}</span>,
+        keywords: [...cmd.keywords, 'custom'],
+        category: 'Custom',
+        action: (ed) => {
+          ed.chain()
+            .focus()
+            .insertCustomCommand({ commandConfig: JSON.stringify(cmd) })
+            .run();
+        },
+      });
+    }
+
+    // "Create Custom Command" entry
+    list.push({
+      name: 'Create Custom Command',
+      icon: <Plus className="w-5 h-5" style={{ color: '#7c3aed' }} />,
+      keywords: ['custom', 'create', 'command', 'builder', 'developer', 'api', 'script'],
+      category: 'Developer',
+      action: () => {
+        openBuilder();
+      },
+    });
+
+    return list;
+  }, [customCommands, openBuilder]);
 
   const filteredCommands = useMemo(() => {
     if (!query) return commands;
@@ -190,7 +228,7 @@ export function SlashCommandMenu({
         cmd.name.toLowerCase().includes(lowerQuery) ||
         cmd.keywords.some((keyword) => keyword.includes(lowerQuery))
     );
-  }, [query]);
+  }, [query, commands]);
 
   const groupedCommands = useMemo(() => {
     const groups: { category: string; items: SlashCommand[] }[] = [];

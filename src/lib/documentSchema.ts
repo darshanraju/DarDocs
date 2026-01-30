@@ -1,5 +1,6 @@
 import type { JSONContent } from '@tiptap/react';
 import type { TLEditorSnapshot } from 'tldraw';
+import type { CustomCommand } from '../stores/customCommandStore';
 
 // Comment on a document
 export interface Comment {
@@ -18,6 +19,7 @@ export interface DarDocsDocument {
   content: JSONContent;
   boards: Record<string, TLEditorSnapshot>;
   comments: Comment[];
+  customCommands?: CustomCommand[];
 }
 
 export interface DocumentMetadata {
@@ -51,7 +53,8 @@ export type NodeType =
   | 'tableHeader'
   | 'boardBlock'
   | 'image'
-  | 'videoBlock';
+  | 'videoBlock'
+  | 'customCommandBlock';
 
 // Supported TipTap mark types
 export type MarkType =
