@@ -5,7 +5,7 @@ import { BoardBlockComponent } from './BoardBlockComponent';
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     boardBlock: {
-      insertBoard: () => ReturnType;
+      insertBoard: (options?: { boardId?: string }) => ReturnType;
     };
   }
 }
@@ -52,9 +52,9 @@ export const BoardBlockExtension = Node.create({
   addCommands() {
     return {
       insertBoard:
-        () =>
+        (options?: { boardId?: string }) =>
         ({ commands }) => {
-          const boardId = crypto.randomUUID();
+          const boardId = options?.boardId || crypto.randomUUID();
           return commands.insertContent({
             type: this.name,
             attrs: {

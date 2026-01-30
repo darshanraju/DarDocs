@@ -36,6 +36,11 @@ export const SlashCommands = Extension.create<SlashCommandsOptions>({
                 options.onClose();
                 return true;
               }
+              // Prevent ProseMirror from handling Enter and arrow keys
+              // so the slash command menu can handle them instead
+              if (event.key === 'Enter' || event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                return true;
+              }
               return false;
             }
 

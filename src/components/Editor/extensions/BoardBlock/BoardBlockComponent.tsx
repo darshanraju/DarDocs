@@ -27,6 +27,15 @@ export function BoardBlockComponent({ node, updateAttributes, deleteNode, select
     }
   }, [boardId, getBoardSnapshot, createBoard]);
 
+  // Auto-fullscreen for newly created boards via slash command
+  useEffect(() => {
+    const pendingId = useBoardStore.getState().pendingFullscreenBoardId;
+    if (pendingId && pendingId === boardId) {
+      setIsFullscreen(true);
+      useBoardStore.getState().clearPendingFullscreen();
+    }
+  }, [boardId]);
+
   // Throttled save function
   const saveSnapshot = useCallback(
     throttle((editor: TldrawEditor) => {
@@ -76,6 +85,12 @@ export function BoardBlockComponent({ node, updateAttributes, deleteNode, select
     setIsFullscreen(!isFullscreen);
   }, [isFullscreen]);
 
+  const handleDoubleClick = useCallback(() => {
+    if (!isFullscreen) {
+      setIsFullscreen(true);
+    }
+  }, [isFullscreen]);
+
   // Resize handling
   const handleResizeStart = useCallback(
     (e: React.MouseEvent) => {
@@ -119,6 +134,7 @@ export function BoardBlockComponent({ node, updateAttributes, deleteNode, select
         ref={containerRef}
         className={containerClasses}
         style={!isFullscreen ? { height: `${height}px` } : undefined}
+        onDoubleClick={handleDoubleClick}
       >
         {/* Drag handle */}
         <div

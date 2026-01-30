@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Editor } from '@tiptap/react';
 import {
+  Type,
   Heading1,
   Heading2,
   Heading3,
@@ -12,12 +13,13 @@ import {
   Table,
   Palette,
 } from 'lucide-react';
+import { useBoardStore } from '../../stores/boardStore';
 
 interface SlashCommand {
   name: string;
-  description: string;
   icon: React.ReactNode;
   keywords: string[];
+  category: string;
   action: (editor: Editor) => void;
 }
 
@@ -31,75 +33,86 @@ interface SlashCommandMenuProps {
 
 const commands: SlashCommand[] = [
   {
+    name: 'Text',
+    icon: <Type className="w-5 h-5" style={{ color: '#3370ff' }} />,
+    keywords: ['text', 'paragraph', 'plain'],
+    category: 'Basics',
+    action: (editor) => editor.chain().focus().setParagraph().run(),
+  },
+  {
     name: 'Heading 1',
-    description: 'Large section heading',
-    icon: <Heading1 className="w-5 h-5" />,
+    icon: <Heading1 className="w-5 h-5" style={{ color: '#3370ff' }} />,
     keywords: ['heading1', 'h1', 'title', 'large'],
+    category: 'Basics',
     action: (editor) => editor.chain().focus().toggleHeading({ level: 1 }).run(),
   },
   {
     name: 'Heading 2',
-    description: 'Medium section heading',
-    icon: <Heading2 className="w-5 h-5" />,
+    icon: <Heading2 className="w-5 h-5" style={{ color: '#00b386' }} />,
     keywords: ['heading2', 'h2', 'subtitle', 'medium'],
+    category: 'Basics',
     action: (editor) => editor.chain().focus().toggleHeading({ level: 2 }).run(),
   },
   {
     name: 'Heading 3',
-    description: 'Small section heading',
-    icon: <Heading3 className="w-5 h-5" />,
+    icon: <Heading3 className="w-5 h-5" style={{ color: '#3370ff' }} />,
     keywords: ['heading3', 'h3', 'small'],
+    category: 'Basics',
     action: (editor) => editor.chain().focus().toggleHeading({ level: 3 }).run(),
   },
   {
-    name: 'Bullet List',
-    description: 'Create a simple bullet list',
-    icon: <List className="w-5 h-5" />,
-    keywords: ['bullet', 'list', 'unordered', 'ul'],
-    action: (editor) => editor.chain().focus().toggleBulletList().run(),
-  },
-  {
     name: 'Numbered List',
-    description: 'Create a numbered list',
-    icon: <ListOrdered className="w-5 h-5" />,
+    icon: <ListOrdered className="w-5 h-5" style={{ color: '#cf8a00' }} />,
     keywords: ['numbered', 'list', 'ordered', 'ol', 'number'],
+    category: 'Basics',
     action: (editor) => editor.chain().focus().toggleOrderedList().run(),
   },
   {
-    name: 'Quote',
-    description: 'Add a blockquote',
-    icon: <Quote className="w-5 h-5" />,
-    keywords: ['quote', 'blockquote', 'citation'],
-    action: (editor) => editor.chain().focus().toggleBlockquote().run(),
+    name: 'Bulleted List',
+    icon: <List className="w-5 h-5" style={{ color: '#3370ff' }} />,
+    keywords: ['bullet', 'list', 'unordered', 'ul'],
+    category: 'Basics',
+    action: (editor) => editor.chain().focus().toggleBulletList().run(),
   },
   {
     name: 'Code Block',
-    description: 'Add a code block',
-    icon: <Code className="w-5 h-5" />,
+    icon: <Code className="w-5 h-5" style={{ color: '#3370ff' }} />,
     keywords: ['code', 'codeblock', 'programming', 'snippet'],
+    category: 'Basics',
     action: (editor) => editor.chain().focus().toggleCodeBlock().run(),
   },
   {
+    name: 'Quote',
+    icon: <Quote className="w-5 h-5" style={{ color: '#3370ff' }} />,
+    keywords: ['quote', 'blockquote', 'citation'],
+    category: 'Basics',
+    action: (editor) => editor.chain().focus().toggleBlockquote().run(),
+  },
+  {
     name: 'Divider',
-    description: 'Add a horizontal divider',
-    icon: <Minus className="w-5 h-5" />,
+    icon: <Minus className="w-5 h-5" style={{ color: '#cf8a00' }} />,
     keywords: ['divider', 'horizontal', 'rule', 'hr', 'line'],
+    category: 'Basics',
     action: (editor) => editor.chain().focus().setHorizontalRule().run(),
   },
   {
     name: 'Table',
-    description: 'Insert a table',
-    icon: <Table className="w-5 h-5" />,
+    icon: <Table className="w-5 h-5" style={{ color: '#0fc6c2' }} />,
     keywords: ['table', 'grid', 'spreadsheet'],
+    category: 'Blocks',
     action: (editor) =>
       editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
   },
   {
     name: 'Whiteboard',
-    description: 'Insert a drawing board',
-    icon: <Palette className="w-5 h-5" />,
+    icon: <Palette className="w-5 h-5" style={{ color: '#7c3aed' }} />,
     keywords: ['board', 'whiteboard', 'drawing', 'canvas', 'sketch'],
-    action: (editor) => editor.chain().focus().insertBoard().run(),
+    category: 'Blocks',
+    action: (editor) => {
+      const boardId = crypto.randomUUID();
+      useBoardStore.getState().setPendingFullscreenBoardId(boardId);
+      editor.chain().focus().insertBoard({ boardId }).run();
+    },
   },
 ];
 
@@ -112,7 +125,6 @@ export function SlashCommandMenu({
 }: SlashCommandMenuProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  // Filter commands based on query
   const filteredCommands = useMemo(() => {
     if (!query) return commands;
 
@@ -124,40 +136,51 @@ export function SlashCommandMenu({
     );
   }, [query]);
 
-  // Reset selection when filtered commands change
+  const groupedCommands = useMemo(() => {
+    const groups: { category: string; items: SlashCommand[] }[] = [];
+    const categoryMap = new Map<string, SlashCommand[]>();
+
+    for (const cmd of filteredCommands) {
+      const existing = categoryMap.get(cmd.category);
+      if (existing) {
+        existing.push(cmd);
+      } else {
+        const items = [cmd];
+        categoryMap.set(cmd.category, items);
+        groups.push({ category: cmd.category, items });
+      }
+    }
+
+    return groups;
+  }, [filteredCommands]);
+
   useEffect(() => {
     setSelectedIndex(0);
   }, [filteredCommands]);
 
-  // Execute selected command
   const executeCommand = useCallback(
     (command: SlashCommand) => {
       if (!editor) return;
 
-      // Delete the slash and query from the document
       const { state } = editor;
       const { selection } = state;
       const { $from } = selection;
 
-      // Find the slash position
       const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
       const slashIndex = textBefore.lastIndexOf('/');
 
       if (slashIndex !== -1) {
         const from = $from.start() + slashIndex;
         const to = $from.pos;
-
         editor.chain().deleteRange({ from, to }).run();
       }
 
-      // Execute the command action
       command.action(editor);
       onClose();
     },
     [editor, onClose]
   );
 
-  // Keyboard navigation
   useEffect(() => {
     if (!isOpen) return;
 
@@ -195,18 +218,23 @@ export function SlashCommandMenu({
       className="slash-command-menu fixed"
       style={{ top: position.top, left: position.left }}
     >
-      {filteredCommands.map((command, index) => (
-        <div
-          key={command.name}
-          className={`slash-command-item ${index === selectedIndex ? 'is-selected' : ''}`}
-          onClick={() => executeCommand(command)}
-          onMouseEnter={() => setSelectedIndex(index)}
-        >
-          <div className="slash-command-item-icon">{command.icon}</div>
-          <div className="slash-command-item-content">
-            <div className="slash-command-item-title">{command.name}</div>
-            <div className="slash-command-item-description">{command.description}</div>
-          </div>
+      {groupedCommands.map((group) => (
+        <div key={group.category}>
+          <div className="slash-command-category">{group.category}</div>
+          {group.items.map((command) => {
+            const index = filteredCommands.indexOf(command);
+            return (
+              <div
+                key={command.name}
+                className={`slash-command-item ${index === selectedIndex ? 'is-selected' : ''}`}
+                onClick={() => executeCommand(command)}
+                onMouseEnter={() => setSelectedIndex(index)}
+              >
+                <div className="slash-command-item-icon">{command.icon}</div>
+                <div className="slash-command-item-title">{command.name}</div>
+              </div>
+            );
+          })}
         </div>
       ))}
     </div>

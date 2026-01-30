@@ -3,6 +3,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import type { JSONContent } from '@tiptap/react';
 import { getExtensions } from './extensions';
 import { SlashCommandMenu } from './SlashCommandMenu';
+import { TableEdgeControls } from '../Blocks/TableBlock/TableEdgeControls';
 import { useDocumentStore } from '../../stores/documentStore';
 import { debounce } from 'lodash-es';
 import { EDITOR_SAVE_DEBOUNCE_MS, EDITOR_PLACEHOLDER } from '../../lib/constants';
@@ -109,6 +110,12 @@ export function Editor({ isViewMode = false }: EditorProps) {
         onClose={handleSlashCommandClose}
         position={slashMenuPosition}
       />
+      {editor && !isViewMode && (
+        <TableEdgeControls
+          editor={editor}
+          editorContainerRef={editorContainerRef}
+        />
+      )}
     </div>
   );
 }
