@@ -3,6 +3,7 @@ import { Toaster } from 'sonner';
 import { Editor } from './components/Editor/Editor';
 import { DocumentViewer } from './components/Viewer/DocumentViewer';
 import { TableOfContents } from './components/TableOfContents/TableOfContents';
+import { CommentSection } from './components/Comments/CommentSection';
 import { useDocumentStore } from './stores/documentStore';
 
 function App() {
@@ -57,6 +58,9 @@ function App() {
 
             {/* Editor */}
             {isViewMode ? <DocumentViewer /> : <Editor isViewMode={false} />}
+
+            {/* Comments */}
+            <CommentSection />
           </div>
         </div>
       </main>

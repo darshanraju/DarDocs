@@ -1,12 +1,23 @@
 import type { JSONContent } from '@tiptap/react';
 import type { TLEditorSnapshot } from 'tldraw';
 
+// Comment on a document
+export interface Comment {
+  id: string;
+  author: string;
+  avatarUrl?: string;
+  text: string;
+  imageUrl?: string;
+  createdAt: string;
+}
+
 // Main document structure
 export interface DarDocsDocument {
   version: "1.0";
   metadata: DocumentMetadata;
   content: JSONContent;
   boards: Record<string, TLEditorSnapshot>;
+  comments: Comment[];
 }
 
 export interface DocumentMetadata {
@@ -72,5 +83,6 @@ export function createNewDocument(title: string = 'Untitled Document'): DarDocsD
       ],
     },
     boards: {},
+    comments: [],
   };
 }
