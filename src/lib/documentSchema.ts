@@ -50,7 +50,8 @@ export type MarkType =
   | 'strike'
   | 'code'
   | 'link'
-  | 'highlight';
+  | 'highlight'
+  | 'comment';
 
 // Create a new empty document
 export function createNewDocument(title: string = 'Untitled Document'): DarDocsDocument {
