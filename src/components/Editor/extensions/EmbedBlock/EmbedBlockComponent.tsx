@@ -94,6 +94,8 @@ export function EmbedBlockComponent({ node, updateAttributes, deleteNode, select
         return <GitHubCardEmbed url={url} />;
       case 'gist':
         return <GistEmbed url={url} />;
+      case 'swagger':
+        return <SwaggerEmbed url={url} config={config} />;
       default:
         return null;
     }
@@ -141,7 +143,7 @@ export function EmbedBlockComponent({ node, updateAttributes, deleteNode, select
 }
 
 /* ------------------------------------------------------------------ */
-/*  Iframe-based embed (Figma, Google Sheets, Grafana, Swagger)       */
+/*  Iframe-based embed (Figma, Google Sheets, Grafana)                */
 /* ------------------------------------------------------------------ */
 
 function IframeEmbed({
@@ -286,6 +288,90 @@ function GitHubCardEmbed({ url }: { url: string }) {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  GitHub Gist embed                                                  */
+/* ------------------------------------------------------------------ */
+
+function SwaggerEmbed({
+  url,
+  config,
+}: {
+  url: string;
+  config: (typeof EMBED_CONFIGS)[EmbedType];
+}) {
+  const [height, setHeight] = useState(config.defaultHeight);
+  const [isResizing, setIsResizing] = useState(false);
+  const startYRef = useRef(0);
+  const startHeightRef = useRef(0);
+
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      setIsResizing(true);
+      startYRef.current = e.clientY;
+      startHeightRef.current = height;
+    },
+    [height]
+  );
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaY = e.clientY - startYRef.current;
+      setHeight(Math.max(200, Math.min(1200, startHeightRef.current + deltaY)));
+    };
+
+    const handleMouseUp = () => setIsResizing(false);
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
+
+  // Build a self-contained HTML page that loads Swagger UI from CDN
+  const srcdoc = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+  <style>
+    html, body { margin: 0; padding: 0; }
+    .swagger-ui .topbar { display: none; }
+  </style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"><\/script>
+  <script>
+    SwaggerUIBundle({
+      url: ${JSON.stringify(url)},
+      dom_id: '#swagger-ui',
+      presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
+      layout: 'BaseLayout',
+      defaultModelsExpandDepth: -1
+    });
+  <\/script>
+</body>
+</html>`;
+
+  return (
+    <div className="embed-iframe-container">
+      <iframe
+        srcDoc={srcdoc}
+        className="embed-iframe"
+        style={{ height: `${height}px` }}
+        sandbox="allow-scripts allow-same-origin"
+      />
+      <div className="embed-resize-handle" onMouseDown={handleResizeStart} />
     </div>
   );
 }
