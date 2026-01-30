@@ -27,8 +27,13 @@ export const EMBED_CONFIGS: Record<EmbedType, EmbedConfig> = {
     placeholder: 'Paste a Google Sheets URL (e.g., https://docs.google.com/spreadsheets/d/...)',
     urlPattern: /^https:\/\/docs\.google\.com\/spreadsheets\/d\//,
     getEmbedUrl: (url) => {
-      const base = url.split('?')[0].replace(/\/edit$/, '').replace(/\/$/, '');
-      return `${base}/pubhtml?widget=true&headers=false`;
+      // Extract the spreadsheet base path (up to and including the ID)
+      const base = url.split('?')[0].replace(/\/(edit|preview|pubhtml)$/, '').replace(/\/$/, '');
+      // Preserve gid param if present so a specific sheet tab is shown
+      const gidMatch = url.match(/gid=(\d+)/);
+      const gidParam = gidMatch ? `?gid=${gidMatch[1]}` : '';
+      // Use /preview which works with "anyone with the link" sharing
+      return `${base}/preview${gidParam}`;
     },
     renderMode: 'iframe',
     defaultHeight: 400,
