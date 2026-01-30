@@ -14,7 +14,7 @@ html, body {
 /* Editor-specific styles */
 .ProseMirror {
   outline: none;
-  min-height: 300px;
+  min-height: calc(100vh - 160px);
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
@@ -1055,6 +1055,248 @@ html, body {
   color: #3370ff;
   border-color: #3370ff;
   box-shadow: 0 4px 12px rgba(51, 112, 255, 0.15);
+}
+
+/* ---- Floating Toolbar (text selection) ---- */
+
+.floating-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.06);
+  white-space: nowrap;
+}
+
+.floating-toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 4px;
+  border: none;
+  background: transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #4b5563;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.floating-toolbar-btn:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.floating-toolbar-btn.active {
+  background: #eef2ff;
+  color: #3370ff;
+}
+
+.floating-toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background: #e5e7eb;
+  margin: 0 3px;
+  flex-shrink: 0;
+}
+
+/* Heading selector group */
+.floating-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 2px;
+}
+
+.floating-toolbar-heading-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #4b5563;
+  min-width: 22px;
+  text-align: center;
+  user-select: none;
+}
+
+.floating-toolbar-heading-arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.floating-toolbar-arrow-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 14px;
+  border: none;
+  background: transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 0;
+  transition: color 0.1s, background-color 0.1s;
+}
+
+.floating-toolbar-arrow-btn:hover {
+  color: #1f2937;
+  background: #f3f4f6;
+}
+
+/* Chevron icon next to buttons */
+.floating-toolbar-chevron {
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+/* Dropdown wrapper (relative container) */
+.floating-toolbar-dropdown-wrapper {
+  position: relative;
+}
+
+/* Dropdown panel */
+.floating-toolbar-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 4px;
+  z-index: 100;
+  min-width: 120px;
+}
+
+.floating-toolbar-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  color: #374151;
+  white-space: nowrap;
+  transition: background-color 0.1s;
+}
+
+.floating-toolbar-dropdown-item:hover {
+  background: #f3f4f6;
+}
+
+.floating-toolbar-dropdown-item.active {
+  background: #eef2ff;
+  color: #3370ff;
+}
+
+/* Text color button */
+.floating-toolbar-color-label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.floating-toolbar-color-indicator {
+  display: block;
+  width: 14px;
+  height: 3px;
+  border-radius: 1px;
+  margin-top: -2px;
+}
+
+/* Color grid dropdown */
+.floating-toolbar-color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px;
+  width: 140px;
+  min-width: 140px;
+}
+
+.floating-toolbar-color-swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  padding: 0;
+}
+
+.floating-toolbar-color-swatch:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.floating-toolbar-color-reset {
+  width: 100%;
+  padding: 4px;
+  margin-top: 2px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  color: #6b7280;
+  transition: background-color 0.1s;
+}
+
+.floating-toolbar-color-reset:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Link input dropdown */
+.floating-toolbar-link-input {
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  min-width: 240px;
+}
+
+.floating-toolbar-link-input input {
+  flex: 1;
+  padding: 5px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  font-size: 0.8125rem;
+  color: #374151;
+  outline: none;
+  background: #f9fafb;
+  transition: border-color 0.15s;
+}
+
+.floating-toolbar-link-input input:focus {
+  border-color: #3370ff;
+  background: white;
+}
+
+.floating-toolbar-link-submit {
+  padding: 5px 10px;
+  border: none;
+  background: #3370ff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.15s;
+}
+
+.floating-toolbar-link-submit:hover {
+  background: #2563eb;
 }
 
 /* Comment Panel (floating card) */

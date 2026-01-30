@@ -3,7 +3,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import type { JSONContent, Editor as TiptapEditor } from '@tiptap/react';
 import { getExtensions } from './extensions';
 import { SlashCommandMenu } from './SlashCommandMenu';
-import { AddCommentBubble } from '../Comments/AddCommentBubble';
+import { FloatingToolbar } from './FloatingToolbar';
 import { TableEdgeControls } from '../Blocks/TableBlock/TableEdgeControls';
 import { useDocumentStore } from '../../stores/documentStore';
 import { useCommentStore } from '../../stores/commentStore';
@@ -40,7 +40,7 @@ export function Editor({ isViewMode = false, onEditorReady }: EditorProps) {
       editable: !isViewMode,
       editorProps: {
         attributes: {
-          class: 'prose prose-sm focus:outline-none max-w-none min-h-[300px]',
+          class: 'prose prose-sm focus:outline-none max-w-none',
           'data-placeholder': EDITOR_PLACEHOLDER,
         },
         handleClick: (view, pos) => {
@@ -135,7 +135,7 @@ export function Editor({ isViewMode = false, onEditorReady }: EditorProps) {
       />
       {editor && !isViewMode && (
         <>
-          <AddCommentBubble editor={editor} />
+          <FloatingToolbar editor={editor} />
           <TableEdgeControls
             editor={editor}
             editorContainerRef={editorContainerRef}
