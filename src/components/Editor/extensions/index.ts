@@ -14,6 +14,7 @@ import { common, createLowlight } from 'lowlight';
 import { EDITOR_PLACEHOLDER } from '../../../lib/constants';
 import { SlashCommands } from './SlashCommands';
 import { BoardBlockExtension } from './BoardBlock/BoardBlockExtension';
+import { Whiteboard2BlockExtension } from '../../Whiteboard2/WhiteboardBlockExtension';
 
 // Create lowlight instance with common languages
 const lowlight = createLowlight(common);
@@ -60,5 +61,6 @@ export function getExtensions(onSlashCommand: (query: string) => void, onSlashCo
       onClose: onSlashCommandClose,
     }),
     BoardBlockExtension,
+    Whiteboard2BlockExtension,
   ];
 }

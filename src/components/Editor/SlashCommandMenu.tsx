@@ -12,8 +12,10 @@ import {
   Minus,
   Table,
   Palette,
+  PenTool,
 } from 'lucide-react';
 import { useBoardStore } from '../../stores/boardStore';
+import { useWhiteboard2Store } from '../Whiteboard2/whiteboardStore';
 
 interface SlashCommand {
   name: string;
@@ -112,6 +114,17 @@ const commands: SlashCommand[] = [
       const boardId = crypto.randomUUID();
       useBoardStore.getState().setPendingFullscreenBoardId(boardId);
       editor.chain().focus().insertBoard({ boardId }).run();
+    },
+  },
+  {
+    name: 'Whiteboard 2',
+    icon: <PenTool className="w-5 h-5" style={{ color: '#3370ff' }} />,
+    keywords: ['whiteboard2', 'canvas', 'draw', 'board2', 'sketch2'],
+    category: 'Blocks',
+    action: (editor) => {
+      const boardId = crypto.randomUUID();
+      useWhiteboard2Store.getState().setPendingFullscreenBoardId(boardId);
+      editor.chain().focus().insertWhiteboard2({ boardId }).run();
     },
   },
 ];
