@@ -340,6 +340,25 @@ html, body {
   z-index: 50;
 }
 
+/* Table edge dots (Lark-style): small dots between columns/rows */
+.table-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d1d5db;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+  z-index: 40;
+}
+
+.table-dot:hover {
+  background: #3370ff;
+  transform: scale(1.4);
+}
+
 /* Table edge insert buttons (Lark-style) */
 .table-edge-btn {
   z-index: 40;
