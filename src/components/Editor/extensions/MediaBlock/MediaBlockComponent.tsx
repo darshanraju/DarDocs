@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import {
@@ -8,6 +9,7 @@ import {
   AlignRight,
   ImagePlus,
   Upload,
+  X,
 } from 'lucide-react';
 import { openImagePicker, readFileAsDataURL } from './mediaUtils';
 
@@ -21,6 +23,7 @@ export function MediaBlockComponent({
   const { src, alt, width, alignment } = node.attrs;
   const [isHovered, setIsHovered] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -110,6 +113,31 @@ export function MediaBlockComponent({
     updateAttributes({ src: dataUrl });
   }, [updateAttributes]);
 
+  // --- Fullscreen ---
+
+  const handleDoubleClick = useCallback(() => {
+    if (src) setIsFullscreen(true);
+  }, [src]);
+
+  const closeFullscreen = useCallback(() => {
+    setIsFullscreen(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isFullscreen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsFullscreen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown, true);
+    return () => document.removeEventListener('keydown', handleKeyDown, true);
+  }, [isFullscreen]);
+
   if (!src) {
     return (
       <NodeViewWrapper className="media-block">
@@ -160,6 +188,7 @@ export function MediaBlockComponent({
             src={src}
             alt={alt || ''}
             draggable={false}
+            onDoubleClick={handleDoubleClick}
           />
 
           {/* Resize handles */}
@@ -223,6 +252,27 @@ export function MediaBlockComponent({
           )}
         </div>
       </div>
+
+      {/* Fullscreen overlay */}
+      {isFullscreen &&
+        createPortal(
+          <div className="media-fullscreen-overlay" onClick={closeFullscreen}>
+            <button
+              className="media-fullscreen-close"
+              onClick={closeFullscreen}
+              title="Close (Esc)"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <img
+              src={src}
+              alt={alt || ''}
+              className="media-fullscreen-content"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>,
+          document.body
+        )}
     </NodeViewWrapper>
   );
 }
