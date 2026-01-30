@@ -194,13 +194,6 @@ export function CommentSection() {
           >
             <Image size={18} />
           </button>
-          <button
-            className="comment-input-action-btn"
-            onClick={handleSubmit}
-            title="More options"
-          >
-            <MoreHorizontal size={18} />
-          </button>
         </div>
         <input
           ref={fileInputRef}
