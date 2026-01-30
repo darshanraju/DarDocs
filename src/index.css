@@ -1754,3 +1754,397 @@ html, body {
 .comments-sidebar-card-wrapper .comment-panel {
   width: 100%;
 }
+
+/* ============================================================
+   Embed Blocks (Figma, Google Sheet, GitHub, Gist, Grafana, Swagger)
+   ============================================================ */
+
+/* URL input state */
+.embed-input-wrapper {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+.embed-input-wrapper:focus-within {
+  border-color: #3370ff;
+}
+
+.embed-input-wrapper.is-selected {
+  border-color: #3370ff;
+  box-shadow: 0 0 0 1px #3370ff;
+}
+
+.embed-input-header {
+  padding: 0.5rem 0.75rem;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.embed-input-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.embed-input-body {
+  padding: 0.75rem;
+}
+
+.embed-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.embed-url-input {
+  flex: 1;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  font-size: 0.8125rem;
+  color: #374151;
+  outline: none;
+  background: white;
+  transition: border-color 0.15s;
+}
+
+.embed-url-input:focus {
+  border-color: #3370ff;
+}
+
+.embed-url-input::placeholder {
+  color: #9ca3af;
+}
+
+.embed-submit-btn {
+  padding: 0.375rem 0.75rem;
+  background: #3370ff;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s;
+}
+
+.embed-submit-btn:hover {
+  background: #2563eb;
+}
+
+.embed-input-error {
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-top: 0.375rem;
+}
+
+.embed-input-hint {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.375rem;
+}
+
+/* Embed block container */
+.embed-block-wrapper {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.15s;
+}
+
+.embed-block-wrapper:hover {
+  border-color: #d1d5db;
+}
+
+.embed-block-wrapper.is-selected {
+  border-color: #3370ff;
+  box-shadow: 0 0 0 1px #3370ff;
+}
+
+/* Drag handle */
+.embed-drag-handle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+}
+
+.embed-block-wrapper:hover .embed-drag-handle {
+  opacity: 1;
+}
+
+/* Header bar */
+.embed-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.375rem 0.625rem 0.375rem 0.75rem;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.embed-block-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.embed-block-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.embed-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border: none;
+  background: transparent;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.embed-action-btn:hover {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+.embed-action-delete:hover {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+/* Iframe embed */
+.embed-iframe-container {
+  position: relative;
+}
+
+.embed-iframe {
+  width: 100%;
+  border: none;
+  display: block;
+}
+
+.embed-resize-handle {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  cursor: ns-resize;
+  background: transparent;
+  transition: background-color 0.15s;
+}
+
+.embed-resize-handle:hover {
+  background: rgba(51, 112, 255, 0.15);
+}
+
+/* GitHub card */
+.github-card {
+  padding: 1rem;
+}
+
+.github-card-repo {
+  font-size: 0.8125rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.github-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+.github-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.github-card-type {
+  padding: 0.125rem 0.5rem;
+  background: #f3f4f6;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.github-card-number {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.github-card-state {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.github-card-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+}
+
+.github-card-label {
+  padding: 0.125rem 0.5rem;
+  background: #eef2ff;
+  color: #4338ca;
+  border-radius: 1rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+/* Gist embed */
+.embed-gist-container {
+  overflow: hidden;
+}
+
+.embed-gist-iframe {
+  width: 100%;
+  border: none;
+  display: block;
+}
+
+/* Embed error */
+.embed-error {
+  padding: 1rem;
+  color: #ef4444;
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* ============================================================
+   Mermaid Diagram Block
+   ============================================================ */
+
+.mermaid-block-wrapper {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.15s;
+}
+
+.mermaid-block-wrapper:hover {
+  border-color: #d1d5db;
+}
+
+.mermaid-block-wrapper.is-selected {
+  border-color: #3370ff;
+  box-shadow: 0 0 0 1px #3370ff;
+}
+
+.mermaid-block-wrapper:hover .embed-drag-handle {
+  opacity: 1;
+}
+
+/* Editor */
+.mermaid-editor {
+  padding: 0;
+}
+
+.mermaid-textarea {
+  width: 100%;
+  min-height: 180px;
+  padding: 0.75rem;
+  border: none;
+  outline: none;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: #374151;
+  background: #fafbfc;
+  box-sizing: border-box;
+}
+
+.mermaid-textarea::placeholder {
+  color: #9ca3af;
+}
+
+.mermaid-editor-hint {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.6875rem;
+  color: #9ca3af;
+  background: #f3f4f6;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Preview */
+.mermaid-preview {
+  padding: 1rem;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mermaid-svg {
+  width: 100%;
+  cursor: pointer;
+  text-align: center;
+}
+
+.mermaid-svg svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-empty {
+  padding: 2rem;
+  color: #9ca3af;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.mermaid-empty:hover {
+  color: #6b7280;
+}
+
+.mermaid-error {
+  padding: 0.75rem;
+  color: #ef4444;
+  font-size: 0.8125rem;
+}
+
+.mermaid-error p {
+  margin: 0 0 0.5rem;
+  font-weight: 500;
+}
+
+.mermaid-error pre {
+  margin: 0;
+  padding: 0.5rem;
+  background: #fef2f2;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #991b1b;
+}

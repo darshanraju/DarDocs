@@ -15,6 +15,13 @@ import {
   PenTool,
   Image as ImageIcon,
   Video,
+  Figma,
+  Github,
+  FileCode2,
+  Workflow,
+  BarChart3,
+  Braces,
+  Table2,
 } from 'lucide-react';
 import { useBoardStore } from '../../stores/boardStore';
 import { useWhiteboard2Store } from '../Whiteboard2/whiteboardStore';
@@ -169,6 +176,56 @@ const commands: SlashCommand[] = [
       useWhiteboard2Store.getState().setPendingFullscreenBoardId(boardId);
       editor.chain().focus().insertWhiteboard2({ boardId }).run();
     },
+  },
+  // ---- Embeds ----
+  {
+    name: 'Figma',
+    icon: <Figma className="w-5 h-5" style={{ color: '#a259ff' }} />,
+    keywords: ['figma', 'design', 'prototype', 'wireframe', 'embed'],
+    category: 'Embeds',
+    action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'figma' }).run(),
+  },
+  {
+    name: 'Google Sheet',
+    icon: <Table2 className="w-5 h-5" style={{ color: '#0f9d58' }} />,
+    keywords: ['google', 'sheet', 'spreadsheet', 'excel', 'embed'],
+    category: 'Embeds',
+    action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'google-sheet' }).run(),
+  },
+  {
+    name: 'GitHub',
+    icon: <Github className="w-5 h-5" style={{ color: '#24292e' }} />,
+    keywords: ['github', 'issue', 'pr', 'pull', 'request', 'repo', 'embed'],
+    category: 'Embeds',
+    action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'github' }).run(),
+  },
+  {
+    name: 'GitHub Gist',
+    icon: <FileCode2 className="w-5 h-5" style={{ color: '#24292e' }} />,
+    keywords: ['gist', 'github', 'snippet', 'code', 'embed'],
+    category: 'Embeds',
+    action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'github-gist' }).run(),
+  },
+  {
+    name: 'Mermaid Diagram',
+    icon: <Workflow className="w-5 h-5" style={{ color: '#ff6b6b' }} />,
+    keywords: ['mermaid', 'diagram', 'flowchart', 'sequence', 'graph', 'chart', 'er'],
+    category: 'Embeds',
+    action: (editor) => editor.chain().focus().insertMermaid().run(),
+  },
+  {
+    name: 'Grafana',
+    icon: <BarChart3 className="w-5 h-5" style={{ color: '#f46800' }} />,
+    keywords: ['grafana', 'dashboard', 'metrics', 'monitoring', 'graph', 'embed'],
+    category: 'Embeds',
+    action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'grafana' }).run(),
+  },
+  {
+    name: 'Swagger',
+    icon: <Braces className="w-5 h-5" style={{ color: '#49cc90' }} />,
+    keywords: ['swagger', 'openapi', 'api', 'docs', 'rest', 'embed'],
+    category: 'Embeds',
+    action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'swagger' }).run(),
   },
 ];
 
