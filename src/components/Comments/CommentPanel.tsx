@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Editor } from '@tiptap/react';
-import { ChevronUp, ChevronDown, Link2, Check, Send, X } from 'lucide-react';
+import { Check, Send, X } from 'lucide-react';
 import { useCommentStore, type MockUser } from '../../stores/commentStore';
 
 interface CommentPanelProps {
@@ -156,26 +156,6 @@ export function CommentPanel({ editor, contentAreaRef }: CommentPanelProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [setActiveComment, isDraft, activeCommentId, editor, deleteComment]);
 
-  // Navigate between comments
-  const unresolvedComments = comments.filter((c) => !c.resolved);
-  const activeIndex = unresolvedComments.findIndex(
-    (c) => c.id === activeCommentId
-  );
-
-  const navigateComment = (direction: 'prev' | 'next') => {
-    if (unresolvedComments.length === 0) return;
-
-    let newIndex;
-    if (direction === 'next') {
-      newIndex =
-        activeIndex + 1 >= unresolvedComments.length ? 0 : activeIndex + 1;
-    } else {
-      newIndex =
-        activeIndex - 1 < 0 ? unresolvedComments.length - 1 : activeIndex - 1;
-    }
-    setActiveComment(unresolvedComments[newIndex].id);
-  };
-
   const handleReplySubmit = () => {
     if (!replyText.trim() || !activeCommentId) return;
     addReply(activeCommentId, replyText.trim());
@@ -243,37 +223,13 @@ export function CommentPanel({ editor, contentAreaRef }: CommentPanelProps) {
           </span>
         </div>
         <div className="comment-panel-actions">
-          <div className="comment-panel-nav">
-            <button
-              onClick={() => navigateComment('next')}
-              className="comment-panel-action-btn"
-              title="Next comment"
-            >
-              <ChevronDown size={16} />
-            </button>
-            <button
-              onClick={() => navigateComment('prev')}
-              className="comment-panel-action-btn"
-              title="Previous comment"
-            >
-              <ChevronUp size={16} />
-            </button>
-          </div>
-          <div className="comment-panel-nav">
-            <button
-              className="comment-panel-action-btn"
-              title="Copy link"
-            >
-              <Link2 size={16} />
-            </button>
-            <button
-              onClick={handleResolve}
-              className="comment-panel-action-btn"
-              title="Resolve"
-            >
-              <Check size={16} />
-            </button>
-          </div>
+          <button
+            onClick={handleResolve}
+            className="comment-panel-action-btn"
+            title="Resolve"
+          >
+            <Check size={16} />
+          </button>
         </div>
       </div>
 
