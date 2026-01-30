@@ -4,14 +4,13 @@ import type { Editor as TiptapEditor } from '@tiptap/react';
 import { Editor } from './components/Editor/Editor';
 import { DocumentViewer } from './components/Viewer/DocumentViewer';
 import { TableOfContents } from './components/TableOfContents/TableOfContents';
-import { CommentPanel } from './components/Comments/CommentPanel';
+import { CommentsSidebar } from './components/Comments/CommentsSidebar';
 import { useDocumentStore } from './stores/documentStore';
 
 function App() {
   const [isViewMode] = useState(false);
   const { document, createDocument, updateMetadata } = useDocumentStore();
   const titleInputRef = useRef<HTMLInputElement>(null);
-  const contentAreaRef = useRef<HTMLDivElement>(null);
   const [editorInstance, setEditorInstance] = useState<TiptapEditor | null>(null);
 
   // Create a new document on first load
@@ -48,36 +47,38 @@ function App() {
       {/* Table of Contents sidebar */}
       <TableOfContents />
 
-      {/* Main content */}
+      {/* Main content + Comments sidebar */}
       <main className="flex-1 overflow-hidden bg-white">
-        <div id="main-scroll-container" className="h-full overflow-y-auto">
-          <div
-            ref={contentAreaRef}
-            className="max-w-[720px] mx-auto px-6 py-8"
-          >
-            {/* Title */}
-            <input
-              ref={titleInputRef}
-              type="text"
-              value={document?.metadata.title || ''}
-              onChange={handleTitleChange}
-              onKeyDown={handleTitleKeyDown}
-              placeholder="Enter title here"
-              className="doc-title-input"
-            />
+        <div id="main-scroll-container" className="h-full overflow-y-auto overflow-x-hidden">
+          <div className="flex min-h-full">
+            {/* Document content */}
+            <div className="flex-1 min-w-0">
+              <div className="max-w-[720px] mx-auto px-6 py-8">
+                {/* Title */}
+                <input
+                  ref={titleInputRef}
+                  type="text"
+                  value={document?.metadata.title || ''}
+                  onChange={handleTitleChange}
+                  onKeyDown={handleTitleKeyDown}
+                  placeholder="Enter title here"
+                  className="doc-title-input"
+                />
 
-            {/* Editor */}
-            {isViewMode ? (
-              <DocumentViewer />
-            ) : (
-              <Editor isViewMode={false} onEditorReady={handleEditorReady} />
-            )}
+                {/* Editor */}
+                {isViewMode ? (
+                  <DocumentViewer />
+                ) : (
+                  <Editor isViewMode={false} onEditorReady={handleEditorReady} />
+                )}
+              </div>
+            </div>
+
+            {/* Comments sidebar (right column) */}
+            <CommentsSidebar editor={editorInstance} />
           </div>
         </div>
       </main>
-
-      {/* Comment Panel (fixed position, floats to the right of content) */}
-      <CommentPanel editor={editorInstance} contentAreaRef={contentAreaRef} />
 
       {/* Toast notifications */}
       <Toaster position="bottom-right" />

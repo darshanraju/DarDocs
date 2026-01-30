@@ -1,14 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { Editor } from '@tiptap/react';
-import { Check, Send, X } from 'lucide-react';
+import { ChevronUp, ChevronDown, Link2, Check, Send, X } from 'lucide-react';
 import { useCommentStore, type MockUser } from '../../stores/commentStore';
 
-interface CommentPanelProps {
-  editor: Editor | null;
-  contentAreaRef: React.RefObject<HTMLDivElement | null>;
-}
-
-function formatTime(isoString: string): string {
+export function formatTime(isoString: string): string {
   const date = new Date(isoString);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
@@ -23,7 +18,7 @@ function formatTime(isoString: string): string {
   return date.toLocaleDateString();
 }
 
-function UserAvatar({ user, size = 32 }: { user: MockUser; size?: number }) {
+export function UserAvatar({ user, size = 32 }: { user: MockUser; size?: number }) {
   const initials = user.name
     .split(' ')
     .map((n) => n[0])
@@ -44,7 +39,11 @@ function UserAvatar({ user, size = 32 }: { user: MockUser; size?: number }) {
   );
 }
 
-export function CommentPanel({ editor, contentAreaRef }: CommentPanelProps) {
+interface CommentPanelProps {
+  editor: Editor | null;
+}
+
+export function CommentPanel({ editor }: CommentPanelProps) {
   const {
     comments,
     activeCommentId,
@@ -57,11 +56,6 @@ export function CommentPanel({ editor, contentAreaRef }: CommentPanelProps) {
 
   const [replyText, setReplyText] = useState('');
   const [draftText, setDraftText] = useState('');
-  const [panelPosition, setPanelPosition] = useState<{
-    top: number;
-    left: number;
-  } | null>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
   const replyInputRef = useRef<HTMLInputElement>(null);
   const draftInputRef = useRef<HTMLInputElement>(null);
 
@@ -70,54 +64,26 @@ export function CommentPanel({ editor, contentAreaRef }: CommentPanelProps) {
   );
   const isDraft = activeComment && activeComment.text === '';
 
-  const updatePosition = useCallback(() => {
-    if (!activeCommentId || !contentAreaRef.current) {
-      setPanelPosition(null);
-      return;
+  // Navigate between comments
+  const unresolvedComments = comments.filter((c) => !c.resolved);
+  const activeIndex = unresolvedComments.findIndex(
+    (c) => c.id === activeCommentId
+  );
+
+  const navigateComment = (direction: 'prev' | 'next') => {
+    if (unresolvedComments.length === 0) return;
+    let newIndex;
+    if (direction === 'next') {
+      newIndex =
+        activeIndex + 1 >= unresolvedComments.length ? 0 : activeIndex + 1;
+    } else {
+      newIndex =
+        activeIndex - 1 < 0 ? unresolvedComments.length - 1 : activeIndex - 1;
     }
+    setActiveComment(unresolvedComments[newIndex].id);
+  };
 
-    const markElement = document.querySelector(
-      `span[data-comment-id="${activeCommentId}"]`
-    );
-
-    if (!markElement) {
-      setPanelPosition(null);
-      return;
-    }
-
-    const markRect = markElement.getBoundingClientRect();
-    const contentRect = contentAreaRef.current.getBoundingClientRect();
-
-    // Position to the right of the content area, at the Y-level of the mark
-    const left = contentRect.right + 16;
-    const top = markRect.top;
-
-    // Clamp to keep panel in viewport
-    const panelHeight = panelRef.current?.offsetHeight || 200;
-    const maxTop = window.innerHeight - panelHeight - 16;
-    const clampedTop = Math.max(16, Math.min(top, maxTop));
-
-    setPanelPosition({ top: clampedTop, left });
-  }, [activeCommentId, contentAreaRef]);
-
-  useEffect(() => {
-    updatePosition();
-
-    const scrollContainer = document.getElementById('main-scroll-container');
-    if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', updatePosition);
-    }
-    window.addEventListener('resize', updatePosition);
-
-    return () => {
-      if (scrollContainer) {
-        scrollContainer.removeEventListener('scroll', updatePosition);
-      }
-      window.removeEventListener('resize', updatePosition);
-    };
-  }, [updatePosition]);
-
-  // Focus the appropriate input when comment becomes active
+  // Focus input when active
   useEffect(() => {
     if (!activeComment) return;
     if (isDraft) {
@@ -127,34 +93,11 @@ export function CommentPanel({ editor, contentAreaRef }: CommentPanelProps) {
     }
   }, [activeComment?.id, isDraft]);
 
-  // Reset reply text when switching comments
+  // Reset text on switch
   useEffect(() => {
     setReplyText('');
     setDraftText('');
   }, [activeCommentId]);
-
-  // Close panel when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Element;
-      if (
-        panelRef.current &&
-        !panelRef.current.contains(target) &&
-        !target?.closest?.('.comment-highlight') &&
-        !target?.closest?.('.add-comment-bubble')
-      ) {
-        // If it's a draft with no text, clean up
-        if (isDraft && activeCommentId && editor) {
-          editor.chain().focus().unsetComment(activeCommentId).run();
-          deleteComment(activeCommentId);
-        }
-        setActiveComment(null);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [setActiveComment, isDraft, activeCommentId, editor, deleteComment]);
 
   const handleReplySubmit = () => {
     if (!replyText.trim() || !activeCommentId) return;
@@ -181,7 +124,6 @@ export function CommentPanel({ editor, contentAreaRef }: CommentPanelProps) {
       handleDraftSubmit();
     }
     if (e.key === 'Escape') {
-      // Cancel draft
       if (activeCommentId && editor) {
         editor.chain().focus().unsetComment(activeCommentId).run();
         deleteComment(activeCommentId);
@@ -202,19 +144,10 @@ export function CommentPanel({ editor, contentAreaRef }: CommentPanelProps) {
     deleteComment(activeCommentId);
   };
 
-  if (!activeComment || !panelPosition) return null;
+  if (!activeComment) return null;
 
   return (
-    <div
-      ref={panelRef}
-      className="comment-panel"
-      style={{
-        position: 'fixed',
-        top: panelPosition.top,
-        left: panelPosition.left,
-        zIndex: 100,
-      }}
-    >
+    <div className="comment-panel">
       {/* Quoted text + actions header */}
       <div className="comment-panel-header">
         <div className="comment-panel-quote">
@@ -223,13 +156,34 @@ export function CommentPanel({ editor, contentAreaRef }: CommentPanelProps) {
           </span>
         </div>
         <div className="comment-panel-actions">
-          <button
-            onClick={handleResolve}
-            className="comment-panel-action-btn"
-            title="Resolve"
-          >
-            <Check size={16} />
-          </button>
+          <div className="comment-panel-nav">
+            <button
+              onClick={() => navigateComment('next')}
+              className="comment-panel-action-btn"
+              title="Next comment"
+            >
+              <ChevronDown size={16} />
+            </button>
+            <button
+              onClick={() => navigateComment('prev')}
+              className="comment-panel-action-btn"
+              title="Previous comment"
+            >
+              <ChevronUp size={16} />
+            </button>
+          </div>
+          <div className="comment-panel-nav">
+            <button className="comment-panel-action-btn" title="Copy link">
+              <Link2 size={16} />
+            </button>
+            <button
+              onClick={handleResolve}
+              className="comment-panel-action-btn"
+              title="Resolve"
+            >
+              <Check size={16} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -249,10 +203,7 @@ export function CommentPanel({ editor, contentAreaRef }: CommentPanelProps) {
             />
           </div>
           <div className="comment-panel-draft-actions">
-            <button
-              onClick={handleDelete}
-              className="comment-panel-cancel-btn"
-            >
+            <button onClick={handleDelete} className="comment-panel-cancel-btn">
               <X size={14} />
               <span>Cancel</span>
             </button>
@@ -287,7 +238,10 @@ export function CommentPanel({ editor, contentAreaRef }: CommentPanelProps) {
 
             {/* Replies */}
             {activeComment.replies.map((reply) => (
-              <div key={reply.id} className="comment-panel-message comment-panel-reply-msg">
+              <div
+                key={reply.id}
+                className="comment-panel-message comment-panel-reply-msg"
+              >
                 <div className="comment-panel-message-header">
                   <UserAvatar user={reply.author} size={28} />
                   <div className="comment-panel-message-meta">
