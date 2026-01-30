@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { JSONContent } from '@tiptap/react';
-import type { DarDocsDocument, DocumentMetadata } from '../lib/documentSchema';
+import type { DarDocsDocument, DocumentMetadata, Comment } from '../lib/documentSchema';
 import { createNewDocument } from '../lib/documentSchema';
 
 interface DocumentStore {
@@ -14,6 +14,10 @@ interface DocumentStore {
   updateContent: (content: JSONContent) => void;
   updateMetadata: (metadata: Partial<DocumentMetadata>) => void;
   markSaved: () => void;
+
+  // Comment operations
+  addComment: (comment: Omit<Comment, 'id' | 'createdAt'>) => void;
+  deleteComment: (commentId: string) => void;
 
   // Getters
   getDocument: () => DarDocsDocument | null;
@@ -74,6 +78,46 @@ export const useDocumentStore = create<DocumentStore>((set, get) => ({
 
   markSaved: () => {
     set({ hasUnsavedChanges: false });
+  },
+
+  addComment: (comment) => {
+    const current = get().document;
+    if (!current) return;
+
+    const newComment: Comment = {
+      ...comment,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString(),
+    };
+
+    set({
+      document: {
+        ...current,
+        comments: [...(current.comments || []), newComment],
+        metadata: {
+          ...current.metadata,
+          updatedAt: new Date().toISOString(),
+        },
+      },
+      hasUnsavedChanges: true,
+    });
+  },
+
+  deleteComment: (commentId) => {
+    const current = get().document;
+    if (!current) return;
+
+    set({
+      document: {
+        ...current,
+        comments: (current.comments || []).filter((c) => c.id !== commentId),
+        metadata: {
+          ...current.metadata,
+          updatedAt: new Date().toISOString(),
+        },
+      },
+      hasUnsavedChanges: true,
+    });
   },
 
   getDocument: () => get().document,

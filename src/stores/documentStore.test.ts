@@ -78,6 +78,7 @@ describe('Document Store', () => {
           content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Hello' }] }],
         },
         boards: {},
+        comments: [],
       };
 
       loadDocument(mockDoc);
@@ -104,6 +105,7 @@ describe('Document Store', () => {
         },
         content: { type: 'doc', content: [] },
         boards: {},
+        comments: [],
       });
 
       expect(useDocumentStore.getState().hasUnsavedChanges).toBe(false);

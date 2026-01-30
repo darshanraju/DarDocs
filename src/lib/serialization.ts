@@ -20,6 +20,11 @@ export function deserializeDocument(json: string): DarDocsDocument {
     parsed.boards = {};
   }
 
+  // Ensure comments array exists (backward compat)
+  if (!parsed.comments) {
+    parsed.comments = [];
+  }
+
   return parsed as DarDocsDocument;
 }
 

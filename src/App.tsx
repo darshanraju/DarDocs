@@ -4,6 +4,7 @@ import type { Editor as TiptapEditor } from '@tiptap/react';
 import { Editor } from './components/Editor/Editor';
 import { DocumentViewer } from './components/Viewer/DocumentViewer';
 import { TableOfContents } from './components/TableOfContents/TableOfContents';
+import { CommentSection } from './components/Comments/CommentSection';
 import { CommentsSidebar } from './components/Comments/CommentsSidebar';
 import { useDocumentStore } from './stores/documentStore';
 
@@ -71,6 +72,9 @@ function App() {
                 ) : (
                   <Editor isViewMode={false} onEditorReady={handleEditorReady} />
                 )}
+
+                {/* Comments */}
+                <CommentSection />
               </div>
             </div>
 

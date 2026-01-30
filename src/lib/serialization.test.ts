@@ -20,6 +20,7 @@ describe('Serialization Utilities', () => {
       content: [{ type: 'paragraph' }],
     },
     boards: {},
+    comments: [],
     ...overrides,
   });
 
