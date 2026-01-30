@@ -1,19 +1,23 @@
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
-import type { JSONContent } from '@tiptap/react';
+import type { JSONContent, Editor as TiptapEditor } from '@tiptap/react';
 import { getExtensions } from './extensions';
 import { SlashCommandMenu } from './SlashCommandMenu';
+import { AddCommentBubble } from '../Comments/AddCommentBubble';
 import { TableEdgeControls } from '../Blocks/TableBlock/TableEdgeControls';
 import { useDocumentStore } from '../../stores/documentStore';
+import { useCommentStore } from '../../stores/commentStore';
 import { debounce } from 'lodash-es';
 import { EDITOR_SAVE_DEBOUNCE_MS, EDITOR_PLACEHOLDER } from '../../lib/constants';
 
 interface EditorProps {
   isViewMode?: boolean;
+  onEditorReady?: (editor: TiptapEditor) => void;
 }
 
-export function Editor({ isViewMode = false }: EditorProps) {
+export function Editor({ isViewMode = false, onEditorReady }: EditorProps) {
   const { document, updateContent } = useDocumentStore();
+  const { setActiveComment } = useCommentStore();
   const [slashMenuOpen, setSlashMenuOpen] = useState(false);
   const [slashQuery, setSlashQuery] = useState('');
   const [slashMenuPosition, setSlashMenuPosition] = useState({ top: 0, left: 0 });
@@ -39,6 +43,18 @@ export function Editor({ isViewMode = false }: EditorProps) {
           class: 'prose prose-sm focus:outline-none max-w-none min-h-[300px]',
           'data-placeholder': EDITOR_PLACEHOLDER,
         },
+        handleClick: (view, pos) => {
+          // Check if clicked position has a comment mark
+          const $pos = view.state.doc.resolve(pos);
+          const marks = $pos.marks();
+          const commentMark = marks.find((m) => m.type.name === 'comment');
+
+          if (commentMark) {
+            setActiveComment(commentMark.attrs.commentId);
+            return false;
+          }
+          return false;
+        },
       },
       onUpdate: ({ editor }) => {
         if (!isViewMode) {
@@ -48,6 +64,13 @@ export function Editor({ isViewMode = false }: EditorProps) {
     },
     [document?.metadata?.id, isViewMode]
   );
+
+  // Notify parent when editor is ready
+  useEffect(() => {
+    if (editor && onEditorReady) {
+      onEditorReady(editor);
+    }
+  }, [editor, onEditorReady]);
 
   // Debounced content update
   const debouncedUpdateContent = useCallback(
@@ -111,10 +134,13 @@ export function Editor({ isViewMode = false }: EditorProps) {
         position={slashMenuPosition}
       />
       {editor && !isViewMode && (
-        <TableEdgeControls
-          editor={editor}
-          editorContainerRef={editorContainerRef}
-        />
+        <>
+          <AddCommentBubble editor={editor} />
+          <TableEdgeControls
+            editor={editor}
+            editorContainerRef={editorContainerRef}
+          />
+        </>
       )}
     </div>
   );

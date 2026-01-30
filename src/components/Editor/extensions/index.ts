@@ -13,6 +13,7 @@ import { common, createLowlight } from 'lowlight';
 
 import { EDITOR_PLACEHOLDER } from '../../../lib/constants';
 import { SlashCommands } from './SlashCommands';
+import { CommentMark } from './CommentMark';
 import { BoardBlockExtension } from './BoardBlock/BoardBlockExtension';
 import { Whiteboard2BlockExtension } from '../../Whiteboard2/WhiteboardBlockExtension';
 
@@ -60,6 +61,7 @@ export function getExtensions(onSlashCommand: (query: string) => void, onSlashCo
       onQuery: onSlashCommand,
       onClose: onSlashCommandClose,
     }),
+    CommentMark,
     BoardBlockExtension,
     Whiteboard2BlockExtension,
   ];
