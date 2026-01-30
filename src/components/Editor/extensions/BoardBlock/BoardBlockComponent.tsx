@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { Tldraw, getSnapshot, loadSnapshot } from 'tldraw';
@@ -124,66 +125,82 @@ export function BoardBlockComponent({ node, updateAttributes, deleteNode, select
     };
   }, [isResizing, updateAttributes]);
 
-  const containerClasses = isFullscreen
-    ? 'fixed inset-0 z-50 bg-white'
-    : 'board-block-wrapper relative';
-
-  return (
-    <NodeViewWrapper className="my-4">
-      <div
-        ref={containerRef}
-        className={containerClasses}
-        style={!isFullscreen ? { height: `${height}px` } : undefined}
-        onDoubleClick={handleDoubleClick}
-      >
-        {/* Drag handle */}
+  const boardContent = (
+    <div
+      ref={containerRef}
+      className={isFullscreen ? 'fixed inset-0 z-50 bg-white' : 'board-block-wrapper relative'}
+      style={!isFullscreen ? { height: `${height}px` } : undefined}
+      onDoubleClick={handleDoubleClick}
+    >
+      {/* Drag handle */}
+      {!isFullscreen && (
         <div
           className="absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center cursor-grab opacity-0 hover:opacity-100 transition-opacity z-10"
           data-drag-handle
         >
           <GripVertical className="w-4 h-4 text-gray-400" />
         </div>
+      )}
 
-        {/* Toolbar */}
-        <div className="board-toolbar absolute top-2 right-2 z-20 flex gap-1">
-          <button
-            onClick={toggleFullscreen}
-            className="p-1.5 bg-white rounded border border-gray-200 hover:bg-gray-50 transition-colors"
-            title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-          >
-            {isFullscreen ? (
-              <Minimize2 className="w-4 h-4 text-gray-600" />
-            ) : (
-              <Maximize2 className="w-4 h-4 text-gray-600" />
-            )}
-          </button>
-          <button
-            onClick={handleDelete}
-            className="p-1.5 bg-white rounded border border-gray-200 hover:bg-red-50 hover:border-red-200 transition-colors"
-            title="Delete whiteboard"
-          >
-            <Trash2 className="w-4 h-4 text-gray-600 hover:text-red-600" />
-          </button>
-        </div>
-
-        {/* tldraw canvas */}
-        <div className="w-full h-full">
-          <Tldraw onMount={handleMount} />
-        </div>
-
-        {/* Resize handle */}
-        {!isFullscreen && (
-          <div
-            className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize bg-transparent hover:bg-blue-100 transition-colors"
-            onMouseDown={handleResizeStart}
-          />
-        )}
-
-        {/* Selected indicator */}
-        {selected && !isFullscreen && (
-          <div className="absolute inset-0 border-2 border-blue-500 rounded-lg pointer-events-none" />
-        )}
+      {/* Toolbar */}
+      <div className="board-toolbar absolute top-2 right-2 z-20 flex gap-1">
+        <button
+          onClick={toggleFullscreen}
+          className="p-1.5 bg-white rounded border border-gray-200 hover:bg-gray-50 transition-colors"
+          title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+        >
+          {isFullscreen ? (
+            <Minimize2 className="w-4 h-4 text-gray-600" />
+          ) : (
+            <Maximize2 className="w-4 h-4 text-gray-600" />
+          )}
+        </button>
+        <button
+          onClick={handleDelete}
+          className="p-1.5 bg-white rounded border border-gray-200 hover:bg-red-50 hover:border-red-200 transition-colors"
+          title="Delete whiteboard"
+        >
+          <Trash2 className="w-4 h-4 text-gray-600 hover:text-red-600" />
+        </button>
       </div>
+
+      {/* tldraw canvas */}
+      <div className="w-full h-full">
+        <Tldraw onMount={handleMount} />
+      </div>
+
+      {/* Resize handle */}
+      {!isFullscreen && (
+        <div
+          className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize bg-transparent hover:bg-blue-100 transition-colors"
+          onMouseDown={handleResizeStart}
+        />
+      )}
+
+      {/* Selected indicator */}
+      {selected && !isFullscreen && (
+        <div className="absolute inset-0 border-2 border-blue-500 rounded-lg pointer-events-none" />
+      )}
+    </div>
+  );
+
+  // Portal to document.body when fullscreen to escape overflow:hidden ancestors
+  if (isFullscreen) {
+    return (
+      <NodeViewWrapper className="my-4">
+        <div className="board-block-wrapper relative" style={{ height: `${height}px` }}>
+          <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+            Whiteboard is open in fullscreen
+          </div>
+        </div>
+        {createPortal(boardContent, document.body)}
+      </NodeViewWrapper>
+    );
+  }
+
+  return (
+    <NodeViewWrapper className="my-4">
+      {boardContent}
     </NodeViewWrapper>
   );
 }
