@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import {
@@ -9,7 +8,6 @@ import {
   AlignRight,
   RefreshCw,
   Upload,
-  X,
 } from 'lucide-react';
 import { openVideoPicker, readFileAsDataURL } from './mediaUtils';
 
@@ -23,7 +21,6 @@ export function VideoBlockComponent({
   const { src, width, alignment } = node.attrs;
   const [isHovered, setIsHovered] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -104,31 +101,6 @@ export function VideoBlockComponent({
     [updateAttributes]
   );
 
-  // --- Fullscreen ---
-
-  const handleDoubleClick = useCallback(() => {
-    if (src) setIsFullscreen(true);
-  }, [src]);
-
-  const closeFullscreen = useCallback(() => {
-    setIsFullscreen(false);
-  }, []);
-
-  useEffect(() => {
-    if (!isFullscreen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsFullscreen(false);
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown, true);
-    return () => document.removeEventListener('keydown', handleKeyDown, true);
-  }, [isFullscreen]);
-
   // --- Upload placeholder ---
 
   const handleUpload = useCallback(async () => {
@@ -189,7 +161,6 @@ export function VideoBlockComponent({
             controls
             preload="metadata"
             draggable={false}
-            onDoubleClick={handleDoubleClick}
           />
 
           {/* Resize handles */}
@@ -253,28 +224,6 @@ export function VideoBlockComponent({
           )}
         </div>
       </div>
-
-      {/* Fullscreen overlay */}
-      {isFullscreen &&
-        createPortal(
-          <div className="media-fullscreen-overlay" onClick={closeFullscreen}>
-            <button
-              className="media-fullscreen-close"
-              onClick={closeFullscreen}
-              title="Close (Esc)"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <video
-              src={src}
-              controls
-              autoPlay
-              className="media-fullscreen-content"
-              onClick={(e) => e.stopPropagation()}
-            />
-          </div>,
-          document.body
-        )}
     </NodeViewWrapper>
   );
 }
