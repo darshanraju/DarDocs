@@ -73,10 +73,13 @@ export const EMBED_CONFIGS: Record<EmbedType, EmbedConfig> = {
     placeholder: 'Paste a Swagger UI URL or OpenAPI spec URL (JSON/YAML)',
     urlPattern: /^https?:\/\/.+/,
     getEmbedUrl: (url) => {
-      if (url.includes('swagger') || url.includes('api-docs')) {
-        return url;
+      // Raw spec files (.json, .yaml, .yml) should always be rendered through Swagger UI
+      const isRawSpec = /\.(json|yaml|yml)(\?.*)?$/i.test(url);
+      if (isRawSpec) {
+        return `https://petstore.swagger.io/?url=${encodeURIComponent(url)}`;
       }
-      return `https://petstore.swagger.io/?url=${encodeURIComponent(url)}`;
+      // Already a Swagger UI page — embed directly
+      return url;
     },
     renderMode: 'iframe',
     defaultHeight: 500,
