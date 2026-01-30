@@ -81,6 +81,18 @@ export function VideoBlockComponent({
     };
   }, [isResizing, updateAttributes]);
 
+  // Stop playback on unmount (e.g. node deleted)
+  useEffect(() => {
+    return () => {
+      const video = videoRef.current;
+      if (video) {
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+      }
+    };
+  }, []);
+
   // --- Actions ---
 
   const handleReplace = useCallback(async () => {
@@ -91,6 +103,7 @@ export function VideoBlockComponent({
   }, [updateAttributes]);
 
   const handleDelete = useCallback(() => {
+    videoRef.current?.pause();
     deleteNode();
   }, [deleteNode]);
 
