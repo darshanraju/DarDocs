@@ -8,13 +8,15 @@ import { Table } from '@tiptap/extension-table';
 import TableRow from '@tiptap/extension-table-row';
 import TableCell from '@tiptap/extension-table-cell';
 import TableHeader from '@tiptap/extension-table-header';
-import Image from '@tiptap/extension-image';
 import { common, createLowlight } from 'lowlight';
 
 import { EDITOR_PLACEHOLDER } from '../../../lib/constants';
 import { SlashCommands } from './SlashCommands';
 import { BoardBlockExtension } from './BoardBlock/BoardBlockExtension';
 import { Whiteboard2BlockExtension } from '../../Whiteboard2/WhiteboardBlockExtension';
+import { MediaBlockExtension } from './MediaBlock/MediaBlockExtension';
+import { VideoBlockExtension } from './MediaBlock/VideoBlockExtension';
+import { DropPasteHandler } from './MediaBlock/DropPasteHandler';
 
 // Create lowlight instance with common languages
 const lowlight = createLowlight(common);
@@ -52,10 +54,12 @@ export function getExtensions(onSlashCommand: (query: string) => void, onSlashCo
     TableRow,
     TableCell,
     TableHeader,
-    Image.configure({
+    MediaBlockExtension.configure({
       inline: false,
       allowBase64: true,
     }),
+    VideoBlockExtension,
+    DropPasteHandler,
     SlashCommands.configure({
       onQuery: onSlashCommand,
       onClose: onSlashCommandClose,
