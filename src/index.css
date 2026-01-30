@@ -769,7 +769,7 @@ html, body {
   outline: none;
 }
 
-/* ---- Comment Section ---- */
+/* ---- Comment Section (bottom of document) ---- */
 
 .comment-section {
   margin-top: 3rem;
@@ -1017,4 +1017,498 @@ html, body {
 
 .comment-input-action-btn:hover {
   background: #f0f5ff;
+}
+
+/* ========== Inline Comment Styles (sidebar) ========== */
+
+/* Comment highlight mark in editor */
+.comment-highlight {
+  background-color: rgba(255, 191, 0, 0.25);
+  border-bottom: 2px solid #f59e0b;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  padding: 1px 0;
+}
+
+.comment-highlight:hover {
+  background-color: rgba(255, 191, 0, 0.4);
+}
+
+/* Add Comment bubble button */
+.add-comment-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #6b7280;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.15s ease;
+}
+
+.add-comment-bubble:hover {
+  background: #f9fafb;
+  color: #3370ff;
+  border-color: #3370ff;
+  box-shadow: 0 4px 12px rgba(51, 112, 255, 0.15);
+}
+
+/* Comment Panel (floating card) */
+.comment-panel {
+  width: 320px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  animation: comment-panel-in 0.15s ease-out;
+}
+
+@keyframes comment-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Panel header: quoted text + actions */
+.comment-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 12px 12px 8px;
+  gap: 8px;
+}
+
+.comment-panel-quote {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  border-left: 3px solid #f59e0b;
+  background: #fffbeb;
+  border-radius: 0 4px 4px 0;
+}
+
+.comment-panel-quote-text {
+  font-size: 0.8125rem;
+  color: #374151;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.comment-panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.comment-panel-nav {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.comment-panel-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: all 0.1s ease;
+}
+
+.comment-panel-action-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Comment thread */
+.comment-panel-thread {
+  padding: 4px 12px 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.comment-panel-message {
+  padding: 8px 0;
+}
+
+.comment-panel-reply-msg {
+  border-top: 1px solid #f3f4f6;
+}
+
+.comment-panel-message-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.comment-panel-message-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.comment-panel-author {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.comment-panel-time {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.comment-panel-text {
+  font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.5;
+  padding-left: 42px;
+  word-break: break-word;
+}
+
+/* Reply input */
+.comment-panel-reply {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px 10px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.comment-panel-reply-input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  color: #374151;
+  outline: none;
+  background: #f9fafb;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.comment-panel-reply-input:focus {
+  border-color: #3370ff;
+  background: white;
+}
+
+.comment-panel-reply-input::placeholder {
+  color: #9ca3af;
+}
+
+.comment-panel-reply-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: #3370ff;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  flex-shrink: 0;
+  transition: background-color 0.15s;
+}
+
+.comment-panel-reply-btn:hover {
+  background: #2563eb;
+}
+
+.comment-panel-reply-btn:disabled {
+  background: #d1d5db;
+  cursor: default;
+}
+
+/* Draft comment input */
+.comment-panel-draft {
+  padding: 12px;
+}
+
+.comment-panel-draft-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.comment-panel-draft-input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  color: #374151;
+  outline: none;
+  background: #f9fafb;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.comment-panel-draft-input:focus {
+  border-color: #3370ff;
+  background: white;
+}
+
+.comment-panel-draft-input::placeholder {
+  color: #9ca3af;
+}
+
+.comment-panel-draft-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.comment-panel-cancel-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 0.8125rem;
+  transition: all 0.15s;
+}
+
+.comment-panel-cancel-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.comment-panel-submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 14px;
+  border: none;
+  background: #3370ff;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: background-color 0.15s;
+}
+
+.comment-panel-submit-btn:hover {
+  background: #2563eb;
+}
+
+.comment-panel-submit-btn:disabled {
+  background: #93c5fd;
+  cursor: default;
+}
+
+/* ============================================================
+   Comments Sidebar (right column)
+   ============================================================ */
+
+/* Expanded sidebar */
+.comments-sidebar {
+  width: 340px;
+  min-width: 340px;
+  flex-shrink: 0;
+  position: relative;
+  padding-top: 0;
+}
+
+/* Sticky header bar */
+.comments-sidebar-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.comments-sidebar-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.comments-sidebar-collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: all 0.15s;
+}
+
+.comments-sidebar-collapse-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Content area (relative container for absolute cards) */
+.comments-sidebar-content {
+  position: relative;
+  padding: 12px 10px;
+}
+
+/* Individual card wrapper (absolutely positioned) */
+.comments-sidebar-card-wrapper {
+  transition: top 0.2s ease-out;
+  padding: 0 4px;
+}
+
+/* Collapsed sidebar: thin vertical strip */
+.comments-sidebar-collapsed {
+  width: 40px;
+  min-width: 40px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 14px;
+}
+
+.comments-sidebar-expand-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #9ca3af;
+  padding: 6px;
+  transition: all 0.15s;
+}
+
+.comments-sidebar-expand-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.comments-sidebar-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: white;
+  background: #3370ff;
+  border-radius: 9px;
+  padding: 0 4px;
+}
+
+/* ============================================================
+   Compact Comment Card (non-active state in sidebar)
+   ============================================================ */
+.comment-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.comment-card:hover {
+  border-color: #c7d2fe;
+  box-shadow: 0 2px 8px rgba(51, 112, 255, 0.08);
+}
+
+.comment-card-quote {
+  font-size: 0.75rem;
+  color: #6b7280;
+  border-left: 2px solid #fbbf24;
+  padding-left: 8px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.comment-card-body {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.comment-card-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+
+.comment-card-author {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.comment-card-time {
+  font-size: 0.6875rem;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+.comment-card-text {
+  font-size: 0.8125rem;
+  color: #4b5563;
+  line-height: 1.45;
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.comment-card-replies {
+  font-size: 0.75rem;
+  color: #3370ff;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+/* Make comment-panel fill its sidebar wrapper */
+.comments-sidebar-card-wrapper .comment-panel {
+  width: 100%;
 }
