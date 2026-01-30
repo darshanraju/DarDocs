@@ -13,9 +13,10 @@
  * or as a standalone fullscreen whiteboard.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import { Trash2, Maximize2, Minimize2, GripVertical } from 'lucide-react';
+import { GripVertical } from 'lucide-react';
 import { throttle } from 'lodash-es';
 
 import { SceneGraph } from '../engine/SceneGraph';
@@ -27,6 +28,7 @@ import { TextEditBridge } from '../engine/TextEditBridge';
 import { CommentSystem } from '../engine/CommentSystem';
 import { CollaborationAdapter } from '../engine/CollaborationAdapter';
 
+import { hitTest } from '../engine/HitTest';
 import { OverlayLayer } from './OverlayLayer';
 import { Toolbar } from './Toolbar';
 import { CommentPanel } from './CommentPanel';
@@ -41,7 +43,7 @@ import type { ToolType, SelectionState } from '../types';
 
 const SAVE_THROTTLE_MS = 500;
 
-export function WhiteboardBlock({ node, updateAttributes, deleteNode, selected }: NodeViewProps) {
+export function WhiteboardBlock({ node, updateAttributes, selected }: NodeViewProps) {
   const { boardId, height } = node.attrs;
   const store = useWhiteboard2Store;
 
@@ -239,16 +241,33 @@ export function WhiteboardBlock({ node, updateAttributes, deleteNode, selected }
   }, []);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    // Escape exits fullscreen
+    if (e.key === 'Escape' && isFullscreen) {
+      e.preventDefault();
+      setIsFullscreen(false);
+      return;
+    }
     if (!interactionRef.current) return;
     // Don't handle keys when text editing
     if (textBridgeRef.current?.isEditing()) return;
     interactionRef.current.handleKeyDown(e.nativeEvent);
-  }, []);
+  }, [isFullscreen]);
 
   const handleDoubleClick = useCallback((e: React.MouseEvent) => {
     if (!interactionRef.current || !canvasRef.current) return;
-    interactionRef.current.handleDoubleClick(e.nativeEvent, canvasRef.current);
-  }, []);
+    // If not fullscreen, double-click on empty space expands to fullscreen
+    // If clicking on an object, delegate to interaction controller (text editing)
+    const rect = canvasRef.current.getBoundingClientRect();
+    const screenPos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    const hit = hitTest(screenPos, sceneRef.current!, viewRef.current!, interactionRef.current.getSelection());
+    if (hit) {
+      // Double-click on object → delegate to interaction controller (text editing)
+      interactionRef.current.handleDoubleClick(e.nativeEvent, canvasRef.current);
+    } else if (!isFullscreen) {
+      // Double-click on empty canvas → enter fullscreen
+      setIsFullscreen(true);
+    }
+  }, [isFullscreen]);
 
   const handleToolChange = useCallback((tool: ToolType) => {
     interactionRef.current?.setTool(tool);
@@ -262,17 +281,6 @@ export function WhiteboardBlock({ node, updateAttributes, deleteNode, selected }
   }, []);
 
   // ─── Block Controls ───────────────────────────────────────────
-
-  const handleDelete = useCallback(() => {
-    if (confirm('Delete this whiteboard?')) {
-      store.getState().deleteBoard(boardId);
-      deleteNode();
-    }
-  }, [boardId, deleteNode]);
-
-  const toggleFullscreen = useCallback(() => {
-    setIsFullscreen((prev) => !prev);
-  }, []);
 
   // ─── Resize Handle ───────────────────────────────────────────
 
@@ -306,113 +314,105 @@ export function WhiteboardBlock({ node, updateAttributes, deleteNode, selected }
 
   // ─── Render ───────────────────────────────────────────────────
 
-  const containerClasses = isFullscreen
-    ? 'fixed inset-0 z-50 bg-white'
-    : 'relative';
+  const boardContent = (
+    <div
+      ref={containerRef}
+      className={isFullscreen ? 'fixed inset-0 z-50 bg-white' : 'relative'}
+      style={!isFullscreen ? { height: `${height}px`, border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' } : undefined}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+    >
+      {/* Drag handle */}
+      {!isFullscreen && (
+        <div
+          className="absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center cursor-grab opacity-0 hover:opacity-100 transition-opacity z-10"
+          data-drag-handle
+        >
+          <GripVertical className="w-4 h-4 text-gray-400" />
+        </div>
+      )}
+
+      {/* Canvas */}
+      <canvas
+        ref={canvasRef}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onWheel={handleWheel}
+        onDoubleClick={handleDoubleClick}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'block',
+          touchAction: 'none',
+        }}
+      />
+
+      {/* DOM Overlay (text editing, comment badges, a11y) */}
+      {textBridgeRef.current && commentsRef.current && viewRef.current && sceneRef.current && (
+        <OverlayLayer
+          textBridge={textBridgeRef.current}
+          comments={commentsRef.current}
+          view={viewRef.current}
+          scene={sceneRef.current}
+        />
+      )}
+
+      {/* Toolbar */}
+      {commandsRef.current && viewRef.current && (
+        <Toolbar
+          activeTool={activeTool}
+          onToolChange={handleToolChange}
+          commands={commandsRef.current}
+          view={viewRef.current}
+          zoom={zoom}
+          onZoomChange={handleZoomChange}
+          showComments={showComments}
+          onToggleComments={() => setShowComments((p) => !p)}
+        />
+      )}
+
+      {/* Comment panel */}
+      {showComments && commentsRef.current && sceneRef.current && (
+        <CommentPanel
+          comments={commentsRef.current}
+          scene={sceneRef.current}
+          selection={selection}
+        />
+      )}
+
+      {/* Resize handle */}
+      {!isFullscreen && (
+        <div
+          className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize bg-transparent hover:bg-blue-100 transition-colors"
+          onMouseDown={handleResizeStart}
+        />
+      )}
+
+      {/* Selected indicator */}
+      {selected && !isFullscreen && (
+        <div className="absolute inset-0 border-2 border-blue-500 rounded-lg pointer-events-none" />
+      )}
+    </div>
+  );
+
+  // Portal to document.body when fullscreen to escape overflow:hidden ancestors
+  if (isFullscreen) {
+    return (
+      <NodeViewWrapper className="my-4">
+        <div className="relative" style={{ height: `${height}px`, border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
+          <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+            Whiteboard is open in fullscreen — press Escape to exit
+          </div>
+        </div>
+        {createPortal(boardContent, document.body)}
+      </NodeViewWrapper>
+    );
+  }
 
   return (
     <NodeViewWrapper className="my-4">
-      <div
-        ref={containerRef}
-        className={containerClasses}
-        style={!isFullscreen ? { height: `${height}px`, border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' } : undefined}
-        tabIndex={0}
-        onKeyDown={handleKeyDown}
-      >
-        {/* Drag handle */}
-        {!isFullscreen && (
-          <div
-            className="absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center cursor-grab opacity-0 hover:opacity-100 transition-opacity z-10"
-            data-drag-handle
-          >
-            <GripVertical className="w-4 h-4 text-gray-400" />
-          </div>
-        )}
-
-        {/* Block toolbar (top-right) */}
-        <div className="absolute top-2 right-2 z-20 flex gap-1">
-          <button
-            onClick={toggleFullscreen}
-            className="p-1.5 bg-white rounded border border-gray-200 hover:bg-gray-50 transition-colors"
-            title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
-          >
-            {isFullscreen ? (
-              <Minimize2 className="w-4 h-4 text-gray-600" />
-            ) : (
-              <Maximize2 className="w-4 h-4 text-gray-600" />
-            )}
-          </button>
-          <button
-            onClick={handleDelete}
-            className="p-1.5 bg-white rounded border border-gray-200 hover:bg-red-50 hover:border-red-200 transition-colors"
-            title="Delete whiteboard"
-          >
-            <Trash2 className="w-4 h-4 text-gray-600 hover:text-red-600" />
-          </button>
-        </div>
-
-        {/* Canvas */}
-        <canvas
-          ref={canvasRef}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onWheel={handleWheel}
-          onDoubleClick={handleDoubleClick}
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'block',
-            touchAction: 'none',
-          }}
-        />
-
-        {/* DOM Overlay (text editing, comment badges, a11y) */}
-        {textBridgeRef.current && commentsRef.current && viewRef.current && sceneRef.current && (
-          <OverlayLayer
-            textBridge={textBridgeRef.current}
-            comments={commentsRef.current}
-            view={viewRef.current}
-            scene={sceneRef.current}
-          />
-        )}
-
-        {/* Toolbar */}
-        {commandsRef.current && viewRef.current && (
-          <Toolbar
-            activeTool={activeTool}
-            onToolChange={handleToolChange}
-            commands={commandsRef.current}
-            view={viewRef.current}
-            zoom={zoom}
-            onZoomChange={handleZoomChange}
-            showComments={showComments}
-            onToggleComments={() => setShowComments((p) => !p)}
-          />
-        )}
-
-        {/* Comment panel */}
-        {showComments && commentsRef.current && sceneRef.current && (
-          <CommentPanel
-            comments={commentsRef.current}
-            scene={sceneRef.current}
-            selection={selection}
-          />
-        )}
-
-        {/* Resize handle */}
-        {!isFullscreen && (
-          <div
-            className="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize bg-transparent hover:bg-blue-100 transition-colors"
-            onMouseDown={handleResizeStart}
-          />
-        )}
-
-        {/* Selected indicator */}
-        {selected && !isFullscreen && (
-          <div className="absolute inset-0 border-2 border-blue-500 rounded-lg pointer-events-none" />
-        )}
-      </div>
+      {boardContent}
     </NodeViewWrapper>
   );
 }
