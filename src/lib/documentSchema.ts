@@ -39,7 +39,8 @@ export type NodeType =
   | 'tableCell'
   | 'tableHeader'
   | 'boardBlock'
-  | 'image';
+  | 'image'
+  | 'videoBlock';
 
 // Supported TipTap mark types
 export type MarkType =

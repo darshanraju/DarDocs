@@ -13,9 +13,12 @@ import {
   Table,
   Palette,
   PenTool,
+  Image as ImageIcon,
+  Video,
 } from 'lucide-react';
 import { useBoardStore } from '../../stores/boardStore';
 import { useWhiteboard2Store } from '../Whiteboard2/whiteboardStore';
+import { readFileAsDataURL } from './extensions/MediaBlock/mediaUtils';
 
 interface SlashCommand {
   name: string;
@@ -96,6 +99,46 @@ const commands: SlashCommand[] = [
     keywords: ['divider', 'horizontal', 'rule', 'hr', 'line'],
     category: 'Basics',
     action: (editor) => editor.chain().focus().setHorizontalRule().run(),
+  },
+  {
+    name: 'Image',
+    icon: <ImageIcon className="w-5 h-5" style={{ color: '#3370ff' }} />,
+    keywords: ['image', 'photo', 'picture', 'upload', 'media', 'img'],
+    category: 'Media',
+    action: (editor) => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async () => {
+        const file = input.files?.[0];
+        if (!file) return;
+        const dataUrl = await readFileAsDataURL(file);
+        editor.chain().focus().setImage({ src: dataUrl }).run();
+      };
+      input.click();
+    },
+  },
+  {
+    name: 'Video',
+    icon: <Video className="w-5 h-5" style={{ color: '#cf8a00' }} />,
+    keywords: ['video', 'movie', 'clip', 'upload', 'media', 'mp4'],
+    category: 'Media',
+    action: (editor) => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'video/*';
+      input.onchange = async () => {
+        const file = input.files?.[0];
+        if (!file) return;
+        const dataUrl = await readFileAsDataURL(file);
+        editor
+          .chain()
+          .focus()
+          .insertContent({ type: 'videoBlock', attrs: { src: dataUrl } })
+          .run();
+      };
+      input.click();
+    },
   },
   {
     name: 'Table',
