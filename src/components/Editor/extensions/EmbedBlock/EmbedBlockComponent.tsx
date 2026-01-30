@@ -305,8 +305,44 @@ function SwaggerEmbed({
 }) {
   const [height, setHeight] = useState(config.defaultHeight);
   const [isResizing, setIsResizing] = useState(false);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const startYRef = useRef(0);
   const startHeightRef = useRef(0);
+
+  // Create a blob URL containing a self-contained Swagger UI page.
+  // Blob URLs behave like normal pages — no X-Frame-Options or sandbox issues.
+  useEffect(() => {
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+  <style>
+    html, body { margin: 0; padding: 0; }
+    .swagger-ui .topbar { display: none; }
+  </style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script>
+    SwaggerUIBundle({
+      url: ${JSON.stringify(url)},
+      dom_id: '#swagger-ui',
+      presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
+      layout: 'BaseLayout',
+      defaultModelsExpandDepth: -1
+    });
+  </script>
+</body>
+</html>`;
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const objectUrl = URL.createObjectURL(blob);
+    setBlobUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [url]);
 
   const handleResizeStart = useCallback(
     (e: React.MouseEvent) => {
@@ -336,40 +372,14 @@ function SwaggerEmbed({
     };
   }, [isResizing]);
 
-  // Build a self-contained HTML page that loads Swagger UI from CDN
-  const srcdoc = `<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
-  <style>
-    html, body { margin: 0; padding: 0; }
-    .swagger-ui .topbar { display: none; }
-  </style>
-</head>
-<body>
-  <div id="swagger-ui"></div>
-  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"><\/script>
-  <script>
-    SwaggerUIBundle({
-      url: ${JSON.stringify(url)},
-      dom_id: '#swagger-ui',
-      presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
-      layout: 'BaseLayout',
-      defaultModelsExpandDepth: -1
-    });
-  <\/script>
-</body>
-</html>`;
+  if (!blobUrl) return null;
 
   return (
     <div className="embed-iframe-container">
       <iframe
-        srcDoc={srcdoc}
+        src={blobUrl}
         className="embed-iframe"
         style={{ height: `${height}px` }}
-        sandbox="allow-scripts allow-same-origin"
       />
       <div className="embed-resize-handle" onMouseDown={handleResizeStart} />
     </div>
