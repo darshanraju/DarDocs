@@ -51,7 +51,7 @@ export class CollaborationAdapter implements ICollaborationAdapter {
     this.localUserId = crypto.randomUUID().slice(0, 8);
   }
 
-  async connect(roomId: string): Promise<void> {
+  async connect(_roomId: string): Promise<void> {
     try {
       // Dynamically import Yjs (optional dependency)
       const Y = await import('yjs');
@@ -194,16 +194,8 @@ export class CollaborationAdapter implements ICollaborationAdapter {
 
 // ─── Yjs ↔ BoardObject Conversion ──────────────────────────────
 
-function objectToYMap(obj: BoardObject, ydoc: YDoc): YMap {
-  // For Yjs, we store as a plain Y.Map with nested Y.Map for style
-  // This allows fine-grained conflict resolution per field
-  const Y = (ydoc as any).constructor;
-  // Fallback: just store as JSON string in a Y.Map entry
-  // This is simpler and still CRDT-safe at the object level
-  const map = new (ydoc.constructor as any).Map?.() ?? new Map();
-
-  // Since we might not have full Y.Map constructor access,
-  // serialize as JSON — each object is an atomic CRDT entry
+function objectToYMap(obj: BoardObject, _ydoc: YDoc): YMap {
+  // Serialize as JSON — each object is an atomic CRDT entry
   return JSON.parse(JSON.stringify(obj));
 }
 

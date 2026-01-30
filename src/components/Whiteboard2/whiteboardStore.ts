@@ -19,12 +19,9 @@
  */
 import { create } from 'zustand';
 import type {
-  BoardObject,
-  Comment,
   ICommentSystem,
   ISceneGraph,
   IViewTransform,
-  ViewState,
   WhiteboardSnapshot,
 } from './types';
 import { DEFAULT_VIEW_STATE } from './types';
@@ -98,9 +95,6 @@ export function restoreSnapshot(
   view: IViewTransform,
   comments: ICommentSystem,
 ): void {
-  // Version migration: handle future schema changes here
-  const version = snapshot.version || '1.0';
-
   scene.loadObjects(snapshot.objects || []);
   view.setViewState(snapshot.viewState || { ...DEFAULT_VIEW_STATE });
 

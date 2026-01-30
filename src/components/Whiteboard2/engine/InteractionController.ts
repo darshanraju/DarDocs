@@ -67,7 +67,6 @@ export class InteractionController implements IInteractionController {
   private marqueeRect: Rect | null = null;
 
   // Panning state
-  private isPanningWithSpace = false;
   private spaceDown = false;
   private lastScreenPos: Point | null = null;
 
@@ -135,7 +134,6 @@ export class InteractionController implements IInteractionController {
     if (e.button === 1 || (this.spaceDown && e.button === 0)) {
       this.mode = 'panning';
       this.lastScreenPos = screenPos;
-      this.isPanningWithSpace = this.spaceDown;
       canvas.style.cursor = 'grabbing';
       this.emit();
       return;
@@ -187,9 +185,7 @@ export class InteractionController implements IInteractionController {
     this.emit();
   }
 
-  handlePointerUp(e: PointerEvent, canvas: HTMLCanvasElement): void {
-    const worldPos = this.view.screenToWorld(this.getCanvasPoint(e, canvas));
-
+  handlePointerUp(_e: PointerEvent, canvas: HTMLCanvasElement): void {
     switch (this.mode) {
       case 'panning':
         canvas.style.cursor = this.spaceDown ? 'grab' : 'default';

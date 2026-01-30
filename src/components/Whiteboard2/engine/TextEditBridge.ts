@@ -18,7 +18,6 @@ import type {
   ISceneGraph,
   ITextEditBridge,
   IViewTransform,
-  Rect,
   TextEditState,
 } from '../types';
 import { SceneGraph } from './SceneGraph';
@@ -26,16 +25,14 @@ import { createUpdateCommand } from './CommandStack';
 
 export class TextEditBridge implements ITextEditBridge {
   private scene: ISceneGraph;
-  private view: IViewTransform;
   private commands: ICommandStack;
   private listeners: Set<() => void> = new Set();
 
   private editState: TextEditState | null = null;
   private originalText: string = '';
 
-  constructor(scene: ISceneGraph, view: IViewTransform, commands: ICommandStack) {
+  constructor(scene: ISceneGraph, _view: IViewTransform, commands: ICommandStack) {
     this.scene = scene;
-    this.view = view;
     this.commands = commands;
   }
 

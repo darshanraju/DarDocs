@@ -18,7 +18,7 @@ import {
   ZoomOut,
   MessageSquare,
 } from 'lucide-react';
-import type { ICommandStack, IViewTransform, Point, ToolType } from '../types';
+import type { ICommandStack, IViewTransform, ToolType } from '../types';
 
 interface ToolbarProps {
   activeTool: ToolType;

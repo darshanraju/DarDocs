@@ -37,7 +37,6 @@ import {
   useWhiteboard2Store,
   createSnapshot,
   restoreSnapshot,
-  createEmptySnapshot,
 } from '../whiteboardStore';
 import type { ToolType, SelectionState } from '../types';
 
@@ -59,6 +58,7 @@ export function WhiteboardBlock({ node, updateAttributes, selected }: NodeViewPr
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<ResizeObserver | null>(null);
   const rafRef = useRef<number>(0);
   const initializedRef = useRef(false);
 
@@ -196,25 +196,47 @@ export function WhiteboardBlock({ node, updateAttributes, selected }: NodeViewPr
   // ─── Viewport Resize Observer ─────────────────────────────────
 
   useEffect(() => {
-    const container = containerRef.current;
-    if (!container || !viewRef.current) return;
+    // Defer to next frame so the portal DOM is committed
+    const frameId = requestAnimationFrame(() => {
+      const container = containerRef.current;
+      if (!container || !viewRef.current) return;
 
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { width, height } = entry.contentRect;
+      // Focus the container so keyboard events (Escape) work
+      container.focus();
+
+      const syncViewport = (width: number, height: number) => {
         const dpr = window.devicePixelRatio || 1;
         viewRef.current?.setViewport({ width, height, dpr });
-
         if (canvasRef.current) {
           canvasRef.current.style.width = `${width}px`;
           canvasRef.current.style.height = `${height}px`;
         }
         rendererRef.current?.setDirty();
+      };
+
+      // Immediately sync viewport from current container size
+      const rect = container.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        syncViewport(rect.width, rect.height);
       }
+
+      const observer = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const { width, height } = entry.contentRect;
+          syncViewport(width, height);
+        }
+      });
+      observer.observe(container);
+
+      // Store cleanup ref
+      observerRef.current = observer;
     });
 
-    observer.observe(container);
-    return () => observer.disconnect();
+    return () => {
+      cancelAnimationFrame(frameId);
+      observerRef.current?.disconnect();
+      observerRef.current = null;
+    };
   }, [isFullscreen]);
 
   // ─── Event Handlers ───────────────────────────────────────────

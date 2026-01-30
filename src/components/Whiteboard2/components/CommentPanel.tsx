@@ -17,7 +17,7 @@ interface CommentPanelProps {
   selection: SelectionState;
 }
 
-export function CommentPanel({ comments, scene, selection }: CommentPanelProps) {
+export function CommentPanel({ comments, selection }: CommentPanelProps) {
   const [newText, setNewText] = useState('');
   const selectedIds = [...selection.selectedIds];
 

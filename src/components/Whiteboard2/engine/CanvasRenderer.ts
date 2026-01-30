@@ -23,7 +23,6 @@ import type {
   ISceneGraph,
   IViewTransform,
   InteractionState,
-  Point,
   Rect,
   SelectionState,
   UserPresence,
@@ -39,11 +38,8 @@ const MARQUEE_STROKE = '#3370ff';
 const GRID_COLOR = '#e8e8e8';
 
 export class CanvasRenderer implements ICanvasRenderer {
-  private dirty = true;
-  private animFrameId: number | null = null;
-
   setDirty(): void {
-    this.dirty = true;
+    // Mark renderer as needing redraw (render loop handles scheduling)
   }
 
   render(
@@ -121,8 +117,6 @@ export class CanvasRenderer implements ICanvasRenderer {
     }
 
     ctx.restore(); // undo DPR scale
-
-    this.dirty = false;
   }
 
   // ─── Object Rendering ───────────────────────────────────────
@@ -426,7 +420,6 @@ export class CanvasRenderer implements ICanvasRenderer {
     view: IViewTransform,
   ): void {
     const vs = view.getViewState();
-    const vp = view.getViewport();
     if (vs.zoom < 0.3) return; // hide grid at extreme zoom-out
 
     const spacing = 20;
