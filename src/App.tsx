@@ -33,10 +33,27 @@ function App() {
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         e.preventDefault();
-        titleInputRef.current?.blur();
+        if (editorInstance) {
+          const { doc, schema } = editorInstance.state;
+          const firstChild = doc.firstChild;
+
+          if (firstChild && !firstChild.isTextblock) {
+            // First node is a block (table, image, etc.) — insert a paragraph above it
+            editorInstance
+              .chain()
+              .command(({ tr }) => {
+                tr.insert(0, schema.nodes.paragraph.create());
+                return true;
+              })
+              .focus('start')
+              .run();
+          } else {
+            editorInstance.commands.focus('start');
+          }
+        }
       }
     },
-    []
+    [editorInstance]
   );
 
   const handleEditorReady = useCallback((editor: TiptapEditor) => {

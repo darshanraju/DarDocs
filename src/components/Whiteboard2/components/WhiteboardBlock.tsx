@@ -308,14 +308,14 @@ export function WhiteboardBlock({ node, updateAttributes, deleteNode, selected }
 
   const containerClasses = isFullscreen
     ? 'fixed inset-0 z-50 bg-white'
-    : 'relative';
+    : 'whiteboard-block-wrapper relative';
 
   return (
     <NodeViewWrapper className="my-4">
       <div
         ref={containerRef}
         className={containerClasses}
-        style={!isFullscreen ? { height: `${height}px`, border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' } : undefined}
+        style={!isFullscreen ? { height: `${height}px` } : undefined}
         tabIndex={0}
         onKeyDown={handleKeyDown}
       >

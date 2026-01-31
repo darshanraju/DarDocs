@@ -22,6 +22,8 @@ import { VideoBlockExtension } from './MediaBlock/VideoBlockExtension';
 import { DropPasteHandler } from './MediaBlock/DropPasteHandler';
 import { EmbedBlockExtension } from './EmbedBlock/EmbedBlockExtension';
 import { MermaidBlockExtension } from './MermaidBlock/MermaidBlockExtension';
+import { SelectionHighlight } from './SelectionHighlight';
+import { DocumentGaps } from './DocumentGaps';
 
 // Create lowlight instance with common languages
 const lowlight = createLowlight(common);
@@ -79,5 +81,7 @@ export function getExtensions(onSlashCommand: (query: string) => void, onSlashCo
     Whiteboard2BlockExtension,
     EmbedBlockExtension,
     MermaidBlockExtension,
+    SelectionHighlight,
+    DocumentGaps,
   ];
 }
