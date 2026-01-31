@@ -1,25 +1,16 @@
 /**
- * DocumentGaps — Ensures the document always has a text block (paragraph)
- * at the start and end, so users can click above/below block nodes
- * (tables, boards, embeds, etc.) to type.
+ * DocumentGaps — Ensures the document always ends with a text block
+ * (paragraph) so users can click below block nodes (tables, boards,
+ * embeds, etc.) to type.
  *
- * Uses appendTransaction to insert an empty paragraph when the first or
- * last child of the document is a non-textblock node.
+ * For the top of the document, paragraphs are created on demand
+ * (e.g. pressing Enter in the title) rather than enforced continuously,
+ * so users can freely delete empty lines above blocks.
  */
 import { Extension } from '@tiptap/core';
 
 export const DocumentGaps = Extension.create({
   name: 'documentGaps',
-
-  addOptions() {
-    return {
-      /**
-       * Node types considered "block" for gap purposes.
-       * If the doc starts or ends with one of these, a paragraph is inserted.
-       * Using `isTextblock` check makes this automatic for all non-text blocks.
-       */
-    };
-  },
 
   appendTransaction({ transactions }, _oldState, newState) {
     // Only act when the document content actually changed
@@ -29,24 +20,14 @@ export const DocumentGaps = Extension.create({
     const paragraphType = schema.nodes.paragraph;
     if (!paragraphType) return null;
 
-    const tr = newState.tr;
-    let modified = false;
-
-    // If the document starts with a non-text block, insert an empty paragraph before it
-    const firstChild = tr.doc.firstChild;
-    if (firstChild && !firstChild.isTextblock) {
-      tr.insert(0, paragraphType.create());
-      modified = true;
-    }
-
     // If the document ends with a non-text block, insert an empty paragraph after it
-    // (use tr.doc which reflects any prior insert)
-    const lastChild = tr.doc.lastChild;
+    const lastChild = newState.doc.lastChild;
     if (lastChild && !lastChild.isTextblock) {
+      const tr = newState.tr;
       tr.insert(tr.doc.content.size, paragraphType.create());
-      modified = true;
+      return tr;
     }
 
-    return modified ? tr : null;
+    return null;
   },
 });
