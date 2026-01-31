@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Tell Tailwind v4 to scan editor package for utility classes */
+@source "../../../packages/editor/src";
+
 /* Lark-style system font stack */
 html, body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI",
@@ -512,6 +515,7 @@ html, body {
 
 /* Slash command menu styles (Lark-inspired light theme) */
 .slash-command-menu {
+  position: fixed;
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 0.75rem;
