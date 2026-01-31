@@ -3,14 +3,53 @@
  * (paragraph) so users can click below block nodes (tables, boards,
  * embeds, etc.) to type.
  *
- * For the top of the document, paragraphs are created on demand
- * (e.g. pressing Enter in the title) rather than enforced continuously,
- * so users can freely delete empty lines above blocks.
+ * Also handles Backspace in empty paragraphs adjacent to block nodes,
+ * where ProseMirror's default join-backward has nothing to join with.
  */
 import { Extension } from '@tiptap/core';
 
 export const DocumentGaps = Extension.create({
   name: 'documentGaps',
+
+  addKeyboardShortcuts() {
+    return {
+      Backspace: ({ editor }) => {
+        const { state } = editor;
+        const { selection } = state;
+        const { $from } = selection;
+
+        // Only handle a collapsed cursor, not a range selection
+        if (!selection.empty) return false;
+
+        // Cursor must be at the very start of the block
+        if ($from.parentOffset !== 0) return false;
+
+        const parent = $from.parent;
+        // Only act on completely empty paragraphs
+        if (parent.type.name !== 'paragraph' || parent.textContent.length > 0) return false;
+
+        const depth = $from.depth;
+        const grandParent = $from.node(depth - 1);
+        const indexInParent = $from.index(depth - 1);
+
+        // Never delete the last remaining child
+        if (grandParent.childCount <= 1) return false;
+
+        // If the previous sibling is a textblock, default backspace
+        // (join-backward) handles it fine — don't interfere
+        if (indexInParent > 0) {
+          const prevSibling = grandParent.child(indexInParent - 1);
+          if (prevSibling.isTextblock) return false;
+        }
+
+        // Delete the empty paragraph
+        const from = $from.before(depth);
+        const to = $from.after(depth);
+        editor.view.dispatch(state.tr.delete(from, to));
+        return true;
+      },
+    };
+  },
 
   appendTransaction({ transactions }, _oldState, newState) {
     // Only act when the document content actually changed
