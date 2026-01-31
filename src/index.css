@@ -759,6 +759,55 @@ html, body {
   background: #9ca3af;
 }
 
+/* ---- Block node drag-selection highlight ---- */
+
+/* Image */
+.block-node-selected .media-block-container {
+  box-shadow: 0 0 0 2px #3370ff;
+}
+
+/* Video */
+.block-node-selected .video-block-container {
+  box-shadow: 0 0 0 2px #3370ff;
+}
+
+/* Board (tldraw) */
+.block-node-selected .board-block-wrapper {
+  border-color: #3370ff;
+  box-shadow: 0 0 0 1px #3370ff;
+}
+
+/* Whiteboard2 */
+.whiteboard-block-wrapper {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.block-node-selected .whiteboard-block-wrapper {
+  border-color: #3370ff;
+  box-shadow: 0 0 0 1px #3370ff;
+}
+
+/* Embed */
+.block-node-selected .embed-block-wrapper,
+.block-node-selected .embed-input-wrapper {
+  border-color: #3370ff;
+  box-shadow: 0 0 0 1px #3370ff;
+}
+
+/* Mermaid */
+.block-node-selected .mermaid-block-wrapper {
+  border-color: #3370ff;
+  box-shadow: 0 0 0 1px #3370ff;
+}
+
+/* Table (class applied directly to .tableWrapper by the plugin) */
+.tableWrapper.block-node-selected {
+  box-shadow: 0 0 0 2px #3370ff;
+  border-radius: 4px;
+}
+
 /* Node view styles */
 .ProseMirror .node-boardBlock {
   margin: 1rem 0;
