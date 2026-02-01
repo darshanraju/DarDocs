@@ -1,31 +1,50 @@
 import { create } from 'zustand';
 import type { Comment, CommentAuthor, CommentReply } from '@dardocs/core';
+import { commentsApi } from '../lib/api.js';
+import type { ApiComment } from '../lib/api.js';
 
 // Re-export types for consumers
 export type { Comment, CommentReply, CommentAuthor } from '@dardocs/core';
 
-export const MOCK_USERS: CommentAuthor[] = [
-  { id: 'user-1', name: 'Alex Chen', color: '#3370ff' },
-  { id: 'user-2', name: 'Jordan Kim', color: '#00b386' },
-  { id: 'user-3', name: 'Sam Rivera', color: '#cf8a00' },
-  { id: 'user-4', name: 'Taylor Park', color: '#7c3aed' },
-];
-
-function getRandomUser(): CommentAuthor {
-  return MOCK_USERS[Math.floor(Math.random() * MOCK_USERS.length)];
+/** Convert API comment shape to client Comment shape */
+function toClientComment(c: ApiComment): Comment {
+  return {
+    id: c.id,
+    type: c.type as 'inline' | 'document',
+    text: c.text,
+    quotedText: c.quotedText ?? undefined,
+    author: {
+      id: c.author.id,
+      name: c.author.name,
+      avatarUrl: c.author.avatarUrl ?? undefined,
+    },
+    createdAt: c.createdAt,
+    replies: c.replies.map((r) => ({
+      id: r.id,
+      text: r.text,
+      author: {
+        id: r.author.id,
+        name: r.author.name,
+        avatarUrl: r.author.avatarUrl ?? undefined,
+      },
+      createdAt: r.createdAt,
+    })),
+    resolved: c.resolved,
+  };
 }
-
-const currentUser = getRandomUser();
 
 interface CommentStore {
   comments: Comment[];
   activeCommentId: string | null;
   currentUser: CommentAuthor;
+  documentId: string | null;
 
-  // Persistence: load comments from a document, get comments for serialization
+  // Persistence: load comments from API, get comments for serialization
   loadComments: (comments: Comment[]) => void;
+  loadFromApi: (documentId: string) => Promise<void>;
   getComments: () => Comment[];
   clearComments: () => void;
+  setCurrentUser: (user: CommentAuthor) => void;
 
   // Inline comment (text-anchored)
   addComment: (commentId: string, text: string, quotedText: string) => void;
@@ -43,25 +62,45 @@ interface CommentStore {
 export const useCommentStore = create<CommentStore>((set, get) => ({
   comments: [],
   activeCommentId: null,
-  currentUser,
+  currentUser: { id: 'anonymous', name: 'Anonymous' },
+  documentId: null,
+
+  setCurrentUser: (user) => {
+    set({ currentUser: user });
+  },
 
   loadComments: (comments) => {
     set({ comments, activeCommentId: null });
   },
 
+  loadFromApi: async (documentId) => {
+    set({ documentId });
+    try {
+      const apiComments = await commentsApi.list(documentId);
+      set({
+        comments: apiComments.map(toClientComment),
+        activeCommentId: null,
+      });
+    } catch {
+      // If API fails (e.g., offline), keep empty
+      set({ comments: [], activeCommentId: null });
+    }
+  },
+
   getComments: () => get().comments,
 
   clearComments: () => {
-    set({ comments: [], activeCommentId: null });
+    set({ comments: [], activeCommentId: null, documentId: null });
   },
 
   addComment: (commentId, text, quotedText) => {
+    const { currentUser, documentId } = get();
     const comment: Comment = {
       id: commentId,
       type: 'inline',
       text,
       quotedText,
-      author: get().currentUser,
+      author: currentUser,
       createdAt: new Date().toISOString(),
       replies: [],
       resolved: false,
@@ -70,22 +109,41 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
       comments: [...state.comments, comment],
       activeCommentId: commentId,
     }));
+
+    // Persist to API
+    if (documentId) {
+      commentsApi.create(documentId, {
+        id: commentId,
+        type: 'inline',
+        text,
+        quotedText,
+      }).catch(() => { /* best-effort */ });
+    }
   },
 
-  addDocumentComment: (text, imageUrl) => {
+  addDocumentComment: (text, _imageUrl) => {
+    const { currentUser, documentId } = get();
+    const id = crypto.randomUUID();
     const comment: Comment = {
-      id: crypto.randomUUID(),
+      id,
       type: 'document',
       text,
-      author: get().currentUser,
+      author: currentUser,
       createdAt: new Date().toISOString(),
       replies: [],
       resolved: false,
-      imageUrl,
     };
     set(state => ({
       comments: [...state.comments, comment],
     }));
+
+    if (documentId) {
+      commentsApi.create(documentId, {
+        id,
+        type: 'document',
+        text,
+      }).catch(() => {});
+    }
   },
 
   updateCommentText: (commentId, text) => {
@@ -94,15 +152,16 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
         c.id === commentId ? { ...c, text } : c
       ),
     }));
+
+    commentsApi.update(commentId, { text }).catch(() => {});
   },
 
   addReply: (commentId, text) => {
-    const otherUsers = MOCK_USERS.filter(u => u.id !== get().currentUser.id);
-    const replyUser = otherUsers[Math.floor(Math.random() * otherUsers.length)];
+    const { currentUser } = get();
     const reply: CommentReply = {
       id: crypto.randomUUID(),
       text,
-      author: replyUser,
+      author: currentUser,
       createdAt: new Date().toISOString(),
     };
     set(state => ({
@@ -112,6 +171,9 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
           : c
       ),
     }));
+
+    // Persist — the API will generate its own reply ID
+    commentsApi.reply(commentId, text).catch(() => {});
   },
 
   resolveComment: (commentId) => {
@@ -121,6 +183,8 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
       ),
       activeCommentId: state.activeCommentId === commentId ? null : state.activeCommentId,
     }));
+
+    commentsApi.update(commentId, { resolved: true }).catch(() => {});
   },
 
   deleteComment: (commentId) => {
@@ -128,6 +192,8 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
       comments: state.comments.filter(c => c.id !== commentId),
       activeCommentId: state.activeCommentId === commentId ? null : state.activeCommentId,
     }));
+
+    commentsApi.delete(commentId).catch(() => {});
   },
 
   setActiveComment: (commentId) => {

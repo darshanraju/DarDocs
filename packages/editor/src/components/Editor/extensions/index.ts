@@ -3,7 +3,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { ExecutableCodeBlockExtension } from './ExecutableCodeBlock/ExecutableCodeBlockExtension';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyle, Color } from '@tiptap/extension-text-style';
 import { Table } from '@tiptap/extension-table';
@@ -21,11 +21,13 @@ import { MediaBlockExtension } from './MediaBlock/MediaBlockExtension';
 import { VideoBlockExtension } from './MediaBlock/VideoBlockExtension';
 import { DropPasteHandler } from './MediaBlock/DropPasteHandler';
 import { EmbedBlockExtension } from './EmbedBlock/EmbedBlockExtension';
+import { MonitorBlockExtension } from './MonitorBlock/MonitorBlockExtension';
 import { MermaidBlockExtension } from './MermaidBlock/MermaidBlockExtension';
 import { RunbookBlockExtension } from './RunbookBlock/RunbookBlockExtension';
 import { SelectionHighlight } from './SelectionHighlight';
 import { DocumentGaps } from './DocumentGaps';
 import { SearchHighlight } from './SearchHighlight';
+import { ProgramBlockExtension } from '../../Program/ProgramBlockExtension';
 
 // Create lowlight instance with common languages
 const lowlight = createLowlight(common);
@@ -56,7 +58,7 @@ export function getExtensions(onSlashCommand: (query: string) => void, onSlashCo
     Highlight.configure({
       multicolor: false,
     }),
-    CodeBlockLowlight.configure({
+    ExecutableCodeBlockExtension.configure({
       lowlight,
     }),
     Table.configure({
@@ -82,10 +84,12 @@ export function getExtensions(onSlashCommand: (query: string) => void, onSlashCo
     BoardBlockExtension,
     Whiteboard2BlockExtension,
     EmbedBlockExtension,
+    MonitorBlockExtension,
     MermaidBlockExtension,
     RunbookBlockExtension,
     SelectionHighlight,
     DocumentGaps,
     SearchHighlight,
+    ProgramBlockExtension,
   ];
 }

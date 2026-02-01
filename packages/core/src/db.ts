@@ -1,5 +1,6 @@
 import Dexie from 'dexie';
 import type { DarDocsDocument } from './documentSchema';
+import type { WorkspaceConfig } from './workspace/types';
 
 /**
  * Workspace document tree node stored alongside each document.
@@ -19,15 +20,20 @@ export interface DocTreeNode {
 class DarDocsDB extends Dexie {
   documents!: Dexie.Table<DarDocsDocument, string>;
   tree!: Dexie.Table<DocTreeNode, string>;
+  workspaceConfig!: Dexie.Table<WorkspaceConfig, string>;
 
   constructor() {
     super('dardocs');
 
     this.version(1).stores({
-      // Index by metadata.id; also index updatedAt for sorting
       documents: 'metadata.id',
-      // Tree nodes indexed by id, parentId for querying children
       tree: 'id, parentId',
+    });
+
+    this.version(2).stores({
+      documents: 'metadata.id',
+      tree: 'id, parentId',
+      workspaceConfig: 'key',
     });
   }
 }

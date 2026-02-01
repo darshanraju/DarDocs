@@ -24,6 +24,8 @@ import {
   ApiIcon,
   Table02Icon,
   CheckListIcon,
+  GlobeIcon,
+  BoundingBoxIcon,
 } from '@hugeicons/core-free-icons';
 import { useBoardStore } from '../../stores/boardStore';
 import { useWhiteboard2Store } from '../Whiteboard2/whiteboardStore';
@@ -216,11 +218,11 @@ const commands: SlashCommand[] = [
     action: (editor) => editor.chain().focus().insertMermaid().run(),
   },
   {
-    name: 'Grafana',
-    icon: <HugeiconsIcon icon={AnalyticsIcon} size={20} color="#f46800" />,
-    keywords: ['grafana', 'dashboard', 'metrics', 'monitoring', 'graph', 'embed'],
-    category: 'Embeds',
-    action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'grafana' }).run(),
+    name: 'Monitor',
+    icon: <HugeiconsIcon icon={AnalyticsIcon} size={20} color="#3370ff" />,
+    keywords: ['monitor', 'grafana', 'sentry', 'datadog', 'pagerduty', 'metrics', 'monitoring', 'observability', 'dashboard', 'alerts'],
+    category: 'Blocks',
+    action: (editor) => editor.chain().focus().insertMonitor().run(),
   },
   {
     name: 'Swagger',
@@ -228,6 +230,21 @@ const commands: SlashCommand[] = [
     keywords: ['swagger', 'openapi', 'api', 'docs', 'rest', 'embed'],
     category: 'Embeds',
     action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'swagger' }).run(),
+  },
+  {
+    name: 'Webview',
+    icon: <HugeiconsIcon icon={GlobeIcon} size={20} color="#3b82f6" />,
+    keywords: ['webview', 'iframe', 'embed', 'website', 'url', 'web', 'page', 'site'],
+    category: 'Embeds',
+    action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'webview' }).run(),
+  },
+  // ---- Programs ----
+  {
+    name: 'Program',
+    icon: <HugeiconsIcon icon={BoundingBoxIcon} size={20} color="#7c3aed" />,
+    keywords: ['program', 'pipeline', 'flow', 'workflow', 'automation', 'n8n', 'dag'],
+    category: 'Blocks',
+    action: (editor) => editor.chain().focus().insertProgram().run(),
   },
   // ---- Runbooks ----
   {

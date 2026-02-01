@@ -67,3 +67,20 @@ export { createRunbookStep, generateRunbookSummary } from './runbookSchema';
 
 // Docx converter
 export { convertDocxToTipTap } from './docxConverter';
+
+// Monitor providers
+export type { MonitorProviderId, MonitorProviderConfig } from './monitors';
+export { MONITOR_PROVIDERS, MONITOR_PROVIDER_LIST } from './monitors';
+
+// Workspace config
+export type {
+  RepoConfig,
+  GrafanaCredentials,
+  SentryCredentials,
+  DatadogCredentials,
+  PagerDutyCredentials,
+  ProviderCredentials,
+  AIConfig,
+  WorkspaceConfig,
+} from './workspace';
+export { DEFAULT_WORKSPACE_CONFIG, parseGitHubRepoUrl } from './workspace';

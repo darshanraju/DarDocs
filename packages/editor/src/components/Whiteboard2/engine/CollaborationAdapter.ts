@@ -200,7 +200,8 @@ function objectToYMap(obj: BoardObject, ydoc: YDoc): YMap {
   const Y = (ydoc as any).constructor;
   // Fallback: just store as JSON string in a Y.Map entry
   // This is simpler and still CRDT-safe at the object level
-  const map = new (ydoc.constructor as any).Map?.() ?? new Map();
+  const YConstructor = (ydoc.constructor as any);
+  const map = YConstructor.Map ? new YConstructor.Map() : new Map();
 
   // Since we might not have full Y.Map constructor access,
   // serialize as JSON — each object is an atomic CRDT entry
