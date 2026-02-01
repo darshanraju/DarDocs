@@ -123,16 +123,10 @@ export function ProgramBlockComponent(props: NodeViewProps) {
   );
 
   const handleNodeClick = useCallback((_: any, node: any) => {
-    console.log('[ProgramBlock] handleNodeClick', node.id);
     setSelectedNodeId(node.id);
-    // Compute panel position from canvas bounds for portal rendering
     if (canvasRef.current) {
       const rect = canvasRef.current.getBoundingClientRect();
-      const pos = { top: rect.top + 8, right: window.innerWidth - rect.right + 8 };
-      console.log('[ProgramBlock] setPanelPos', pos);
-      setPanelPos(pos);
-    } else {
-      console.warn('[ProgramBlock] canvasRef.current is null!');
+      setPanelPos({ top: rect.top + 8, right: window.innerWidth - rect.right + 8 });
     }
   }, []);
 
@@ -233,8 +227,13 @@ export function ProgramBlockComponent(props: NodeViewProps) {
   const selectedPlugin = selectedNode ? getNodeType(selectedNode.data.pluginType) : undefined;
   const categorized = useMemo(() => getNodeTypesByCategory(), []);
 
-  // DEBUG: log portal render conditions
-  console.log('[ProgramBlock] render — selectedNode:', !!selectedNode, 'selectedPlugin:', !!selectedPlugin, 'panelPos:', panelPos);
+  // Read config from store (source of truth) so updateNodeConfig changes reflect immediately
+  const selectedNodeConfig = useMemo(() => {
+    if (!selectedNodeId) return {};
+    const p = store.getProgram(programId);
+    const storeNode = p?.nodes.find((n) => n.id === selectedNodeId);
+    return storeNode?.data.config ?? selectedNode?.data.config ?? {};
+  }, [selectedNodeId, programId, store.programs, selectedNode]);
 
   const wrapperClass = isFullscreen ? 'program-block program-block-fullscreen' : 'program-block';
 
@@ -371,7 +370,7 @@ export function ProgramBlockComponent(props: NodeViewProps) {
             programId={programId}
             nodeId={selectedNode.id}
             plugin={selectedPlugin}
-            config={selectedNode.data.config}
+            config={selectedNodeConfig}
             onClose={() => setSelectedNodeId(null)}
           />
         </div>,
