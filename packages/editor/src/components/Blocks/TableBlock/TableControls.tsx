@@ -1,14 +1,7 @@
 import { useCallback } from 'react';
 import type { Editor } from '@tiptap/react';
-import {
-  Minus,
-  Trash2,
-  ArrowUp,
-  ArrowDown,
-  ArrowLeft,
-  ArrowRight,
-  ToggleLeft,
-} from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { MinusSignIcon, Delete01Icon, ArrowUp01Icon, ArrowDown01Icon, ArrowLeft01Icon, ArrowRight01Icon, ToggleOffIcon } from '@hugeicons/core-free-icons';
 import { Button, Tooltip } from '../../UI';
 
 interface TableControlsProps {
@@ -62,22 +55,22 @@ export function TableControls({ editor, position }: TableControlsProps) {
     >
       <Tooltip content="Add row above">
         <Button variant="ghost" size="sm" onClick={addRowBefore}>
-          <ArrowUp className="w-4 h-4" />
+          <HugeiconsIcon icon={ArrowUp01Icon} size={16} />
         </Button>
       </Tooltip>
       <Tooltip content="Add row below">
         <Button variant="ghost" size="sm" onClick={addRowAfter}>
-          <ArrowDown className="w-4 h-4" />
+          <HugeiconsIcon icon={ArrowDown01Icon} size={16} />
         </Button>
       </Tooltip>
       <Tooltip content="Add column left">
         <Button variant="ghost" size="sm" onClick={addColumnBefore}>
-          <ArrowLeft className="w-4 h-4" />
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
         </Button>
       </Tooltip>
       <Tooltip content="Add column right">
         <Button variant="ghost" size="sm" onClick={addColumnAfter}>
-          <ArrowRight className="w-4 h-4" />
+          <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
         </Button>
       </Tooltip>
 
@@ -85,17 +78,17 @@ export function TableControls({ editor, position }: TableControlsProps) {
 
       <Tooltip content="Delete row">
         <Button variant="ghost" size="sm" onClick={deleteRow}>
-          <Minus className="w-4 h-4 text-red-500" />
+          <span className="text-red-500"><HugeiconsIcon icon={MinusSignIcon} size={16} /></span>
         </Button>
       </Tooltip>
       <Tooltip content="Delete column">
         <Button variant="ghost" size="sm" onClick={deleteColumn}>
-          <Minus className="w-4 h-4 text-red-500 rotate-90" />
+          <span className="text-red-500 rotate-90"><HugeiconsIcon icon={MinusSignIcon} size={16} /></span>
         </Button>
       </Tooltip>
       <Tooltip content="Toggle header row">
         <Button variant="ghost" size="sm" onClick={toggleHeaderRow}>
-          <ToggleLeft className="w-4 h-4" />
+          <HugeiconsIcon icon={ToggleOffIcon} size={16} />
         </Button>
       </Tooltip>
 
@@ -103,7 +96,7 @@ export function TableControls({ editor, position }: TableControlsProps) {
 
       <Tooltip content="Delete table">
         <Button variant="ghost" size="sm" onClick={deleteTable}>
-          <Trash2 className="w-4 h-4 text-red-500" />
+          <span className="text-red-500"><HugeiconsIcon icon={Delete01Icon} size={16} /></span>
         </Button>
       </Tooltip>
     </div>

@@ -2,15 +2,16 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
+import { HugeiconsIcon } from '@hugeicons/react';
 import {
-  Trash2,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  ImagePlus,
-  Upload,
-  X,
-} from 'lucide-react';
+  Delete01Icon,
+  TextAlignLeftIcon,
+  TextAlignCenterIcon,
+  TextAlignRightIcon,
+  ImageAdd01Icon,
+  Upload01Icon,
+  Cancel01Icon,
+} from '@hugeicons/core-free-icons';
 import { openImagePicker, readFileAsDataURL } from './mediaUtils';
 
 export function MediaBlockComponent({
@@ -142,7 +143,7 @@ export function MediaBlockComponent({
     return (
       <NodeViewWrapper className="media-block">
         <div className="media-placeholder" onClick={handleUpload}>
-          <Upload className="w-8 h-8 text-gray-300" />
+          <HugeiconsIcon icon={Upload01Icon} size={32} className="text-gray-300" />
           <span className="text-sm text-gray-400">Click to upload image</span>
         </div>
       </NodeViewWrapper>
@@ -221,32 +222,32 @@ export function MediaBlockComponent({
                 title="Align left"
                 className={alignment === 'left' ? 'active' : ''}
               >
-                <AlignLeft className="w-4 h-4" />
+                <HugeiconsIcon icon={TextAlignLeftIcon} size={16} />
               </button>
               <button
                 onClick={() => setAlign('center')}
                 title="Align center"
                 className={alignment === 'center' || !alignment ? 'active' : ''}
               >
-                <AlignCenter className="w-4 h-4" />
+                <HugeiconsIcon icon={TextAlignCenterIcon} size={16} />
               </button>
               <button
                 onClick={() => setAlign('right')}
                 title="Align right"
                 className={alignment === 'right' ? 'active' : ''}
               >
-                <AlignRight className="w-4 h-4" />
+                <HugeiconsIcon icon={TextAlignRightIcon} size={16} />
               </button>
               <div className="media-toolbar-divider" />
               <button onClick={handleReplace} title="Replace image">
-                <ImagePlus className="w-4 h-4" />
+                <HugeiconsIcon icon={ImageAdd01Icon} size={16} />
               </button>
               <button
                 onClick={handleDelete}
                 title="Delete"
                 className="media-toolbar-delete"
               >
-                <Trash2 className="w-4 h-4" />
+                <HugeiconsIcon icon={Delete01Icon} size={16} />
               </button>
             </div>
           )}
@@ -262,7 +263,7 @@ export function MediaBlockComponent({
               onClick={closeFullscreen}
               title="Close (Esc)"
             >
-              <X className="w-6 h-6" />
+              <HugeiconsIcon icon={Cancel01Icon} size={24} />
             </button>
             <img
               src={src}

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Editor } from '@tiptap/react';
-import { ChevronUp, ChevronDown, X } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowUp01Icon, ArrowDown01Icon, Cancel01Icon } from '@hugeicons/core-free-icons';
 
 interface SearchBarProps {
   editor: Editor | null;
@@ -108,7 +109,7 @@ export function SearchBar({ editor, onClose }: SearchBarProps) {
         disabled={matchInfo.total === 0}
         title="Previous match (Shift+Enter)"
       >
-        <ChevronUp size={16} />
+        <HugeiconsIcon icon={ArrowUp01Icon} size={16} />
       </button>
       <button
         className="search-bar-btn"
@@ -116,14 +117,14 @@ export function SearchBar({ editor, onClose }: SearchBarProps) {
         disabled={matchInfo.total === 0}
         title="Next match (Enter)"
       >
-        <ChevronDown size={16} />
+        <HugeiconsIcon icon={ArrowDown01Icon} size={16} />
       </button>
       <button
         className="search-bar-btn"
         onClick={handleClose}
         title="Close (Escape)"
       >
-        <X size={16} />
+        <HugeiconsIcon icon={Cancel01Icon} size={16} />
       </button>
     </div>
   );

@@ -1,20 +1,21 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { Editor } from '@tiptap/react';
+import { HugeiconsIcon } from '@hugeicons/react';
 import {
-  Bold,
-  Italic,
-  Underline as UnderlineIcon,
-  Strikethrough,
-  Link,
-  Code,
-  ChevronUp,
-  ChevronDown,
-  MessageSquarePlus,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  AlignJustify,
-} from 'lucide-react';
+  TextBoldIcon,
+  TextItalicIcon,
+  TextUnderlineIcon,
+  TextStrikethroughIcon,
+  Link01Icon,
+  SourceCodeIcon,
+  ArrowUp01Icon,
+  ArrowDown01Icon,
+  CommentAdd01Icon,
+  TextAlignLeftIcon,
+  TextAlignCenterIcon,
+  TextAlignRightIcon,
+  TextAlignJustifyCenterIcon,
+} from '@hugeicons/core-free-icons';
 import { useCommentStore } from '../../stores/commentStore';
 
 interface FloatingToolbarProps {
@@ -215,10 +216,10 @@ export function FloatingToolbar({ editor }: FloatingToolbarProps) {
   const headingLevel = getCurrentHeadingLevel();
   const alignment = getActiveAlignment();
 
-  const AlignIcon = alignment === 'center' ? AlignCenter
-    : alignment === 'right' ? AlignRight
-    : alignment === 'justify' ? AlignJustify
-    : AlignLeft;
+  const AlignIconData = alignment === 'center' ? TextAlignCenterIcon
+    : alignment === 'right' ? TextAlignRightIcon
+    : alignment === 'justify' ? TextAlignJustifyCenterIcon
+    : TextAlignLeftIcon;
 
   return (
     <div
@@ -247,7 +248,7 @@ export function FloatingToolbar({ editor }: FloatingToolbarProps) {
             }}
             title="Previous heading level"
           >
-            <ChevronUp size={12} />
+            <HugeiconsIcon icon={ArrowUp01Icon} size={12} />
           </button>
           <button
             className="floating-toolbar-arrow-btn"
@@ -257,7 +258,7 @@ export function FloatingToolbar({ editor }: FloatingToolbarProps) {
             }}
             title="Next heading level"
           >
-            <ChevronDown size={12} />
+            <HugeiconsIcon icon={ArrowDown01Icon} size={12} />
           </button>
         </div>
       </div>
@@ -276,16 +277,16 @@ export function FloatingToolbar({ editor }: FloatingToolbarProps) {
           }}
           title="Text alignment"
         >
-          <AlignIcon size={16} />
-          <ChevronDown size={10} className="floating-toolbar-chevron" />
+          <HugeiconsIcon icon={AlignIconData} size={16} />
+          <HugeiconsIcon icon={ArrowDown01Icon} size={10} className="floating-toolbar-chevron" />
         </button>
         {showAlignMenu && (
           <div className="floating-toolbar-dropdown">
             {(['left', 'center', 'right', 'justify'] as const).map((align) => {
-              const Icon = align === 'center' ? AlignCenter
-                : align === 'right' ? AlignRight
-                : align === 'justify' ? AlignJustify
-                : AlignLeft;
+              const IconData = align === 'center' ? TextAlignCenterIcon
+                : align === 'right' ? TextAlignRightIcon
+                : align === 'justify' ? TextAlignJustifyCenterIcon
+                : TextAlignLeftIcon;
               return (
                 <button
                   key={align}
@@ -296,7 +297,7 @@ export function FloatingToolbar({ editor }: FloatingToolbarProps) {
                     setShowAlignMenu(false);
                   }}
                 >
-                  <Icon size={16} />
+                  <HugeiconsIcon icon={IconData} size={16} />
                   <span>{align.charAt(0).toUpperCase() + align.slice(1)}</span>
                 </button>
               );
@@ -316,7 +317,7 @@ export function FloatingToolbar({ editor }: FloatingToolbarProps) {
         }}
         title="Bold"
       >
-        <Bold size={16} />
+        <HugeiconsIcon icon={TextBoldIcon} size={16} />
       </button>
 
       {/* Strikethrough */}
@@ -328,7 +329,7 @@ export function FloatingToolbar({ editor }: FloatingToolbarProps) {
         }}
         title="Strikethrough"
       >
-        <Strikethrough size={16} />
+        <HugeiconsIcon icon={TextStrikethroughIcon} size={16} />
       </button>
 
       {/* Italic */}
@@ -340,7 +341,7 @@ export function FloatingToolbar({ editor }: FloatingToolbarProps) {
         }}
         title="Italic"
       >
-        <Italic size={16} />
+        <HugeiconsIcon icon={TextItalicIcon} size={16} />
       </button>
 
       {/* Underline */}
@@ -352,7 +353,7 @@ export function FloatingToolbar({ editor }: FloatingToolbarProps) {
         }}
         title="Underline"
       >
-        <UnderlineIcon size={16} />
+        <HugeiconsIcon icon={TextUnderlineIcon} size={16} />
       </button>
 
       {/* Link */}
@@ -365,7 +366,7 @@ export function FloatingToolbar({ editor }: FloatingToolbarProps) {
           }}
           title="Link"
         >
-          <Link size={16} />
+          <HugeiconsIcon icon={Link01Icon} size={16} />
         </button>
         {showLinkInput && (
           <div className="floating-toolbar-dropdown floating-toolbar-link-input">
@@ -408,7 +409,7 @@ export function FloatingToolbar({ editor }: FloatingToolbarProps) {
         }}
         title="Inline code"
       >
-        <Code size={16} />
+        <HugeiconsIcon icon={SourceCodeIcon} size={16} />
       </button>
 
       {/* Text color */}
@@ -469,7 +470,7 @@ export function FloatingToolbar({ editor }: FloatingToolbarProps) {
         }}
         title="Add comment"
       >
-        <MessageSquarePlus size={16} />
+        <HugeiconsIcon icon={CommentAdd01Icon} size={16} />
       </button>
     </div>
   );

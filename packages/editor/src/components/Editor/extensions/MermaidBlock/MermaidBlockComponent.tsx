@@ -1,7 +1,8 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import { Trash2, GripVertical, Pencil, Eye } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Delete01Icon, Drag01Icon, PencilEdit01Icon, EyeIcon } from '@hugeicons/core-free-icons';
 import mermaid from 'mermaid';
 
 mermaid.initialize({
@@ -102,7 +103,7 @@ export function MermaidBlockComponent({
       <div className={`mermaid-block-wrapper ${selected ? 'is-selected' : ''}`}>
         {/* Drag handle */}
         <div className="embed-drag-handle" data-drag-handle>
-          <GripVertical className="w-4 h-4 text-gray-400" />
+          <HugeiconsIcon icon={Drag01Icon} size={16} className="text-gray-400" />
         </div>
 
         {/* Header */}
@@ -124,12 +125,12 @@ export function MermaidBlockComponent({
             >
               {isEditing ? (
                 <>
-                  <Eye className="w-3.5 h-3.5" />
+                  <HugeiconsIcon icon={EyeIcon} size={14} />
                   <span>Preview</span>
                 </>
               ) : (
                 <>
-                  <Pencil className="w-3.5 h-3.5" />
+                  <HugeiconsIcon icon={PencilEdit01Icon} size={14} />
                   <span>Edit</span>
                 </>
               )}
@@ -139,7 +140,7 @@ export function MermaidBlockComponent({
               className="embed-action-btn embed-action-delete"
               title="Remove diagram"
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <HugeiconsIcon icon={Delete01Icon} size={14} />
             </button>
           </div>
         </div>

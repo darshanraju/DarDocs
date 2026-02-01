@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import type { Editor } from '@tiptap/react';
-import { Plus } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { PlusSignIcon } from '@hugeicons/core-free-icons';
 
 interface TableEdgeControlsProps {
   editor: Editor;
@@ -226,7 +227,7 @@ export function TableEdgeControls({ editor, editorContainerRef }: TableEdgeContr
       >
         <div className="table-edge-line table-edge-line-vertical" />
         <div className="table-edge-plus">
-          <Plus className="w-3.5 h-3.5" />
+          <HugeiconsIcon icon={PlusSignIcon} size={14} />
         </div>
       </button>
 
@@ -245,7 +246,7 @@ export function TableEdgeControls({ editor, editorContainerRef }: TableEdgeContr
       >
         <div className="table-edge-line table-edge-line-horizontal" />
         <div className="table-edge-plus">
-          <Plus className="w-3.5 h-3.5" />
+          <HugeiconsIcon icon={PlusSignIcon} size={14} />
         </div>
       </button>
     </div>

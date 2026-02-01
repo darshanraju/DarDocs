@@ -11,9 +11,10 @@ export class IndexedDBPersistence implements DocumentPersistence {
     const existing = await db.tree.get(doc.metadata.id);
     if (!existing) {
       await this.addTreeNode(doc.metadata.id, null, doc.metadata.title);
-    } else if (existing.title !== doc.metadata.title) {
+    } else if (existing.title !== doc.metadata.title || existing.icon !== doc.metadata.icon) {
       await db.tree.update(doc.metadata.id, {
         title: doc.metadata.title,
+        icon: doc.metadata.icon,
         updatedAt: doc.metadata.updatedAt,
       });
     }
@@ -100,6 +101,13 @@ export class IndexedDBPersistence implements DocumentPersistence {
   async updateTreeNodeTitle(id: string, title: string): Promise<void> {
     await db.tree.update(id, {
       title,
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  async updateTreeNodeIcon(id: string, icon: string | undefined): Promise<void> {
+    await db.tree.update(id, {
+      icon,
       updatedAt: new Date().toISOString(),
     });
   }

@@ -27,6 +27,7 @@ interface WorkspaceStore {
   // Tree operations
   toggleExpanded: (id: string) => void;
   moveDocument: (id: string, newParentId: string | null, newPosition: number) => Promise<void>;
+  updateDocumentIcon: (id: string, icon: string | undefined) => Promise<void>;
 
   // Active document
   setActiveDocId: (id: string | null) => void;
@@ -211,6 +212,20 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
     await get().loadTree();
   },
 
+  updateDocumentIcon: async (id, icon) => {
+    await persistence.updateTreeNodeIcon(id, icon);
+    // Also update the document metadata
+    try {
+      const doc = await persistence.load(id);
+      doc.metadata.icon = icon;
+      doc.metadata.updatedAt = new Date().toISOString();
+      await persistence.save(doc);
+    } catch {
+      // Document might not be saved yet
+    }
+    await get().loadTree();
+  },
+
   setActiveDocId: (id) => {
     set({ activeDocId: id });
   },
@@ -232,7 +247,17 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
       return undefined;
     };
     const existing = findNode(node);
-    if (existing && existing.title !== doc.metadata.title) {
+    if (existing && (existing.title !== doc.metadata.title || existing.icon !== doc.metadata.icon)) {
+      await persistence.updateTreeNodeTitle(
+        doc.metadata.id,
+        doc.metadata.title
+      );
+      if (existing.icon !== doc.metadata.icon) {
+        await persistence.updateTreeNodeIcon(
+          doc.metadata.id,
+          doc.metadata.icon
+        );
+      }
       await get().loadTree();
     }
   },
