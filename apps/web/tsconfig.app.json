@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "types": ["vite/client"]
+  },
+  "include": ["src"],
+  "exclude": [
+    "src/components/Editor",
+    "src/components/Viewer",
+    "src/components/Blocks",
+    "src/components/Comments",
+    "src/components/UI",
+    "src/components/Whiteboard2",
+    "src/stores"
+  ]
+}

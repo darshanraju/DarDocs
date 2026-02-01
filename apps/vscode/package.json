@@ -1,0 +1,45 @@
+{
+  "name": "dardocs-vscode",
+  "displayName": "DarDocs",
+  "description": "View and edit .dardocs.json documents in VSCode",
+  "version": "0.1.0",
+  "publisher": "dardocs",
+  "private": true,
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "dardocs.editor",
+        "displayName": "DarDocs Editor",
+        "selector": [
+          { "filenamePattern": "*.dardocs.json" }
+        ],
+        "priority": "default"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "build:webview": "vite build",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "@dardocs/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@dardocs/editor": "workspace:*",
+    "@types/vscode": "^1.85.0",
+    "@vitejs/plugin-react": "^5.1.2",
+    "esbuild": "^0.24.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4"
+  }
+}
