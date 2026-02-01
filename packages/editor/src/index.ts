@@ -31,4 +31,4 @@ export { LoadDocument } from './components/FileHandler/LoadDocument';
 export { ImportDocx } from './components/FileHandler/ImportDocx';
 
 // UI primitives
-export { Button, Dropdown, Modal, Tooltip } from './components/UI';
+export { Button, Dropdown, Modal, Tooltip, EmojiPicker, DocumentIcon } from './components/UI';

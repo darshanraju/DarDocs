@@ -1,16 +1,17 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { HugeiconsIcon } from '@hugeicons/react';
 import {
-  Plus,
-  FileText,
-  ChevronRight,
-  ChevronDown,
-  MoreHorizontal,
-  Trash2,
-  Pencil,
-  FilePlus,
-  ChevronsLeft,
-  AlignLeft,
-} from 'lucide-react';
+  PlusSignIcon,
+  File01Icon,
+  ArrowRight01Icon,
+  ArrowDown01Icon,
+  MoreHorizontalIcon,
+  Delete01Icon,
+  PencilEdit01Icon,
+  FileAddIcon,
+  ArrowLeft01Icon,
+  SidebarLeft01Icon,
+} from '@hugeicons/core-free-icons';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
 import type { TreeNode } from '../../stores/workspaceStore';
 import { DarkModeToggle } from '../TableOfContents/DarkModeToggle';
@@ -150,16 +151,20 @@ export function Sidebar() {
           >
             {hasChildren ? (
               node.isExpanded ? (
-                <ChevronDown className="w-3.5 h-3.5" />
+                <HugeiconsIcon icon={ArrowDown01Icon} size={14} />
               ) : (
-                <ChevronRight className="w-3.5 h-3.5" />
+                <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
               )
             ) : (
               <span className="w-3.5 h-3.5" />
             )}
           </button>
 
-          <FileText className="w-4 h-4 flex-shrink-0 text-[var(--color-text-faint)]" />
+          {node.icon ? (
+            <span className="sidebar-item-icon">{node.icon}</span>
+          ) : (
+            <HugeiconsIcon icon={File01Icon} size={16} className="flex-shrink-0 text-[var(--color-text-muted)]" />
+          )}
 
           {isRenaming ? (
             <input
@@ -185,7 +190,7 @@ export function Sidebar() {
               handleContextMenu(e, node.id);
             }}
           >
-            <MoreHorizontal className="w-3.5 h-3.5" />
+            <HugeiconsIcon icon={MoreHorizontalIcon} size={14} />
           </button>
         </div>
 
@@ -206,7 +211,7 @@ export function Sidebar() {
           className="toc-toggle-btn"
           title="Show sidebar"
         >
-          <AlignLeft className="w-5 h-5" />
+          <HugeiconsIcon icon={SidebarLeft01Icon} size={20} />
         </button>
         <DarkModeToggle />
       </div>
@@ -224,7 +229,7 @@ export function Sidebar() {
             className="toc-collapse-btn"
             title="Collapse sidebar"
           >
-            <ChevronsLeft className="w-5 h-5" />
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={20} />
           </button>
         </div>
       </div>
@@ -234,7 +239,7 @@ export function Sidebar() {
           className="sidebar-new-btn"
           onClick={() => handleCreateDocument(null)}
         >
-          <Plus className="w-4 h-4" />
+          <HugeiconsIcon icon={PlusSignIcon} size={16} />
           <span>New page</span>
         </button>
       </div>
@@ -264,7 +269,7 @@ export function Sidebar() {
               if (node) handleStartRename(node.id, node.title);
             }}
           >
-            <Pencil className="w-3.5 h-3.5" />
+            <HugeiconsIcon icon={PencilEdit01Icon} size={14} />
             Rename
           </button>
           <button
@@ -273,14 +278,14 @@ export function Sidebar() {
               handleCreateDocument(contextMenu.id);
             }}
           >
-            <FilePlus className="w-3.5 h-3.5" />
+            <HugeiconsIcon icon={FileAddIcon} size={14} />
             Add sub-page
           </button>
           <button
             className="sidebar-context-delete"
             onClick={() => handleDelete(contextMenu.id)}
           >
-            <Trash2 className="w-3.5 h-3.5" />
+            <HugeiconsIcon icon={Delete01Icon} size={14} />
             Delete
           </button>
         </div>

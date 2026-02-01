@@ -12,28 +12,29 @@
 :root {
   /* Backgrounds */
   --color-bg: #ffffff;
-  --color-bg-subtle: #f9fafb;
-  --color-bg-muted: #f3f4f6;
-  --color-bg-code: #f8fafc;
-  --color-bg-inlinecode: #f1f5f9;
-  --color-bg-accent-light: #f0f5ff;
+  --color-bg-subtle: #f9f9f9;
+  --color-bg-muted: #f5f5f4;
+  --color-bg-code: #f8f8f7;
+  --color-bg-inlinecode: #f3f3f2;
+  --color-bg-accent-light: #f5f5f4;
   --color-bg-accent-subtle: #eef2ff;
   --color-bg-danger-subtle: #fef2f2;
   --color-bg-warning-subtle: #fffbeb;
+  --color-bg-hover: #f5f5f4;
 
   /* Text */
-  --color-text: #1f2937;
-  --color-text-secondary: #374151;
-  --color-text-tertiary: #4b5563;
-  --color-text-muted: #6b7280;
-  --color-text-faint: #9ca3af;
-  --color-text-placeholder: #d1d5db;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #404040;
+  --color-text-tertiary: #595959;
+  --color-text-muted: #8c8c8c;
+  --color-text-faint: #bfbfbf;
+  --color-text-placeholder: #d9d9d9;
   --color-text-code: #334155;
   --color-text-code-inline: #475569;
 
   /* Borders */
-  --color-border: #e5e7eb;
-  --color-border-code: #e2e8f0;
+  --color-border: #ebebeb;
+  --color-border-code: #e8e8e8;
 
   /* Accent */
   --color-accent: #3370ff;
@@ -56,71 +57,75 @@
   --color-selection-cell: rgba(51, 112, 255, 0.1);
 
   /* Scrollbar */
-  --color-scrollbar-thumb: #d1d5db;
-  --color-scrollbar-thumb-hover: #9ca3af;
+  --color-scrollbar-thumb: #d9d9d9;
+  --color-scrollbar-thumb-hover: #bfbfbf;
 
   /* Shadows */
-  --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.05);
+  --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.03);
+  --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.03);
+
+  /* Menu sizing */
+  --menu-item-height: 28px;
 }
 
 .dark {
   color-scheme: dark;
 
-  /* Backgrounds */
-  --color-bg: #111827;
-  --color-bg-subtle: #1f2937;
-  --color-bg-muted: #374151;
-  --color-bg-code: #1e293b;
-  --color-bg-inlinecode: #1e293b;
-  --color-bg-accent-light: rgba(51, 112, 255, 0.1);
-  --color-bg-accent-subtle: rgba(51, 112, 255, 0.15);
-  --color-bg-danger-subtle: rgba(239, 68, 68, 0.1);
-  --color-bg-warning-subtle: rgba(245, 158, 11, 0.1);
+  /* Backgrounds — Notion-style warm neutrals */
+  --color-bg: #191919;
+  --color-bg-subtle: #202020;
+  --color-bg-muted: #2c2c2c;
+  --color-bg-code: #252525;
+  --color-bg-inlinecode: #2f2f2f;
+  --color-bg-accent-light: rgba(35, 131, 226, 0.08);
+  --color-bg-accent-subtle: rgba(35, 131, 226, 0.12);
+  --color-bg-danger-subtle: rgba(235, 87, 87, 0.1);
+  --color-bg-warning-subtle: rgba(203, 145, 47, 0.1);
+  --color-bg-hover: #272727;
 
-  /* Text */
-  --color-text: #f9fafb;
-  --color-text-secondary: #e5e7eb;
-  --color-text-tertiary: #d1d5db;
-  --color-text-muted: #9ca3af;
-  --color-text-faint: #6b7280;
-  --color-text-placeholder: #4b5563;
-  --color-text-code: #e2e8f0;
-  --color-text-code-inline: #cbd5e1;
+  /* Text — warm grays, not blue-tinted */
+  --color-text: #ebebeb;
+  --color-text-secondary: #d4d4d4;
+  --color-text-tertiary: #9b9a97;
+  --color-text-muted: #737373;
+  --color-text-faint: #5a5a5a;
+  --color-text-placeholder: #4a4a4a;
+  --color-text-code: #d4d4d4;
+  --color-text-code-inline: #c4c4c4;
 
-  /* Borders */
-  --color-border: #374151;
-  --color-border-code: #334155;
+  /* Borders — subtle warm dividers */
+  --color-border: #2d2d2d;
+  --color-border-code: #333333;
 
-  /* Accent */
-  --color-accent: #5b8cff;
-  --color-accent-hover: #3370ff;
-  --color-accent-disabled: #1e3a5f;
+  /* Accent — Notion blue */
+  --color-accent: #2383e2;
+  --color-accent-hover: #1a73d4;
+  --color-accent-disabled: #1a3a5c;
 
   /* Danger */
-  --color-danger: #f87171;
-  --color-danger-dark: #fca5a5;
+  --color-danger: #eb5757;
+  --color-danger-dark: #ff8a8a;
 
   /* Highlight */
-  --color-highlight: rgba(254, 240, 138, 0.3);
-  --color-highlight-comment: rgba(255, 191, 0, 0.2);
-  --color-highlight-comment-border: #d97706;
-  --color-highlight-comment-hover: rgba(255, 191, 0, 0.35);
-  --color-highlight-quote-border: #d97706;
+  --color-highlight: rgba(255, 212, 0, 0.25);
+  --color-highlight-comment: rgba(255, 191, 0, 0.15);
+  --color-highlight-comment-border: #c28b2d;
+  --color-highlight-comment-hover: rgba(255, 191, 0, 0.3);
+  --color-highlight-quote-border: #c28b2d;
 
   /* Selection */
-  --color-selection: rgba(91, 140, 255, 0.3);
-  --color-selection-cell: rgba(91, 140, 255, 0.15);
+  --color-selection: rgba(35, 131, 226, 0.35);
+  --color-selection-cell: rgba(35, 131, 226, 0.15);
 
   /* Scrollbar */
-  --color-scrollbar-thumb: #4b5563;
-  --color-scrollbar-thumb-hover: #6b7280;
+  --color-scrollbar-thumb: #3a3a3a;
+  --color-scrollbar-thumb-hover: #505050;
 
   /* Shadows */
-  --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2);
+  --shadow-popover: 0 4px 24px rgba(0, 0, 0, 0.5), 0 0 1px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0, 0, 0, 0.5);
 }
 
 /* ============================================================
@@ -141,7 +146,7 @@
   position: relative;
 }
 
-/* Lark-style system font stack */
+/* System font stack */
 html, body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI",
     "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC",
@@ -149,6 +154,8 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--color-bg);
+  letter-spacing: -0.15px;
+  color: var(--color-text-secondary);
 }
 
 /* Editor-specific styles */
@@ -676,14 +683,14 @@ html, body {
   display: flex;
   align-items: center;
   gap: 0.875rem;
-  padding: 0.5rem 1rem;
+  padding: 0.375rem 1rem;
   cursor: pointer;
   transition: background-color 0.1s;
 }
 
 .slash-command-item:hover,
 .slash-command-item.is-selected {
-  background-color: var(--color-bg-muted);
+  background-color: var(--color-bg-hover);
 }
 
 .slash-command-item-icon {
@@ -897,7 +904,7 @@ html, body {
   min-width: 260px;
   height: 100vh;
   background: var(--color-bg);
-  border-right: 1px solid var(--color-bg-muted);
+  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -914,7 +921,7 @@ html, body {
   padding-top: 12px;
   gap: 4px;
   flex-shrink: 0;
-  border-right: 1px solid var(--color-bg-muted);
+  border-right: 1px solid var(--color-border);
   background: var(--color-bg);
 }
 
@@ -941,7 +948,8 @@ html, body {
   align-items: center;
   gap: 6px;
   width: 100%;
-  padding: 6px 10px;
+  height: var(--menu-item-height);
+  padding: 0 10px;
   border: 1px dashed var(--color-border);
   background: transparent;
   border-radius: 6px;
@@ -952,9 +960,9 @@ html, body {
 }
 
 .sidebar-new-btn:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  background: var(--color-bg-accent-light);
+  border-color: var(--color-text-muted);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-hover);
 }
 
 .sidebar-nav {
@@ -973,8 +981,9 @@ html, body {
 .sidebar-item {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 5px 8px;
+  gap: 6px;
+  height: var(--menu-item-height);
+  padding: 0 8px;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.1s;
@@ -982,15 +991,15 @@ html, body {
 }
 
 .sidebar-item:hover {
-  background: var(--color-bg-muted);
+  background: var(--color-bg-hover);
 }
 
 .sidebar-item-active {
-  background: var(--color-bg-accent-light);
+  background: var(--color-bg-hover);
 }
 
 .sidebar-item-active:hover {
-  background: var(--color-bg-accent-light);
+  background: var(--color-bg-hover);
 }
 
 .sidebar-expand-btn {
@@ -1020,10 +1029,11 @@ html, body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 400;
 }
 
 .sidebar-item-active .sidebar-item-title {
-  color: var(--color-accent);
+  color: var(--color-text);
   font-weight: 500;
 }
 
@@ -1080,7 +1090,8 @@ html, body {
   align-items: center;
   gap: 8px;
   width: 100%;
-  padding: 6px 10px;
+  height: var(--menu-item-height);
+  padding: 0 10px;
   border: none;
   background: transparent;
   border-radius: 5px;
@@ -1091,7 +1102,7 @@ html, body {
 }
 
 .sidebar-context-menu button:hover {
-  background: var(--color-bg-muted);
+  background: var(--color-bg-hover);
 }
 
 .sidebar-context-menu .sidebar-context-delete {
@@ -2383,8 +2394,8 @@ html, body {
 }
 
 .dark .comment-card:hover {
-  border-color: rgba(91, 140, 255, 0.3);
-  box-shadow: 0 2px 8px rgba(91, 140, 255, 0.12);
+  border-color: rgba(35, 131, 226, 0.3);
+  box-shadow: 0 2px 8px rgba(35, 131, 226, 0.12);
 }
 
 .comment-card-quote {
@@ -2717,7 +2728,7 @@ html, body {
 }
 
 .dark .github-card-label {
-  color: #a5b4fc;
+  color: #81b0e8;
 }
 
 /* Gist embed */
@@ -2848,4 +2859,298 @@ html, body {
   white-space: pre-wrap;
   word-break: break-word;
   color: var(--color-danger-dark);
+}
+
+/* ============================================================
+   Document Icon & Emoji Picker
+   ============================================================ */
+
+.document-icon-wrapper {
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+.document-icon-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  font-size: 48px;
+  line-height: 1;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  padding: 0;
+}
+
+.document-icon-display:hover {
+  background: var(--color-bg-hover);
+}
+
+.document-icon-add {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  color: var(--color-text-faint);
+  transition: background-color 0.15s, color 0.15s;
+  opacity: 0;
+}
+
+.doc-title-area:hover .document-icon-add {
+  opacity: 1;
+}
+
+.document-icon-add:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-secondary);
+}
+
+.document-icon-picker-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  margin-top: 4px;
+}
+
+/* Emoji Picker (Notion-style) */
+.emoji-picker {
+  width: 340px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-popover);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.emoji-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 6px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.emoji-picker-tab {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  padding: 4px 0;
+  border-bottom: 2px solid var(--color-accent);
+}
+
+.emoji-picker-remove {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.emoji-picker-remove:hover {
+  background: var(--color-bg-danger-subtle);
+  color: var(--color-danger);
+}
+
+.emoji-picker-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+}
+
+.emoji-picker-filter {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-subtle);
+  transition: border-color 0.15s;
+}
+
+.emoji-picker-filter:focus-within {
+  border-color: var(--color-accent);
+  background: var(--color-bg);
+}
+
+.emoji-picker-filter-icon {
+  color: var(--color-text-faint);
+  flex-shrink: 0;
+}
+
+.emoji-picker-filter-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  font-family: inherit;
+}
+
+.emoji-picker-filter-input::placeholder {
+  color: var(--color-text-faint);
+}
+
+.emoji-picker-filter-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  padding: 0;
+  flex-shrink: 0;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.emoji-picker-filter-clear:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-text);
+}
+
+.emoji-picker-random {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.emoji-picker-random:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text);
+  border-color: var(--color-text-faint);
+}
+
+.emoji-picker-grid {
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 4px 12px 8px;
+}
+
+.emoji-picker-category {
+  margin-bottom: 4px;
+}
+
+.emoji-picker-category-name {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 6px 0 4px;
+  position: sticky;
+  top: 0;
+  background: var(--color-bg);
+  z-index: 1;
+}
+
+.emoji-picker-emojis {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 2px;
+}
+
+.emoji-picker-emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.1s, transform 0.1s;
+}
+
+.emoji-picker-emoji:hover {
+  background: var(--color-bg-hover);
+  transform: scale(1.15);
+}
+
+.emoji-picker-empty {
+  padding: 24px;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--color-text-faint);
+}
+
+.emoji-picker-categories {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+}
+
+.emoji-picker-category-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.1s;
+  opacity: 0.6;
+}
+
+.emoji-picker-category-btn:hover {
+  background: var(--color-bg-hover);
+  opacity: 1;
+}
+
+.emoji-picker-category-btn.active {
+  background: var(--color-bg-muted);
+  opacity: 1;
+}
+
+.sidebar-item-icon {
+  font-size: 16px;
+  line-height: 1;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.workspace-card-icon {
+  font-size: 24px;
+  line-height: 1;
 }

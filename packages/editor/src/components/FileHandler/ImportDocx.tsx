@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { FileUp, Loader2 } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Upload01Icon, Loading01Icon } from '@hugeicons/core-free-icons';
 import { toast } from 'sonner';
 import { Button, Tooltip } from '../UI';
 import { useDocumentStore } from '../../stores/documentStore';
@@ -81,9 +82,9 @@ export function ImportDocx() {
       <Tooltip content="Import DOCX file">
         <Button variant="secondary" size="sm" onClick={handleClick} disabled={isLoading}>
           {isLoading ? (
-            <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+            <span className="mr-1.5 animate-spin"><HugeiconsIcon icon={Loading01Icon} size={16} /></span>
           ) : (
-            <FileUp className="w-4 h-4 mr-1.5" />
+            <span className="mr-1.5"><HugeiconsIcon icon={Upload01Icon} size={16} /></span>
           )}
           Import
         </Button>

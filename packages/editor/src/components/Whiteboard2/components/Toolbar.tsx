@@ -5,19 +5,20 @@
  * with tool icons, undo/redo, and zoom controls.
  */
 import { useCallback } from 'react';
+import { HugeiconsIcon } from '@hugeicons/react';
 import {
-  MousePointer2,
-  Square,
-  Circle,
-  ArrowUpRight,
-  Pencil,
-  Type,
-  Undo2,
-  Redo2,
-  ZoomIn,
-  ZoomOut,
-  MessageSquare,
-} from 'lucide-react';
+  Cursor01Icon,
+  Square01Icon,
+  CircleIcon,
+  ArrowUpRight01Icon,
+  PencilEdit01Icon,
+  TextFontIcon,
+  UndoIcon,
+  RedoIcon,
+  ZoomInAreaIcon,
+  ZoomOutAreaIcon,
+  Comment01Icon,
+} from '@hugeicons/core-free-icons';
 import type { ICommandStack, IViewTransform, Point, ToolType } from '../types';
 
 interface ToolbarProps {
@@ -32,12 +33,12 @@ interface ToolbarProps {
 }
 
 const tools: Array<{ type: ToolType; icon: React.ReactNode; label: string; shortcut: string }> = [
-  { type: 'select', icon: <MousePointer2 size={18} />, label: 'Select', shortcut: 'V' },
-  { type: 'rect', icon: <Square size={18} />, label: 'Rectangle', shortcut: 'R' },
-  { type: 'ellipse', icon: <Circle size={18} />, label: 'Ellipse', shortcut: 'O' },
-  { type: 'arrow', icon: <ArrowUpRight size={18} />, label: 'Arrow', shortcut: 'L' },
-  { type: 'path', icon: <Pencil size={18} />, label: 'Pencil', shortcut: 'P' },
-  { type: 'text', icon: <Type size={18} />, label: 'Text', shortcut: 'T' },
+  { type: 'select', icon: <HugeiconsIcon icon={Cursor01Icon} size={18} />, label: 'Select', shortcut: 'V' },
+  { type: 'rect', icon: <HugeiconsIcon icon={Square01Icon} size={18} />, label: 'Rectangle', shortcut: 'R' },
+  { type: 'ellipse', icon: <HugeiconsIcon icon={CircleIcon} size={18} />, label: 'Ellipse', shortcut: 'O' },
+  { type: 'arrow', icon: <HugeiconsIcon icon={ArrowUpRight01Icon} size={18} />, label: 'Arrow', shortcut: 'L' },
+  { type: 'path', icon: <HugeiconsIcon icon={PencilEdit01Icon} size={18} />, label: 'Pencil', shortcut: 'P' },
+  { type: 'text', icon: <HugeiconsIcon icon={TextFontIcon} size={18} />, label: 'Text', shortcut: 'T' },
 ];
 
 export function Toolbar({
@@ -132,7 +133,7 @@ export function Toolbar({
           cursor: commands.canUndo() ? 'pointer' : 'default',
         }}
       >
-        <Undo2 size={18} />
+        <HugeiconsIcon icon={UndoIcon} size={18} />
       </button>
       <button
         onClick={() => commands.redo()}
@@ -151,7 +152,7 @@ export function Toolbar({
           cursor: commands.canRedo() ? 'pointer' : 'default',
         }}
       >
-        <Redo2 size={18} />
+        <HugeiconsIcon icon={RedoIcon} size={18} />
       </button>
 
       {/* Separator */}
@@ -181,7 +182,7 @@ export function Toolbar({
           cursor: 'pointer',
         }}
       >
-        <ZoomOut size={16} />
+        <HugeiconsIcon icon={ZoomOutAreaIcon} size={16} />
       </button>
       <span
         style={{
@@ -210,7 +211,7 @@ export function Toolbar({
           cursor: 'pointer',
         }}
       >
-        <ZoomIn size={16} />
+        <HugeiconsIcon icon={ZoomInAreaIcon} size={16} />
       </button>
 
       {/* Separator */}
@@ -240,7 +241,7 @@ export function Toolbar({
           cursor: 'pointer',
         }}
       >
-        <MessageSquare size={18} />
+        <HugeiconsIcon icon={Comment01Icon} size={18} />
       </button>
     </div>
   );

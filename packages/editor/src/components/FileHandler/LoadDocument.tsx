@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
-import { FolderOpen } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { FolderOpenIcon } from '@hugeicons/core-free-icons';
 import { toast } from 'sonner';
 import { Button, Tooltip } from '../UI';
 import { useDocument } from '../../hooks/useDocument';
@@ -47,7 +48,7 @@ export function LoadDocument() {
       />
       <Tooltip content="Open document (Ctrl+O)">
         <Button variant="secondary" size="sm" onClick={handleClick}>
-          <FolderOpen className="w-4 h-4 mr-1.5" />
+          <span className="mr-1.5"><HugeiconsIcon icon={FolderOpenIcon} size={16} /></span>
           Open
         </Button>
       </Tooltip>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Editor } from '@tiptap/react';
-import { MessageSquarePlus } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { CommentAdd01Icon } from '@hugeicons/core-free-icons';
 import { useCommentStore } from '../../stores/commentStore';
 
 interface AddCommentBubbleProps {
@@ -118,7 +119,7 @@ export function AddCommentBubble({ editor }: AddCommentBubbleProps) {
       }}
       title="Add comment"
     >
-      <MessageSquarePlus size={16} />
+      <HugeiconsIcon icon={CommentAdd01Icon} size={16} />
     </button>
   );
 }
