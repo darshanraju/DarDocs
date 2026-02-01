@@ -49,7 +49,11 @@ export function WorkspacePage() {
                   navigate(`/doc/${doc.id}`);
                 }}
               >
-                <HugeiconsIcon icon={File01Icon} size={20} color="var(--color-accent)" />
+                {doc.icon ? (
+                  <span className="workspace-card-icon">{doc.icon}</span>
+                ) : (
+                  <HugeiconsIcon icon={File01Icon} size={20} color="var(--color-accent)" />
+                )}
                 <span className="workspace-card-title">
                   {doc.title || 'Untitled'}
                 </span>
@@ -68,13 +72,14 @@ export function WorkspacePage() {
 interface FlatDoc {
   id: string;
   title: string;
+  icon?: string;
   updatedAt: string;
 }
 
-function flattenTree(nodes: { id: string; title: string; updatedAt: string; children: any[] }[]): FlatDoc[] {
+function flattenTree(nodes: { id: string; title: string; icon?: string; updatedAt: string; children: any[] }[]): FlatDoc[] {
   const result: FlatDoc[] = [];
   for (const node of nodes) {
-    result.push({ id: node.id, title: node.title, updatedAt: node.updatedAt });
+    result.push({ id: node.id, title: node.title, icon: node.icon, updatedAt: node.updatedAt });
     result.push(...flattenTree(node.children));
   }
   return result;

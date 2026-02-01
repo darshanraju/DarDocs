@@ -160,7 +160,11 @@ export function Sidebar() {
             )}
           </button>
 
-          <HugeiconsIcon icon={File01Icon} size={16} className="flex-shrink-0 text-[var(--color-text-muted)]" />
+          {node.icon ? (
+            <span className="sidebar-item-icon">{node.icon}</span>
+          ) : (
+            <HugeiconsIcon icon={File01Icon} size={16} className="flex-shrink-0 text-[var(--color-text-muted)]" />
+          )}
 
           {isRenaming ? (
             <input

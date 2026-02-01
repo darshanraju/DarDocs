@@ -8,6 +8,7 @@ import {
   CommentsSidebar,
   SearchBar,
   TableOfContents,
+  DocumentIcon,
   useDocumentStore,
   useCommentStore,
   useBoardStore,
@@ -114,6 +115,13 @@ export function DocumentPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docId]);
 
+  const handleIconChange = useCallback(
+    (icon: string | undefined) => {
+      updateMetadata({ icon });
+    },
+    [updateMetadata]
+  );
+
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       updateMetadata({ title: e.target.value });
@@ -181,15 +189,21 @@ export function DocumentPage() {
           <TableOfContents />
           <div className="flex-1 min-w-0">
             <div className="max-w-[720px] mx-auto px-6 py-8">
-              <input
-                ref={titleInputRef}
-                type="text"
-                value={document?.metadata.title || ''}
-                onChange={handleTitleChange}
-                onKeyDown={handleTitleKeyDown}
-                placeholder="Untitled"
-                className="doc-title-input"
-              />
+              <div className="doc-title-area">
+                <DocumentIcon
+                  icon={document?.metadata.icon}
+                  onIconChange={handleIconChange}
+                />
+                <input
+                  ref={titleInputRef}
+                  type="text"
+                  value={document?.metadata.title || ''}
+                  onChange={handleTitleChange}
+                  onKeyDown={handleTitleKeyDown}
+                  placeholder="Untitled"
+                  className="doc-title-input"
+                />
+              </div>
 
               {isViewMode ? (
                 <DocumentViewer />
