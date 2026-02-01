@@ -90,6 +90,18 @@ function collectExpandedIds(tree: TreeNode[]): Set<string> {
   return ids;
 }
 
+function updateNodeInTree(tree: TreeNode[], id: string, updates: Partial<Pick<TreeNode, 'title' | 'icon'>>): TreeNode[] {
+  return tree.map((node) => {
+    if (node.id === id) {
+      return { ...node, ...updates };
+    }
+    if (node.children.length > 0) {
+      return { ...node, children: updateNodeInTree(node.children, id, updates) };
+    }
+    return node;
+  });
+}
+
 function toggleInTree(tree: TreeNode[], id: string): TreeNode[] {
   return tree.map((node) => {
     if (node.id === id) {
@@ -213,17 +225,11 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   },
 
   updateDocumentIcon: async (id, icon) => {
-    await persistence.updateTreeNodeIcon(id, icon);
-    // Also update the document metadata
-    try {
-      const doc = await persistence.load(id);
-      doc.metadata.icon = icon;
-      doc.metadata.updatedAt = new Date().toISOString();
-      await persistence.save(doc);
-    } catch {
-      // Document might not be saved yet
-    }
-    await get().loadTree();
+    // Update the tree node locally; the icon is persisted as part of
+    // document metadata when the auto-save triggers saveDocument().
+    set((state) => ({
+      tree: updateNodeInTree(state.tree, id, { icon }),
+    }));
   },
 
   setActiveDocId: (id) => {
@@ -236,8 +242,7 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
       content: doc.content,
       boards: doc.boards,
     });
-    // Sync tree title if changed
-    const node = get().tree;
+    // Sync sidebar tree title/icon locally if changed
     const findNode = (nodes: TreeNode[]): TreeNode | undefined => {
       for (const n of nodes) {
         if (n.id === doc.metadata.id) return n;
@@ -246,19 +251,14 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
       }
       return undefined;
     };
-    const existing = findNode(node);
+    const existing = findNode(get().tree);
     if (existing && (existing.title !== doc.metadata.title || existing.icon !== doc.metadata.icon)) {
-      await persistence.updateTreeNodeTitle(
-        doc.metadata.id,
-        doc.metadata.title
-      );
-      if (existing.icon !== doc.metadata.icon) {
-        await persistence.updateTreeNodeIcon(
-          doc.metadata.id,
-          doc.metadata.icon
-        );
-      }
-      await get().loadTree();
+      set((state) => ({
+        tree: updateNodeInTree(state.tree, doc.metadata.id, {
+          title: doc.metadata.title,
+          icon: doc.metadata.icon,
+        }),
+      }));
     }
   },
 
