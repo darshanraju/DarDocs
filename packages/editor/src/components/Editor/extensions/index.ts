@@ -25,6 +25,7 @@ import { MermaidBlockExtension } from './MermaidBlock/MermaidBlockExtension';
 import { SelectionHighlight } from './SelectionHighlight';
 import { DocumentGaps } from './DocumentGaps';
 import { SearchHighlight } from './SearchHighlight';
+import { ProgramBlockExtension } from '../../Program/ProgramBlockExtension';
 
 // Create lowlight instance with common languages
 const lowlight = createLowlight(common);
@@ -85,5 +86,6 @@ export function getExtensions(onSlashCommand: (query: string) => void, onSlashCo
     SelectionHighlight,
     DocumentGaps,
     SearchHighlight,
+    ProgramBlockExtension,
   ];
 }

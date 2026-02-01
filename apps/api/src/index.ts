@@ -8,6 +8,7 @@ import { documentRoutes } from './routes/documents.js';
 import { commentRoutes } from './routes/comments.js';
 import { memberRoutes } from './routes/members.js';
 import { executeRoutes } from './routes/execute.js';
+import { programRoutes } from './routes/programs.js';
 
 const app = Fastify({ logger: true });
 
@@ -28,6 +29,7 @@ await app.register(documentRoutes);
 await app.register(commentRoutes);
 await app.register(memberRoutes);
 await app.register(executeRoutes);
+await app.register(programRoutes);
 
 try {
   await app.listen({ port: env.PORT, host: '0.0.0.0' });

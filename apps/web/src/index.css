@@ -3488,3 +3488,602 @@ html, body {
   color: var(--color-danger);
   background: var(--color-bg-danger-subtle);
 }
+
+/* ============================================================
+   Program Block
+   ============================================================ */
+
+.program-block {
+  margin: 1rem 0;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: visible;
+  background: var(--color-bg);
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+
+.program-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--color-bg-muted);
+  border-bottom: 1px solid var(--color-border);
+  user-select: none;
+}
+
+.program-block-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.program-block-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.program-block-toggle {
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.program-block-toggle:hover {
+  background: var(--color-bg);
+}
+
+.program-block-title {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--color-text);
+}
+
+.program-block-count {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.program-block-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.program-block-add-btn:hover {
+  background: var(--color-bg-muted);
+}
+
+.program-block-run-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: #7c3aed;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.program-block-run-btn:hover {
+  background: #6d28d9;
+}
+
+.program-block-run-btn:disabled {
+  background: #c4b5fd;
+  cursor: default;
+}
+
+.program-block-delete-btn {
+  display: flex;
+  align-items: center;
+  padding: 3px 6px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.program-block-delete-btn:hover {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+/* ── Add Node Menu ──────────────────────────────────────── */
+
+.program-add-menu {
+  position: absolute;
+  top: 44px;
+  right: 120px;
+  z-index: 50;
+  min-width: 180px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 4px;
+}
+
+.program-add-category {
+  padding: 6px 10px 2px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+
+.program-add-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.program-add-option:hover {
+  background: var(--color-bg-muted);
+}
+
+.program-add-icon {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+}
+
+/* ── Canvas ─────────────────────────────────────────────── */
+
+.program-block-canvas {
+  position: relative;
+  height: 450px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.program-block-canvas .react-flow {
+  background: var(--color-bg);
+}
+
+.program-block-canvas .react-flow__background {
+  background: var(--color-bg) !important;
+}
+
+.program-block-canvas .react-flow__controls {
+  box-shadow: none;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.program-block-canvas .react-flow__controls-button {
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  width: 28px;
+  height: 28px;
+}
+
+.program-block-canvas .react-flow__controls-button:hover {
+  background: var(--color-bg-muted);
+}
+
+.program-block-canvas .react-flow__controls-button svg {
+  fill: var(--color-text-muted);
+}
+
+.program-block-canvas .react-flow__edge-path {
+  stroke: var(--color-border);
+  stroke-width: 2;
+}
+
+.program-block-canvas .react-flow__handle {
+  width: 10px;
+  height: 10px;
+  border: 2px solid white;
+}
+
+.program-delete-node-btn {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
+  border-radius: 4px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.15s;
+}
+
+.program-delete-node-btn:hover {
+  background: var(--color-bg-danger-subtle);
+}
+
+/* ── Flow Node ──────────────────────────────────────────── */
+
+.program-node {
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: 8px;
+  min-width: 180px;
+  max-width: 240px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-size: 0.75rem;
+  transition: box-shadow 0.15s;
+}
+
+.program-node-selected {
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.4);
+}
+
+.program-node-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 6px 6px 0 0;
+  color: white;
+  font-weight: 600;
+  font-size: 0.7rem;
+}
+
+.program-node-icon {
+  font-size: 0.85rem;
+}
+
+.program-node-label {
+  flex: 1;
+}
+
+.program-node-status-ok {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.program-node-status-err {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.program-node-body {
+  padding: 6px 10px;
+}
+
+.program-node-config-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: 4px;
+}
+
+.program-node-config-key {
+  font-size: 0.6rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.program-node-config-val {
+  font-size: 0.7rem;
+  color: var(--color-text);
+  word-break: break-word;
+  font-family: monospace;
+}
+
+.program-node-empty {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.program-node-error {
+  padding: 4px 10px 6px;
+  font-size: 0.65rem;
+  color: var(--color-danger);
+  word-break: break-word;
+}
+
+.program-handle {
+  width: 10px;
+  height: 10px;
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+/* ── Config Panel ───────────────────────────────────────── */
+
+.program-config-panel {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 280px;
+  max-height: calc(100% - 16px);
+  overflow-y: auto;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+}
+
+.program-config-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-muted);
+  border-radius: 8px 8px 0 0;
+}
+
+.program-config-title {
+  flex: 1;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.program-config-close {
+  display: flex;
+  padding: 2px;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.program-config-close:hover {
+  background: var(--color-bg);
+}
+
+.program-config-body {
+  padding: 10px;
+}
+
+.program-config-field {
+  margin-bottom: 10px;
+}
+
+.program-config-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.program-config-input,
+.program-config-select {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 0.8rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.program-config-input:focus,
+.program-config-select:focus {
+  border-color: #7c3aed;
+}
+
+.program-config-textarea {
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 0.75rem;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  outline: none;
+  resize: vertical;
+  min-height: 60px;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+}
+
+.program-config-textarea:focus {
+  border-color: #7c3aed;
+}
+
+.program-config-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+/* ── Output Preview ─────────────────────────────────────── */
+
+.program-output-section {
+  border-top: 1px solid var(--color-border);
+}
+
+.program-output-header {
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.program-output-header-ok {
+  color: #16a34a;
+  background: rgba(34, 197, 94, 0.06);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.program-output-header-err {
+  color: var(--color-danger);
+  background: var(--color-bg-danger-subtle);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.program-output-error {
+  padding: 10px 12px;
+  font-size: 0.8rem;
+  color: var(--color-danger);
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+.program-output-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.program-output-item:last-child {
+  border-bottom: none;
+}
+
+.program-output-item-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 6px;
+}
+
+.program-output-json {
+  margin: 0;
+  font-size: 0.75rem;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--color-text);
+  background: var(--color-bg-muted);
+  padding: 8px;
+  border-radius: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.program-output-text {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  color: var(--color-text);
+}
+
+.program-output-card-text {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.program-output-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.program-output-card {
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: var(--color-bg-muted);
+}
+
+.program-output-card-field {
+  display: flex;
+  gap: 8px;
+  padding: 2px 0;
+  font-size: 0.75rem;
+}
+
+.program-output-card-key {
+  font-weight: 500;
+  color: var(--color-text-muted);
+  min-width: 60px;
+}
+
+.program-output-card-val {
+  color: var(--color-text);
+  word-break: break-word;
+}
+
+.program-output-table-wrap {
+  overflow-x: auto;
+}
+
+.program-output-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.program-output-table th {
+  background: var(--color-bg-muted);
+  padding: 4px 8px;
+  text-align: left;
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.program-output-table td {
+  padding: 4px 8px;
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.program-output-truncated {
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.program-output-empty {
+  color: var(--color-text-muted);
+  font-style: italic;
+  font-size: 0.8rem;
+}
