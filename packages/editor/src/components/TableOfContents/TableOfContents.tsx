@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronsLeft, AlignLeft } from 'lucide-react';
-import { DarkModeToggle } from './DarkModeToggle';
 
 interface TocHeading {
   domIndex: number;
@@ -9,12 +8,17 @@ interface TocHeading {
 }
 
 export function TableOfContents() {
-  const [isExpanded, setIsExpanded] = useState(true);
+  // null = user hasn't manually toggled, so auto-derive from content
+  const [userOverride, setUserOverride] = useState<boolean | null>(null);
   const [headings, setHeadings] = useState<TocHeading[]>([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const observerRef = useRef<MutationObserver | null>(null);
   const observedElRef = useRef<Element | null>(null);
   const extractingRef = useRef(false);
+
+  const hasHeadings = headings.length > 0;
+  // If user manually toggled, respect that; otherwise follow content
+  const isExpanded = userOverride !== null ? userOverride : hasHeadings;
 
   const getHeadingElements = useCallback((): NodeListOf<Element> | null => {
     const editorEl = window.document.querySelector('.ProseMirror');
@@ -139,49 +143,48 @@ export function TableOfContents() {
     }
   }, [getHeadingElements]);
 
+  // Nothing to show and not manually expanded — render nothing
+  if (!isExpanded && !hasHeadings) {
+    return null;
+  }
+
   if (!isExpanded) {
     return (
-      <div className="toc-collapsed-strip">
+      <div className="toc-inline-collapsed">
         <button
-          onClick={() => setIsExpanded(true)}
+          onClick={() => setUserOverride(true)}
           className="toc-toggle-btn"
           title="Show table of contents"
         >
           <AlignLeft className="w-5 h-5" />
         </button>
-        <DarkModeToggle />
       </div>
     );
   }
 
   return (
-    <div className="toc-sidebar">
-      <div className="toc-header">
+    <div className="toc-inline">
+      <div className="toc-inline-header">
         <button
-          onClick={() => setIsExpanded(false)}
+          onClick={() => setUserOverride(false)}
           className="toc-collapse-btn"
           title="Hide table of contents"
         >
           <ChevronsLeft className="w-5 h-5" />
         </button>
-        <DarkModeToggle />
       </div>
 
       <nav className="toc-nav">
-        {headings.length === 0 ? (
-          <div className="toc-empty">No headings yet</div>
-        ) : (
-          headings.map((heading) => (
-            <button
-              key={`${heading.domIndex}-${heading.text}`}
-              onClick={() => scrollToHeading(heading)}
-              className={`toc-item ${activeIndex === heading.domIndex ? 'toc-item-active' : ''}`}
-              style={{ paddingLeft: `${(heading.level - 1) * 16 + 8}px` }}
-            >
-              {heading.text}
-            </button>
-          ))
-        )}
+        {headings.map((heading) => (
+          <button
+            key={`${heading.domIndex}-${heading.text}`}
+            onClick={() => scrollToHeading(heading)}
+            className={`toc-item ${activeIndex === heading.domIndex ? 'toc-item-active' : ''}`}
+            style={{ paddingLeft: `${(heading.level - 1) * 16 + 8}px` }}
+          >
+            {heading.text}
+          </button>
+        ))}
       </nav>
     </div>
   );

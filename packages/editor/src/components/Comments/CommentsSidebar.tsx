@@ -40,18 +40,23 @@ interface CommentsSidebarProps {
 export function CommentsSidebar({ editor }: CommentsSidebarProps) {
   const { comments, activeCommentId, setActiveComment, deleteComment } =
     useCommentStore();
-  const [collapsed, setCollapsed] = useState(false);
+  // null = user hasn't manually toggled, auto-derive from content
+  const [userOverride, setUserOverride] = useState<boolean | null>(null);
   const [cardPositions, setCardPositions] = useState<Record<string, number>>(
     {}
   );
   const sidebarContentRef = useRef<HTMLDivElement>(null);
 
   const unresolvedComments = comments.filter((c) => c.type === 'inline' && !c.resolved);
+  const hasComments = unresolvedComments.length > 0;
+
+  // Derive collapsed: if user hasn't toggled, collapse when empty
+  const collapsed = userOverride !== null ? !userOverride : !hasComments;
 
   // Auto-expand when a comment becomes active
   useEffect(() => {
     if (activeCommentId && collapsed) {
-      setCollapsed(false);
+      setUserOverride(true);
     }
   }, [activeCommentId, collapsed]);
 
@@ -143,13 +148,18 @@ export function CommentsSidebar({ editor }: CommentsSidebarProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [activeCommentId, comments, editor, setActiveComment, deleteComment]);
 
+  // No comments and not manually expanded — render nothing
+  if (collapsed && !hasComments) {
+    return null;
+  }
+
   // Collapsed state: thin strip with expand button
   if (collapsed) {
     return (
       <div className="comments-sidebar-collapsed">
         <button
           className="comments-sidebar-expand-btn"
-          onClick={() => setCollapsed(false)}
+          onClick={() => setUserOverride(true)}
           title="Show comments"
         >
           <ChevronsLeft size={18} />
@@ -177,7 +187,7 @@ export function CommentsSidebar({ editor }: CommentsSidebarProps) {
         </span>
         <button
           className="comments-sidebar-collapse-btn"
-          onClick={() => setCollapsed(true)}
+          onClick={() => setUserOverride(false)}
           title="Hide comments"
         >
           <ChevronsRight size={18} />

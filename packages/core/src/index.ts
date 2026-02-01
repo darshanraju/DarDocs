@@ -41,6 +41,11 @@ export {
 // Persistence
 export type { DocumentPersistence } from './persistence';
 export { LocalFilePersistence } from './LocalFilePersistence';
+export { IndexedDBPersistence } from './IndexedDBPersistence';
+
+// Database
+export { db } from './db';
+export type { DocTreeNode } from './db';
 
 // Slash commands
 export type { SlashCommandDefinition } from './slashCommands';
