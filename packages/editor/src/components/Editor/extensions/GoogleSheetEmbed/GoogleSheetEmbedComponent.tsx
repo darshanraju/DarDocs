@@ -2,6 +2,7 @@ import { useCallback, useState, useRef, useEffect } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { Table2, ExternalLink, Trash2, Link, RefreshCw } from 'lucide-react';
+import { RoadmapTooltip } from '../../../UI/RoadmapTooltip';
 
 export function GoogleSheetEmbedComponent({
   node,
@@ -72,7 +73,8 @@ export function GoogleSheetEmbedComponent({
   }, [isResizing, updateAttributes]);
 
   return (
-    <NodeViewWrapper className="my-4">
+    <NodeViewWrapper className="my-4 relative">
+      <RoadmapTooltip blockName="googleSheetEmbed" />
       <div
         className={`gsheet-embed-wrapper group ${selected ? 'ring-2 ring-blue-500' : ''}`}
       >

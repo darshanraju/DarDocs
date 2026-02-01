@@ -13,6 +13,7 @@ import {
   Cancel01Icon,
 } from '@hugeicons/core-free-icons';
 import { openImagePicker, readFileAsDataURL } from './mediaUtils';
+import { RoadmapTooltip } from '../../../UI/RoadmapTooltip';
 
 export function MediaBlockComponent({
   node,
@@ -162,7 +163,8 @@ export function MediaBlockComponent({
   const showControls = (isHovered || selected) && editor.isEditable;
 
   return (
-    <NodeViewWrapper className="media-block" data-drag-handle>
+    <NodeViewWrapper className="media-block relative" data-drag-handle>
+      <RoadmapTooltip blockName="mediaBlock" />
       <div
         ref={wrapperRef}
         className="media-block-wrapper"

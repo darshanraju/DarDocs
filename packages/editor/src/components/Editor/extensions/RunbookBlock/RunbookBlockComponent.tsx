@@ -9,6 +9,7 @@ import { RunbookStepItem } from './RunbookStep';
 import { useCommentStore } from '../../../../stores/commentStore';
 import { useWorkspaceConfigStore } from '../../../../stores/workspaceConfigStore';
 import { useRunbookExecution } from '../../../../hooks/useRunbookExecution';
+import { RoadmapTooltip } from '../../../UI/RoadmapTooltip';
 
 export function RunbookBlockComponent({
   node,
@@ -285,7 +286,8 @@ export function RunbookBlockComponent({
   const isAutoRunning = executionMode === 'auto' && typedStatus === 'running';
 
   return (
-    <NodeViewWrapper className="my-4">
+    <NodeViewWrapper className="my-4 relative">
+      <RoadmapTooltip blockName="runbookBlock" />
       <div className={`runbook-block-wrapper ${selected ? 'is-selected' : ''}`}>
         {/* Drag handle */}
         <div className="embed-drag-handle" data-drag-handle>

@@ -8,6 +8,7 @@ import { Delete01Icon, Maximize01Icon, Minimize01Icon, Drag01Icon } from '@hugei
 import { throttle } from 'lodash-es';
 import { useBoardStore } from '../../../../stores/boardStore';
 import { BOARD_SAVE_DEBOUNCE_MS } from '@dardocs/core';
+import { RoadmapTooltip } from '../../../UI/RoadmapTooltip';
 
 import 'tldraw/tldraw.css';
 
@@ -130,7 +131,8 @@ export function BoardBlockComponent({ node, updateAttributes, deleteNode, select
     : 'board-block-wrapper relative';
 
   return (
-    <NodeViewWrapper className="my-4">
+    <NodeViewWrapper className="my-4 relative">
+      <RoadmapTooltip blockName="boardBlock" />
       <div
         ref={containerRef}
         className={containerClasses}

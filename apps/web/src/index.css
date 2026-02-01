@@ -6519,3 +6519,180 @@ html, body {
   margin: 0 auto;
   padding: 0 24px;
 }
+
+/* ============================================================
+   Roadmap Tooltip (dev feature-planning overlay on blocks)
+   ============================================================ */
+
+.roadmap-tooltip-anchor {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 30;
+}
+
+.roadmap-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--color-accent, #3370ff);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  border: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Show badge when hovering the block wrapper (NodeViewWrapper) */
+[class*="NodeViewWrapper"]:hover > .roadmap-tooltip-anchor > .roadmap-badge,
+.ProseMirror [draggable="true"]:hover > .roadmap-tooltip-anchor > .roadmap-badge,
+div[data-node-view-wrapper]:hover > .roadmap-tooltip-anchor > .roadmap-badge,
+.my-4:hover > .roadmap-tooltip-anchor > .roadmap-badge,
+.media-block:hover > .roadmap-tooltip-anchor > .roadmap-badge,
+.exec-code-block:hover > .roadmap-tooltip-anchor > .roadmap-badge,
+.roadmap-tooltip-anchor:hover > .roadmap-badge {
+  opacity: 1;
+}
+
+.roadmap-panel {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: var(--color-bg, #fff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 0;
+  z-index: 40;
+}
+
+.roadmap-panel-header {
+  padding: 10px 14px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted, #9ca3af);
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.roadmap-panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+
+.roadmap-entry {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--color-border-light, #f3f4f6);
+}
+
+.roadmap-entry:last-child {
+  border-bottom: none;
+}
+
+.roadmap-entry-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.roadmap-priority {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.roadmap-priority-high {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.roadmap-priority-medium {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.roadmap-priority-low {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.roadmap-effort {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-text-muted, #9ca3af);
+  background: var(--color-bg-secondary, #f9fafb);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.roadmap-entry-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text, #111827);
+  margin-bottom: 2px;
+}
+
+.roadmap-entry-desc {
+  font-size: 12px;
+  color: var(--color-text-secondary, #6b7280);
+  line-height: 1.4;
+}
+
+.roadmap-entry-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.roadmap-tag {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--color-accent-light, #eff6ff);
+  color: var(--color-accent, #3370ff);
+}
+
+/* Dark mode overrides */
+[data-theme="dark"] .roadmap-panel {
+  background: var(--color-bg, #1f2937);
+  border-color: var(--color-border, #374151);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .roadmap-priority-high {
+  background: #451a1a;
+  color: #f87171;
+}
+
+[data-theme="dark"] .roadmap-priority-medium {
+  background: #451a03;
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .roadmap-priority-low {
+  background: #052e16;
+  color: #4ade80;
+}
+
+[data-theme="dark"] .roadmap-tag {
+  background: #1e3a5f;
+  color: #93c5fd;
+}

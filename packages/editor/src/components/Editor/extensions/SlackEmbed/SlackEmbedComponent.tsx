@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { MessageSquare, ExternalLink, Trash2, Hash, Link } from 'lucide-react';
+import { RoadmapTooltip } from '../../../UI/RoadmapTooltip';
 
 export function SlackEmbedComponent({ node, deleteNode, selected }: NodeViewProps) {
   const { url, channel, workspace } = node.attrs;
@@ -27,7 +28,8 @@ export function SlackEmbedComponent({ node, deleteNode, selected }: NodeViewProp
   );
 
   return (
-    <NodeViewWrapper className="my-4">
+    <NodeViewWrapper className="my-4 relative">
+      <RoadmapTooltip blockName="slackEmbed" />
       <div
         className={`slack-embed-wrapper ${selected ? 'ring-2 ring-blue-500' : ''}`}
       >

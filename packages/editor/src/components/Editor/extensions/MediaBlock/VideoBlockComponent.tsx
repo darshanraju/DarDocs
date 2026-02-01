@@ -11,6 +11,7 @@ import {
   Upload01Icon,
 } from '@hugeicons/core-free-icons';
 import { openVideoPicker, readFileAsDataURL } from './mediaUtils';
+import { RoadmapTooltip } from '../../../UI/RoadmapTooltip';
 
 export function VideoBlockComponent({
   node,
@@ -147,7 +148,8 @@ export function VideoBlockComponent({
   const showControls = (isHovered || selected) && editor.isEditable;
 
   return (
-    <NodeViewWrapper className="media-block" data-drag-handle>
+    <NodeViewWrapper className="media-block relative" data-drag-handle>
+      <RoadmapTooltip blockName="videoBlock" />
       <div
         ref={wrapperRef}
         className="media-block-wrapper"
