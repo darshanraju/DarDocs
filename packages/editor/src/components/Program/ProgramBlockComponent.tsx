@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import {
@@ -44,7 +45,9 @@ export function ProgramBlockComponent(props: NodeViewProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState('');
   const titleInputRef = useRef<HTMLInputElement>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
   const initializedRef = useRef(false);
+  const [panelPos, setPanelPos] = useState<{ top: number; right: number } | null>(null);
 
   const programName = program?.name || 'Untitled Program';
 
@@ -121,6 +124,11 @@ export function ProgramBlockComponent(props: NodeViewProps) {
 
   const handleNodeClick = useCallback((_: any, node: any) => {
     setSelectedNodeId(node.id);
+    // Compute panel position from canvas bounds for portal rendering
+    if (canvasRef.current) {
+      const rect = canvasRef.current.getBoundingClientRect();
+      setPanelPos({ top: rect.top + 8, right: window.innerWidth - rect.right + 8 });
+    }
   }, []);
 
   const handlePaneClick = useCallback(() => {
@@ -314,7 +322,7 @@ export function ProgramBlockComponent(props: NodeViewProps) {
       )}
 
       {!collapsed && (
-        <div className={`program-block-canvas ${isFullscreen ? 'program-block-canvas-fullscreen' : ''}`} contentEditable={false}>
+        <div ref={canvasRef} className={`program-block-canvas ${isFullscreen ? 'program-block-canvas-fullscreen' : ''}`} contentEditable={false}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -333,16 +341,6 @@ export function ProgramBlockComponent(props: NodeViewProps) {
             <Controls showInteractive={false} />
           </ReactFlow>
 
-          {selectedNode && selectedPlugin && (
-            <NodeConfigPanel
-              programId={programId}
-              nodeId={selectedNode.id}
-              plugin={selectedPlugin}
-              config={selectedNode.data.config}
-              onClose={() => setSelectedNodeId(null)}
-            />
-          )}
-
           {selectedNodeId && (
             <button
               className="program-delete-node-btn"
@@ -354,6 +352,22 @@ export function ProgramBlockComponent(props: NodeViewProps) {
             </button>
           )}
         </div>
+      )}
+
+      {selectedNode && selectedPlugin && panelPos && createPortal(
+        <div
+          className="program-config-portal"
+          style={{ position: 'fixed', top: panelPos.top, right: panelPos.right, zIndex: 10000 }}
+        >
+          <NodeConfigPanel
+            programId={programId}
+            nodeId={selectedNode.id}
+            plugin={selectedPlugin}
+            config={selectedNode.data.config}
+            onClose={() => setSelectedNodeId(null)}
+          />
+        </div>,
+        document.body
       )}
 
       {runResult && !isFullscreen && (
