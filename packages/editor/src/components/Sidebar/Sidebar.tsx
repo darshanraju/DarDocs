@@ -270,6 +270,17 @@ export function Sidebar() {
         </button>
       </div>
 
+      <div className="sidebar-templates">
+        <div className="sidebar-templates-label">Templates</div>
+        <button
+          className="sidebar-template-btn"
+          onClick={() => navigate('/templates/god-mode')}
+        >
+          <span className="sidebar-template-icon">🔮</span>
+          <span>God Mode</span>
+        </button>
+      </div>
+
       <nav className="sidebar-nav">
         {loading ? (
           <div className="sidebar-empty">Loading...</div>

@@ -48,3 +48,7 @@ export { ImportDocx } from './components/FileHandler/ImportDocx';
 
 // UI primitives
 export { Button, Dropdown, Modal, Tooltip, EmojiPicker, DocumentIcon } from './components/UI';
+
+// Templates
+export { GodModeTemplate } from './components/Templates/GodModeTemplate';
+export { useGodModeStore } from './stores/godModeStore';
