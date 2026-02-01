@@ -1,12 +1,28 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import { ExternalLink, Trash2, GripVertical, Link, ChevronLeft, Activity } from 'lucide-react';
+import {
+  ExternalLink,
+  Trash2,
+  GripVertical,
+  Link,
+  ChevronLeft,
+  Activity,
+  Sparkles,
+  Loader2,
+  Search,
+  Settings,
+} from 'lucide-react';
 import {
   MONITOR_PROVIDERS,
   MONITOR_PROVIDER_LIST,
 } from '@dardocs/core';
 import type { MonitorProviderId, MonitorProviderConfig } from '@dardocs/core';
+import { useWorkspaceConfigStore } from '../../../../stores/workspaceConfigStore';
+import { discoverMetrics } from '../../../../services/metricScanner';
+import type { DiscoveredMetric } from '../../../../services/metricScanner';
+import { generateGrafanaPanel } from '../../../../services/aiClient';
+import { createDashboard } from '../../../../services/grafanaApi';
 
 // Provider icon components (inline SVGs for brand accuracy)
 function GrafanaIcon({ className }: { className?: string }) {
@@ -48,6 +64,10 @@ const PROVIDER_ICONS: Record<MonitorProviderId, (props: { className?: string }) 
   pagerduty: PagerDutyIcon,
 };
 
+/* ================================================================== */
+/*  Main component                                                     */
+/* ================================================================== */
+
 export function MonitorBlockComponent({ node, updateAttributes, deleteNode, selected }: NodeViewProps) {
   const { provider, url } = node.attrs as { provider: MonitorProviderId | null; url: string | null };
 
@@ -79,7 +99,7 @@ export function MonitorBlockComponent({ node, updateAttributes, deleteNode, sele
 
   const config = MONITOR_PROVIDERS[provider];
 
-  // Provider selected but no URL — show URL input
+  // Provider selected but no URL — show input/create UI
   if (!url) {
     return (
       <NodeViewWrapper className="my-4">
@@ -111,7 +131,12 @@ export function MonitorBlockComponent({ node, updateAttributes, deleteNode, sele
               </button>
             </div>
           </div>
-          <UrlInput config={config} onSubmit={(u) => updateAttributes({ url: u })} onCancel={() => deleteNode()} />
+          <ProviderInput
+            provider={provider}
+            config={config}
+            onUrlSubmit={(u) => updateAttributes({ url: u })}
+            onCancel={() => deleteNode()}
+          />
         </div>
       </NodeViewWrapper>
     );
@@ -195,7 +220,75 @@ function ProviderPicker({ onSelect }: { onSelect: (id: MonitorProviderId) => voi
 }
 
 /* ------------------------------------------------------------------ */
-/*  URL input                                                          */
+/*  Provider input — combines URL embed + AI create tabs               */
+/* ------------------------------------------------------------------ */
+
+function ProviderInput({
+  provider,
+  config,
+  onUrlSubmit,
+  onCancel,
+}: {
+  provider: MonitorProviderId;
+  config: MonitorProviderConfig;
+  onUrlSubmit: (url: string) => void;
+  onCancel: () => void;
+}) {
+  const { config: wsConfig, openSettings } = useWorkspaceConfigStore();
+
+  const hasGrafanaCreds = !!wsConfig.providers.grafana;
+  const hasAI = !!wsConfig.ai;
+  const hasRepos = wsConfig.repos.length > 0;
+  const canCreate = provider === 'grafana' && hasGrafanaCreds && hasAI;
+
+  const [activeTab, setActiveTab] = useState<'embed' | 'create'>(canCreate ? 'create' : 'embed');
+
+  return (
+    <div>
+      {/* Tab bar — only show if Create mode is possible */}
+      {provider === 'grafana' && (
+        <div className="monitor-input-tabs">
+          <button
+            className={`monitor-input-tab ${activeTab === 'embed' ? 'is-active' : ''}`}
+            onClick={() => setActiveTab('embed')}
+          >
+            <Link className="w-3.5 h-3.5" />
+            Embed URL
+          </button>
+          <button
+            className={`monitor-input-tab ${activeTab === 'create' ? 'is-active' : ''}`}
+            onClick={() => canCreate ? setActiveTab('create') : openSettings()}
+            title={canCreate ? 'Create with AI' : 'Configure in Settings'}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Create
+            {!canCreate && <Settings className="w-3 h-3 opacity-50" />}
+          </button>
+        </div>
+      )}
+
+      {activeTab === 'embed' ? (
+        <UrlInput config={config} onSubmit={onUrlSubmit} onCancel={onCancel} />
+      ) : canCreate ? (
+        <CreatePanel
+          wsConfig={wsConfig}
+          onCreated={onUrlSubmit}
+          onCancel={onCancel}
+        />
+      ) : (
+        <ConfigNeeded
+          hasGrafanaCreds={hasGrafanaCreds}
+          hasAI={hasAI}
+          hasRepos={hasRepos}
+          onOpenSettings={openSettings}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  URL input (existing embed flow)                                    */
 /* ------------------------------------------------------------------ */
 
 function UrlInput({
@@ -263,7 +356,230 @@ function UrlInput({
         </button>
       </div>
       {error && <div className="embed-input-error">{error}</div>}
-      <div className="embed-input-hint">Paste a URL and press Enter · Escape to cancel</div>
+      <div className="embed-input-hint">Paste a URL and press Enter</div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  AI create panel                                                    */
+/* ------------------------------------------------------------------ */
+
+interface WsConfig {
+  repos: { id: string; name: string; owner: string; repo: string; token?: string; url: string; addedAt: string }[];
+  providers: { grafana?: { url: string; apiKey: string; defaultDataSourceUid?: string } };
+  ai: { provider: 'anthropic' | 'openai'; apiKey: string; model?: string } | null;
+}
+
+function CreatePanel({
+  wsConfig,
+  onCreated,
+  onCancel,
+}: {
+  wsConfig: WsConfig;
+  onCreated: (url: string) => void;
+  onCancel: () => void;
+}) {
+  const [prompt, setPrompt] = useState('');
+  const [status, setStatus] = useState<'idle' | 'scanning' | 'generating' | 'creating' | 'done' | 'error'>('idle');
+  const [statusMsg, setStatusMsg] = useState('');
+  const [metrics, setMetrics] = useState<DiscoveredMetric[]>([]);
+  const [metricsLoaded, setMetricsLoaded] = useState(false);
+  const [error, setError] = useState('');
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  const handleDiscoverMetrics = useCallback(async () => {
+    if (wsConfig.repos.length === 0) {
+      setError('No repositories connected. Add repos in Workspace Settings.');
+      return;
+    }
+
+    setStatus('scanning');
+    setError('');
+    try {
+      const found = await discoverMetrics(wsConfig.repos, setStatusMsg);
+      setMetrics(found);
+      setMetricsLoaded(true);
+      setStatus('idle');
+      setStatusMsg(`Found ${found.length} metrics`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to scan repos');
+      setStatus('idle');
+    }
+  }, [wsConfig.repos]);
+
+  const handleCreate = useCallback(async () => {
+    if (!prompt.trim()) return;
+    if (!wsConfig.ai || !wsConfig.providers.grafana) return;
+
+    setError('');
+
+    // Step 1: Discover metrics if not already done
+    let currentMetrics = metrics;
+    if (!metricsLoaded && wsConfig.repos.length > 0) {
+      setStatus('scanning');
+      try {
+        currentMetrics = await discoverMetrics(wsConfig.repos, setStatusMsg);
+        setMetrics(currentMetrics);
+        setMetricsLoaded(true);
+      } catch {
+        // Continue without metrics — the LLM can still try
+      }
+    }
+
+    // Step 2: Generate panel JSON via AI
+    setStatus('generating');
+    setStatusMsg('AI is building your panel...');
+    let panel;
+    try {
+      panel = await generateGrafanaPanel(prompt.trim(), currentMetrics, wsConfig.ai);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'AI generation failed');
+      setStatus('idle');
+      return;
+    }
+
+    // Step 3: Create dashboard via Grafana API
+    setStatus('creating');
+    setStatusMsg('Creating dashboard in Grafana...');
+    try {
+      const dashboardUrl = await createDashboard(
+        wsConfig.providers.grafana,
+        panel,
+        wsConfig.providers.grafana.defaultDataSourceUid,
+      );
+      setStatus('done');
+      onCreated(dashboardUrl);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create dashboard');
+      setStatus('idle');
+    }
+  }, [prompt, metrics, metricsLoaded, wsConfig, onCreated]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        handleCreate();
+      }
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onCancel();
+      }
+    },
+    [handleCreate, onCancel]
+  );
+
+  const isWorking = status === 'scanning' || status === 'generating' || status === 'creating';
+
+  return (
+    <div className="monitor-create-panel">
+      <textarea
+        ref={inputRef}
+        value={prompt}
+        onChange={(e) => setPrompt(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Describe the dashboard you want... e.g. &quot;Show HTTP request rate by endpoint over the last 6 hours&quot;"
+        className="monitor-create-input"
+        rows={3}
+        disabled={isWorking}
+      />
+
+      {/* Metrics discovery section */}
+      {metricsLoaded && metrics.length > 0 && (
+        <div className="monitor-metrics-summary">
+          <span className="monitor-metrics-count">{metrics.length} metrics discovered</span>
+          <div className="monitor-metrics-list">
+            {metrics.slice(0, 8).map((m) => (
+              <span key={m.name} className="monitor-metric-chip" title={`${m.type} from ${m.repo}`}>
+                {m.name}
+              </span>
+            ))}
+            {metrics.length > 8 && (
+              <span className="monitor-metric-chip monitor-metric-more">
+                +{metrics.length - 8} more
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Status / progress */}
+      {isWorking && (
+        <div className="monitor-create-status">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>{statusMsg}</span>
+        </div>
+      )}
+
+      {error && <div className="embed-input-error">{error}</div>}
+
+      <div className="monitor-create-actions">
+        <div className="monitor-create-actions-left">
+          <button
+            onClick={handleDiscoverMetrics}
+            className="monitor-create-discover-btn"
+            disabled={isWorking || wsConfig.repos.length === 0}
+            title={wsConfig.repos.length === 0 ? 'Add repos in Settings first' : 'Scan repos for metrics'}
+          >
+            <Search className="w-3.5 h-3.5" />
+            {metricsLoaded ? 'Rescan' : 'Discover Metrics'}
+          </button>
+        </div>
+        <button
+          onClick={handleCreate}
+          className="monitor-create-submit-btn"
+          disabled={isWorking || !prompt.trim()}
+        >
+          {isWorking ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Sparkles className="w-4 h-4" />
+          )}
+          Create Dashboard
+        </button>
+      </div>
+
+      <div className="embed-input-hint">
+        {String.fromCharCode(8984)}+Enter to create · Escape to cancel
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Configuration needed prompt                                        */
+/* ------------------------------------------------------------------ */
+
+function ConfigNeeded({
+  hasGrafanaCreds,
+  hasAI,
+  hasRepos,
+  onOpenSettings,
+}: {
+  hasGrafanaCreds: boolean;
+  hasAI: boolean;
+  hasRepos: boolean;
+  onOpenSettings: () => void;
+}) {
+  return (
+    <div className="monitor-config-needed">
+      <div className="monitor-config-needed-text">
+        To create dashboards with AI, configure the following in Workspace Settings:
+      </div>
+      <ul className="monitor-config-needed-list">
+        {!hasGrafanaCreds && <li>Grafana instance URL and API key</li>}
+        {!hasAI && <li>AI provider API key (Anthropic or OpenAI)</li>}
+        {!hasRepos && <li>At least one GitHub repository (for metric discovery)</li>}
+      </ul>
+      <button onClick={onOpenSettings} className="monitor-config-needed-btn">
+        <Settings className="w-4 h-4" />
+        Open Settings
+      </button>
     </div>
   );
 }

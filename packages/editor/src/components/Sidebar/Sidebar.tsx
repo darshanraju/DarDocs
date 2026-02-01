@@ -10,10 +10,13 @@ import {
   FilePlus,
   ChevronsLeft,
   AlignLeft,
+  Settings,
 } from 'lucide-react';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
+import { useWorkspaceConfigStore } from '../../stores/workspaceConfigStore';
 import type { TreeNode } from '../../stores/workspaceStore';
 import { DarkModeToggle } from '../TableOfContents/DarkModeToggle';
+import { SettingsModal } from '../Settings/SettingsModal';
 import { useNavigate, useParams } from 'react-router';
 
 export function Sidebar() {
@@ -29,6 +32,8 @@ export function Sidebar() {
     setActiveDocId,
   } = useWorkspaceStore();
 
+  const { openSettings, loadConfig } = useWorkspaceConfigStore();
+
   const navigate = useNavigate();
   const params = useParams<{ docId: string }>();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -43,7 +48,8 @@ export function Sidebar() {
 
   useEffect(() => {
     loadTree();
-  }, [loadTree]);
+    loadConfig();
+  }, [loadTree, loadConfig]);
 
   // Sync activeDocId with route
   useEffect(() => {
@@ -237,6 +243,13 @@ export function Sidebar() {
           <Plus className="w-4 h-4" />
           <span>New page</span>
         </button>
+        <button
+          className="sidebar-settings-btn"
+          onClick={openSettings}
+          title="Workspace settings"
+        >
+          <Settings className="w-4 h-4" />
+        </button>
       </div>
 
       <nav className="sidebar-nav">
@@ -250,6 +263,8 @@ export function Sidebar() {
           tree.map((node) => renderNode(node, 0))
         )}
       </nav>
+
+      <SettingsModal />
 
       {/* Context menu */}
       {contextMenu && (
