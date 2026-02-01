@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { X } from 'lucide-react';
 import type { ConfigField, NodeTypePlugin } from '../registry';
 import { useProgramStore } from '../programStore';
@@ -10,6 +10,13 @@ interface NodeConfigPanelProps {
   config: Record<string, any>;
   onClose: () => void;
 }
+
+// Prevent ProseMirror / React Flow from intercepting events on form controls
+const stopEvents = {
+  onMouseDown: (e: React.MouseEvent) => e.stopPropagation(),
+  onKeyDown: (e: React.KeyboardEvent) => e.stopPropagation(),
+  onKeyUp: (e: React.KeyboardEvent) => e.stopPropagation(),
+};
 
 function ConfigFieldInput({
   field,
@@ -29,6 +36,7 @@ function ConfigFieldInput({
           value={value ?? field.defaultValue ?? ''}
           placeholder={field.placeholder}
           onChange={(e) => onChange(e.target.value)}
+          {...stopEvents}
         />
       );
     case 'text':
@@ -39,6 +47,7 @@ function ConfigFieldInput({
           placeholder={field.placeholder}
           rows={4}
           onChange={(e) => onChange(e.target.value)}
+          {...stopEvents}
         />
       );
     case 'number':
@@ -49,6 +58,7 @@ function ConfigFieldInput({
           value={value ?? field.defaultValue ?? ''}
           placeholder={field.placeholder}
           onChange={(e) => onChange(Number(e.target.value))}
+          {...stopEvents}
         />
       );
     case 'select':
@@ -57,6 +67,7 @@ function ConfigFieldInput({
           className="program-config-select"
           value={value ?? field.defaultValue ?? ''}
           onChange={(e) => onChange(e.target.value)}
+          {...stopEvents}
         >
           {field.options?.map((opt) => (
             <option key={opt} value={opt}>
@@ -67,7 +78,7 @@ function ConfigFieldInput({
       );
     case 'boolean':
       return (
-        <label className="program-config-checkbox">
+        <label className="program-config-checkbox" {...stopEvents}>
           <input
             type="checkbox"
             checked={value ?? field.defaultValue ?? false}
