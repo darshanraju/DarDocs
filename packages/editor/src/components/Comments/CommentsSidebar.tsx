@@ -130,7 +130,8 @@ export function CommentsSidebar({ editor }: CommentsSidebarProps) {
       if (
         !target?.closest?.('.comments-sidebar') &&
         !target?.closest?.('.comment-highlight') &&
-        !target?.closest?.('.add-comment-bubble')
+        !target?.closest?.('.add-comment-bubble') &&
+        !target?.closest?.('.floating-toolbar')
       ) {
         if (activeCommentId) {
           const activeComment = comments.find(
