@@ -3269,11 +3269,13 @@ html, body {
    Executable Code Block
    ============================================================ */
 
+/* ── Executable Code Block ────────────────────────────── */
+
 .exec-code-block {
   margin: 1rem 0;
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  overflow: hidden;
+  overflow: visible;
   background: var(--color-bg-muted);
 }
 
@@ -3284,14 +3286,86 @@ html, body {
   padding: 6px 12px;
   background: var(--color-bg-muted);
   border-bottom: 1px solid var(--color-border);
+  user-select: none;
 }
 
-.exec-code-lang {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  font-family: monospace;
-  text-transform: lowercase;
+/* ── Language Picker ───────────────────────────────────── */
+
+.exec-code-lang-picker {
+  position: relative;
 }
+
+.exec-code-lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.exec-code-lang-btn:hover {
+  border-color: var(--color-text-muted);
+  background: var(--color-bg);
+}
+
+.exec-code-lang-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 50;
+  min-width: 160px;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 4px;
+}
+
+.exec-code-lang-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 6px 10px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--color-text);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.exec-code-lang-option:hover {
+  background: var(--color-bg-muted);
+}
+
+.exec-code-lang-option.active {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+  font-weight: 500;
+}
+
+.exec-code-lang-runnable {
+  font-size: 0.65rem;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
+  font-weight: 500;
+}
+
+/* ── Run Button ─────────────────────────────────────── */
 
 .exec-code-run-btn {
   display: flex;
@@ -3321,6 +3395,8 @@ html, body {
   animation: auth-spin 0.8s linear infinite;
 }
 
+/* ── Code Area ──────────────────────────────────────── */
+
 .exec-code-pre {
   margin: 0;
   padding: 12px 16px;
@@ -3329,51 +3405,84 @@ html, body {
   overflow-x: auto;
 }
 
-.exec-code-pre code {
+.exec-code-pre code,
+.exec-code-content {
   font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
 }
 
-.exec-code-output {
+/* ── Result Section ─────────────────────────────────── */
+
+.exec-code-result {
   border-top: 1px solid var(--color-border);
 }
 
-.exec-code-output-header {
+.exec-code-result-label {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
+  justify-content: space-between;
+  padding: 8px 12px;
   font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--color-bg-muted);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.exec-code-result-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 0.65rem;
   font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
-.exec-code-output-ok .exec-code-output-header {
-  color: #22c55e;
-  background: rgba(34, 197, 94, 0.08);
+.exec-code-result-badge-ok {
+  background: rgba(34, 197, 94, 0.12);
+  color: #16a34a;
 }
 
-.exec-code-output-err .exec-code-output-header {
-  color: var(--color-danger);
+.exec-code-result-badge-err {
   background: var(--color-bg-danger-subtle);
+  color: var(--color-danger);
+}
+
+.exec-code-result-badge-warn {
+  background: rgba(234, 179, 8, 0.12);
+  color: #ca8a04;
+}
+
+.exec-code-result-body {
+  background: var(--color-bg);
 }
 
 .exec-code-stdout {
   margin: 0;
-  padding: 8px 16px;
+  padding: 10px 16px;
   font-size: 0.8125rem;
   font-family: 'SF Mono', 'Fira Code', monospace;
-  line-height: 1.5;
+  line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
   color: var(--color-text);
-  background: var(--color-bg);
+}
+
+.exec-code-no-output {
+  color: var(--color-text-muted);
+  font-style: italic;
 }
 
 .exec-code-stderr {
   margin: 0;
-  padding: 8px 16px;
+  padding: 10px 16px;
   font-size: 0.8125rem;
   font-family: 'SF Mono', 'Fira Code', monospace;
-  line-height: 1.5;
+  line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
   color: var(--color-danger);

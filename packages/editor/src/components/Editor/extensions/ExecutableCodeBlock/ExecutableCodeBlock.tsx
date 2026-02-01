@@ -1,35 +1,42 @@
 import { useState, useCallback } from 'react';
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import { Play, Loader2, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { Play, Loader2, CheckCircle2, XCircle, Clock, ChevronDown } from 'lucide-react';
 import { executeApi } from '../../../../lib/api.js';
+
+const SUPPORTED_LANGUAGES = [
+  { value: 'javascript', label: 'JavaScript' },
+  { value: 'python', label: 'Python' },
+  { value: 'bash', label: 'Bash' },
+  { value: 'typescript', label: 'TypeScript' },
+  { value: 'html', label: 'HTML' },
+  { value: 'css', label: 'CSS' },
+  { value: 'json', label: 'JSON' },
+  { value: 'sql', label: 'SQL' },
+  { value: 'yaml', label: 'YAML' },
+  { value: 'markdown', label: 'Markdown' },
+];
+
+const EXECUTABLE_LANGS = new Set(['javascript', 'typescript', 'python', 'bash']);
 
 const LANG_MAP: Record<string, string> = {
   javascript: 'javascript',
-  js: 'javascript',
   typescript: 'javascript',
-  ts: 'javascript',
   python: 'python',
-  py: 'python',
   bash: 'bash',
-  sh: 'bash',
-  shell: 'bash',
 };
 
 function getLanguage(node: NodeViewProps['node']): string {
   return node.attrs.language || 'javascript';
 }
 
-function isExecutable(lang: string): boolean {
-  return lang.toLowerCase() in LANG_MAP;
-}
-
 export function ExecutableCodeBlock(props: NodeViewProps) {
-  const { node } = props;
+  const { node, updateAttributes } = props;
   const language = getLanguage(node);
-  const executable = isExecutable(language);
+  const executable = EXECUTABLE_LANGS.has(language.toLowerCase());
 
   const [running, setRunning] = useState(false);
+  const [showLangMenu, setShowLangMenu] = useState(false);
   const [output, setOutput] = useState<{
     stdout: string;
     stderr: string;
@@ -37,7 +44,10 @@ export function ExecutableCodeBlock(props: NodeViewProps) {
     timedOut: boolean;
   } | null>(null);
 
-  const handleRun = useCallback(async () => {
+  const handleRun = useCallback(async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
     const code = node.textContent;
     if (!code.trim()) return;
 
@@ -62,13 +72,47 @@ export function ExecutableCodeBlock(props: NodeViewProps) {
     }
   }, [node, language]);
 
+  const handleSelectLang = useCallback((lang: string) => {
+    updateAttributes({ language: lang });
+    setShowLangMenu(false);
+  }, [updateAttributes]);
+
+  const displayLabel = SUPPORTED_LANGUAGES.find(l => l.value === language)?.label || language;
+
   return (
     <NodeViewWrapper className="exec-code-block">
-      <div className="exec-code-header">
-        <span className="exec-code-lang">{language}</span>
+      <div className="exec-code-header" contentEditable={false}>
+        <div className="exec-code-lang-picker">
+          <button
+            className="exec-code-lang-btn"
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowLangMenu(!showLangMenu); }}
+          >
+            {displayLabel}
+            <ChevronDown size={12} />
+          </button>
+          {showLangMenu && (
+            <div className="exec-code-lang-menu">
+              {SUPPORTED_LANGUAGES.map((lang) => (
+                <button
+                  key={lang.value}
+                  className={`exec-code-lang-option ${lang.value === language ? 'active' : ''}`}
+                  onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleSelectLang(lang.value); }}
+                >
+                  {lang.label}
+                  {EXECUTABLE_LANGS.has(lang.value) && (
+                    <span className="exec-code-lang-runnable">runnable</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         {executable && (
           <button
             className="exec-code-run-btn"
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
             onClick={handleRun}
             disabled={running}
             title="Run code"
@@ -86,34 +130,40 @@ export function ExecutableCodeBlock(props: NodeViewProps) {
         <NodeViewContent as="div" className="exec-code-content" />
       </pre>
       {output && (
-        <div className={`exec-code-output ${output.exitCode === 0 ? 'exec-code-output-ok' : 'exec-code-output-err'}`}>
-          <div className="exec-code-output-header">
+        <div
+          className={`exec-code-result ${output.exitCode === 0 ? 'exec-code-result-ok' : 'exec-code-result-err'}`}
+          contentEditable={false}
+        >
+          <div className="exec-code-result-label">
+            <span>Result</span>
             {output.timedOut ? (
-              <>
-                <Clock size={14} />
-                <span>Timed out (10s limit)</span>
-              </>
+              <span className="exec-code-result-badge exec-code-result-badge-warn">
+                <Clock size={12} />
+                Timed out
+              </span>
             ) : output.exitCode === 0 ? (
-              <>
-                <CheckCircle2 size={14} />
-                <span>Success</span>
-              </>
+              <span className="exec-code-result-badge exec-code-result-badge-ok">
+                <CheckCircle2 size={12} />
+                Success
+              </span>
             ) : (
-              <>
-                <XCircle size={14} />
-                <span>Exit code {output.exitCode}</span>
-              </>
+              <span className="exec-code-result-badge exec-code-result-badge-err">
+                <XCircle size={12} />
+                Exit {output.exitCode}
+              </span>
             )}
           </div>
-          {output.stdout && (
-            <pre className="exec-code-stdout">{output.stdout}</pre>
-          )}
-          {output.stderr && (
-            <pre className="exec-code-stderr">{output.stderr}</pre>
-          )}
-          {!output.stdout && !output.stderr && !output.timedOut && (
-            <pre className="exec-code-stdout">(no output)</pre>
-          )}
+          <div className="exec-code-result-body">
+            {output.stdout && (
+              <pre className="exec-code-stdout">{output.stdout}</pre>
+            )}
+            {output.stderr && (
+              <pre className="exec-code-stderr">{output.stderr}</pre>
+            )}
+            {!output.stdout && !output.stderr && !output.timedOut && (
+              <pre className="exec-code-stdout exec-code-no-output">(no output)</pre>
+            )}
+          </div>
         </div>
       )}
     </NodeViewWrapper>
