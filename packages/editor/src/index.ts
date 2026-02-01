@@ -11,6 +11,7 @@ export { useSlashCommands } from './hooks/useSlashCommands';
 
 // Editor
 export { Editor } from './components/Editor/Editor';
+export { SearchBar } from './components/Editor/SearchBar';
 
 // Viewer
 export { DocumentViewer } from './components/Viewer/DocumentViewer';
