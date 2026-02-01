@@ -123,11 +123,16 @@ export function ProgramBlockComponent(props: NodeViewProps) {
   );
 
   const handleNodeClick = useCallback((_: any, node: any) => {
+    console.log('[ProgramBlock] handleNodeClick', node.id);
     setSelectedNodeId(node.id);
     // Compute panel position from canvas bounds for portal rendering
     if (canvasRef.current) {
       const rect = canvasRef.current.getBoundingClientRect();
-      setPanelPos({ top: rect.top + 8, right: window.innerWidth - rect.right + 8 });
+      const pos = { top: rect.top + 8, right: window.innerWidth - rect.right + 8 };
+      console.log('[ProgramBlock] setPanelPos', pos);
+      setPanelPos(pos);
+    } else {
+      console.warn('[ProgramBlock] canvasRef.current is null!');
     }
   }, []);
 
@@ -227,6 +232,9 @@ export function ProgramBlockComponent(props: NodeViewProps) {
   const selectedNode = nodes.find((n) => n.id === selectedNodeId);
   const selectedPlugin = selectedNode ? getNodeType(selectedNode.data.pluginType) : undefined;
   const categorized = useMemo(() => getNodeTypesByCategory(), []);
+
+  // DEBUG: log portal render conditions
+  console.log('[ProgramBlock] render — selectedNode:', !!selectedNode, 'selectedPlugin:', !!selectedPlugin, 'panelPos:', panelPos);
 
   const wrapperClass = isFullscreen ? 'program-block program-block-fullscreen' : 'program-block';
 
