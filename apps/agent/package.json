@@ -1,0 +1,24 @@
+{
+  "name": "@dardocs/agent",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node --import tsx src/index.ts"
+  },
+  "dependencies": {
+    "@dardocs/core": "*",
+    "fastify": "^5.7.2",
+    "@fastify/cors": "^11.2.0",
+    "@fastify/websocket": "^11.2.0",
+    "@anthropic-ai/sdk": "^0.72.0",
+    "openai": "^6.17.0",
+    "dotenv": "^16.5.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "@types/node": "^24.10.1",
+    "typescript": "~5.9.3"
+  }
+}

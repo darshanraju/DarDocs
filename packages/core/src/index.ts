@@ -62,6 +62,16 @@ export type {
   RunbookStepType,
   RunbookStepStatus,
   RunbookStatus,
+  StepAutomation,
+  StepVerdict,
+  AgentMessageType,
+  AgentMessage,
+  ExecuteRunbookPayload,
+  StepStartedPayload,
+  StepDataPayload,
+  StepCompletedPayload,
+  ExecutionCompletedPayload,
+  ExecutionErrorPayload,
 } from './runbookSchema';
 export { createRunbookStep, generateRunbookSummary } from './runbookSchema';
 
