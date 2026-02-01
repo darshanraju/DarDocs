@@ -5,6 +5,9 @@ import { env } from './lib/env.js';
 import { authRoutes } from './routes/auth.js';
 import { workspaceRoutes } from './routes/workspaces.js';
 import { documentRoutes } from './routes/documents.js';
+import { commentRoutes } from './routes/comments.js';
+import { memberRoutes } from './routes/members.js';
+import { executeRoutes } from './routes/execute.js';
 
 const app = Fastify({ logger: true });
 
@@ -22,6 +25,9 @@ app.get('/api/health', async () => ({ status: 'ok' }));
 await app.register(authRoutes);
 await app.register(workspaceRoutes);
 await app.register(documentRoutes);
+await app.register(commentRoutes);
+await app.register(memberRoutes);
+await app.register(executeRoutes);
 
 try {
   await app.listen({ port: env.PORT, host: '0.0.0.0' });

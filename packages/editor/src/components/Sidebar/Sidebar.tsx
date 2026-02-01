@@ -11,11 +11,13 @@ import {
   ChevronsLeft,
   AlignLeft,
   LogOut,
+  Users,
 } from 'lucide-react';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
 import type { TreeNode } from '../../stores/workspaceStore';
 import { useAuthStore } from '../../stores/authStore';
 import { DarkModeToggle } from '../TableOfContents/DarkModeToggle';
+import { ShareModal } from './ShareModal';
 import { useNavigate, useParams } from 'react-router';
 
 export function Sidebar() {
@@ -35,6 +37,7 @@ export function Sidebar() {
   const navigate = useNavigate();
   const params = useParams<{ docId: string }>();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [contextMenu, setContextMenu] = useState<{
     id: string;
     x: number;
@@ -240,6 +243,13 @@ export function Sidebar() {
           <Plus className="w-4 h-4" />
           <span>New page</span>
         </button>
+        <button
+          className="sidebar-share-btn"
+          onClick={() => setShowShareModal(true)}
+          title="Share workspace"
+        >
+          <Users className="w-4 h-4" />
+        </button>
       </div>
 
       <nav className="sidebar-nav">
@@ -303,6 +313,10 @@ export function Sidebar() {
             Delete
           </button>
         </div>
+      )}
+
+      {showShareModal && (
+        <ShareModal onClose={() => setShowShareModal(false)} />
       )}
     </div>
   );

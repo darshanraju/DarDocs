@@ -3,7 +3,7 @@ import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
 import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { ExecutableCodeBlockExtension } from './ExecutableCodeBlock/ExecutableCodeBlockExtension';
 import TextAlign from '@tiptap/extension-text-align';
 import { TextStyle, Color } from '@tiptap/extension-text-style';
 import { Table } from '@tiptap/extension-table';
@@ -55,7 +55,7 @@ export function getExtensions(onSlashCommand: (query: string) => void, onSlashCo
     Highlight.configure({
       multicolor: false,
     }),
-    CodeBlockLowlight.configure({
+    ExecutableCodeBlockExtension.configure({
       lowlight,
     }),
     Table.configure({

@@ -24,11 +24,10 @@ async function request<T>(
 }
 
 export class ApiError extends Error {
-  constructor(
-    message: string,
-    public status: number
-  ) {
+  status: number;
+  constructor(message: string, status: number) {
     super(message);
+    this.status = status;
   }
 }
 
@@ -129,4 +128,118 @@ export const documentsApi = {
 
   delete: (id: string) =>
     request<void>(`/api/documents/${id}`, { method: 'DELETE' }),
+};
+
+// ─── Comments ────────────────────────────────────────────────
+
+export interface ApiComment {
+  id: string;
+  type: 'inline' | 'document';
+  text: string;
+  quotedText: string | null;
+  resolved: boolean;
+  author: { id: string; name: string; avatarUrl: string | null };
+  createdAt: string;
+  replies: ApiCommentReply[];
+}
+
+export interface ApiCommentReply {
+  id: string;
+  text: string;
+  author: { id: string; name: string; avatarUrl: string | null };
+  createdAt: string;
+}
+
+export const commentsApi = {
+  list: (documentId: string) =>
+    request<ApiComment[]>(`/api/documents/${documentId}/comments`),
+
+  create: (
+    documentId: string,
+    data: {
+      id?: string;
+      type?: 'inline' | 'document';
+      text: string;
+      quotedText?: string;
+    }
+  ) =>
+    request<ApiComment>(`/api/documents/${documentId}/comments`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  reply: (commentId: string, text: string) =>
+    request<ApiCommentReply>(`/api/comments/${commentId}/replies`, {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    }),
+
+  update: (commentId: string, data: { text?: string; resolved?: boolean }) =>
+    request<{ ok: boolean }>(`/api/comments/${commentId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+
+  delete: (commentId: string) =>
+    request<void>(`/api/comments/${commentId}`, { method: 'DELETE' }),
+};
+
+// ─── Code Execution ──────────────────────────────────────────
+
+export interface ExecResult {
+  stdout: string;
+  stderr: string;
+  exitCode: number;
+  timedOut: boolean;
+}
+
+export const executeApi = {
+  run: (language: string, code: string) =>
+    request<ExecResult>('/api/execute', {
+      method: 'POST',
+      body: JSON.stringify({ language, code }),
+    }),
+};
+
+// ─── Members ─────────────────────────────────────────────────
+
+export interface WorkspaceMember {
+  id: string;
+  userId: string;
+  name: string;
+  email: string;
+  image: string | null;
+  role: string;
+  joinedAt: string;
+}
+
+export const membersApi = {
+  list: (workspaceId: string) =>
+    request<WorkspaceMember[]>(
+      `/api/workspaces/${workspaceId}/members`
+    ),
+
+  invite: (workspaceId: string, email: string, role?: string) =>
+    request<WorkspaceMember>(
+      `/api/workspaces/${workspaceId}/members`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ email, role: role || 'editor' }),
+      }
+    ),
+
+  updateRole: (workspaceId: string, memberId: string, role: string) =>
+    request<{ ok: boolean }>(
+      `/api/workspaces/${workspaceId}/members/${memberId}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({ role }),
+      }
+    ),
+
+  remove: (workspaceId: string, memberId: string) =>
+    request<void>(
+      `/api/workspaces/${workspaceId}/members/${memberId}`,
+      { method: 'DELETE' }
+    ),
 };

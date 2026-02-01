@@ -12,6 +12,7 @@ import {
   useCommentStore,
   useBoardStore,
   useWorkspaceStore,
+  useAuthStore,
 } from '@dardocs/editor';
 
 export function DocumentPage() {
@@ -22,12 +23,12 @@ export function DocumentPage() {
     document,
     loadDocument,
     updateMetadata,
-    updateContent,
   } = useDocumentStore();
-  const { loadComments } = useCommentStore();
+  const { loadFromApi: loadCommentsFromApi, setCurrentUser } = useCommentStore();
   const { loadBoards } = useBoardStore();
   const { saveDocument, setActiveDocId, loadDocument: loadFromDB } =
     useWorkspaceStore();
+  const authUser = useAuthStore((s) => s.user);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const [editorInstance, setEditorInstance] = useState<TiptapEditor | null>(
     null
@@ -53,7 +54,14 @@ export function DocumentPage() {
     setIsSearchOpen(false);
   }, []);
 
-  // Load document from IndexedDB when docId changes
+  // Set comment author from auth user
+  useEffect(() => {
+    if (authUser) {
+      setCurrentUser({ id: authUser.id, name: authUser.name });
+    }
+  }, [authUser, setCurrentUser]);
+
+  // Load document from API when docId changes
   useEffect(() => {
     if (!docId) return;
 
@@ -65,7 +73,7 @@ export function DocumentPage() {
         const doc = await loadFromDB(docId);
         if (cancelled) return;
         loadDocument(doc);
-        loadComments(doc.comments || []);
+        loadCommentsFromApi(docId);
         loadBoards(doc.boards || {});
         setActiveDocId(docId);
       } catch {
@@ -80,7 +88,7 @@ export function DocumentPage() {
     return () => {
       cancelled = true;
     };
-  }, [docId, loadFromDB, loadDocument, loadComments, loadBoards, setActiveDocId]);
+  }, [docId, loadFromDB, loadDocument, loadCommentsFromApi, loadBoards, setActiveDocId]);
 
   // Auto-save: debounce saves to IndexedDB
   useEffect(() => {
