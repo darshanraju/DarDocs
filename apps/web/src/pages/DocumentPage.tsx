@@ -8,7 +8,6 @@ import {
   CommentsSidebar,
   SearchBar,
   SearchModal,
-  FocusMode,
   TableOfContents,
   DocumentIcon,
   useDocumentStore,
@@ -39,7 +38,6 @@ export function DocumentPage() {
   );
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isDocSearchOpen, setIsDocSearchOpen] = useState(false);
-  const [isFocusMode, setIsFocusMode] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -215,29 +213,10 @@ export function DocumentPage() {
         onClose={handleDocSearchClose}
         onOpenDocument={handleOpenDocument}
       />
-      <FocusMode isActive={isFocusMode} onExit={() => setIsFocusMode(false)}>
-        <Editor isViewMode={false} onEditorReady={handleEditorReady} />
-      </FocusMode>
       <div
         id="main-scroll-container"
         className="h-full overflow-y-auto overflow-x-hidden"
       >
-        {/* Focus mode toggle */}
-        <div className="doc-toolbar">
-          <button
-            onClick={() => setIsFocusMode(true)}
-            className="doc-toolbar-btn"
-            title="Focus mode"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <circle cx="12" cy="12" r="6" />
-              <circle cx="12" cy="12" r="2" />
-            </svg>
-            <span>Focus</span>
-          </button>
-        </div>
-
         <div className="flex min-h-full">
           <TableOfContents />
           <div className="flex-1 min-w-0">
