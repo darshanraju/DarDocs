@@ -3,6 +3,8 @@ export { useDocumentStore } from './stores/documentStore';
 export { useBoardStore } from './stores/boardStore';
 export { useCommentStore } from './stores/commentStore';
 export { useThemeStore } from './stores/themeStore';
+export { useWorkspaceStore } from './stores/workspaceStore';
+export type { TreeNode } from './stores/workspaceStore';
 
 // Hooks
 export { useDocument } from './hooks/useDocument';
@@ -19,6 +21,7 @@ export { DocumentViewer } from './components/Viewer/DocumentViewer';
 
 // Layout components
 export { TableOfContents } from './components/TableOfContents/TableOfContents';
+export { Sidebar } from './components/Sidebar/Sidebar';
 export { CommentSection } from './components/Comments/CommentSection';
 export { CommentsSidebar } from './components/Comments/CommentsSidebar';
 
