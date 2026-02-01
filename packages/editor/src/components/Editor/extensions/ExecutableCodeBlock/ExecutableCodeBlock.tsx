@@ -3,6 +3,7 @@ import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { Play, Loader2, CheckCircle2, XCircle, Clock, ChevronDown } from 'lucide-react';
 import { executeApi } from '../../../../lib/api.js';
+import { RoadmapTooltip } from '../../../UI/RoadmapTooltip';
 
 const SUPPORTED_LANGUAGES = [
   { value: 'javascript', label: 'JavaScript' },
@@ -80,7 +81,8 @@ export function ExecutableCodeBlock(props: NodeViewProps) {
   const displayLabel = SUPPORTED_LANGUAGES.find(l => l.value === language)?.label || language;
 
   return (
-    <NodeViewWrapper className="exec-code-block">
+    <NodeViewWrapper className="exec-code-block relative">
+      <RoadmapTooltip blockName="executableCodeBlock" />
       <div className="exec-code-header" contentEditable={false}>
         <div className="exec-code-lang-picker">
           <button

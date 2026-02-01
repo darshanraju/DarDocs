@@ -957,6 +957,46 @@ html, body {
   background: var(--color-bg-accent-light);
 }
 
+.sidebar-templates {
+  padding: 0 8px 8px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 4px;
+}
+
+.sidebar-templates-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-faint);
+  padding: 4px 10px 2px;
+}
+
+.sidebar-template-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 5px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.sidebar-template-btn:hover {
+  background: var(--color-bg-accent-light);
+  color: var(--color-accent);
+}
+
+.sidebar-template-icon {
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
 .sidebar-nav {
   flex: 1;
   overflow-y: auto;
@@ -6389,6 +6429,673 @@ html, body {
   color: var(--color-text);
 }
 
+/* ============================================================
+   Wiki Links
+   ============================================================ */
+
+.wiki-link {
+  color: var(--color-accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease;
+  cursor: pointer;
+}
+
+.wiki-link:hover {
+  border-bottom-color: var(--color-accent);
+}
+
+/* Wiki Link Menu */
+.wiki-link-menu {
+  z-index: 50;
+  width: 320px;
+  max-height: 360px;
+  overflow-y: auto;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.wiki-link-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.wiki-link-menu-empty {
+  padding: 16px 12px;
+  text-align: center;
+}
+
+.wiki-link-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.wiki-link-menu-item:hover,
+.wiki-link-menu-item.is-selected {
+  background: var(--color-bg-muted);
+}
+
+.wiki-link-menu-footer {
+  padding: 8px 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ============================================================
+   Search Modal
+   ============================================================ */
+
+.search-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  z-index: 100;
+}
+
+.search-modal {
+  width: 560px;
+  max-height: 480px;
+  background: var(--color-bg);
+  border-radius: 14px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.search-modal-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.search-modal-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  color: var(--color-text);
+  background: transparent;
+}
+
+.search-modal-input::placeholder {
+  color: var(--color-text-placeholder);
+}
+
+.search-modal-results {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.search-result-item:hover,
+.search-result-item.is-selected {
+  background: var(--color-bg-muted);
+}
+
+.search-modal-footer {
+  padding: 8px 16px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search-kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  font-size: 0.6875rem;
+  font-family: inherit;
+  background: var(--color-bg-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-faint);
+}
+
+/* ============================================================
+   Slack Embed
+   ============================================================ */
+
+.slack-embed-wrapper {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-bg);
+  transition: box-shadow 0.15s ease;
+}
+
+.slack-embed-wrapper:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.slack-embed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+}
+
+.slack-embed-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #4a154b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slack-embed-body {
+  padding: 0;
+}
+
+.slack-embed-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  text-align: center;
+}
+
+/* ============================================================
+   Google Sheet Embed
+   ============================================================ */
+
+.gsheet-embed-wrapper {
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--color-bg);
+  transition: box-shadow 0.15s ease;
+}
+
+.gsheet-embed-wrapper:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.gsheet-embed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+}
+
+.gsheet-embed-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #0f9d58;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============================================================
+   Table of Contents (Notion-style)
+   ============================================================ */
+
+.toc-notion {
+  position: relative;
+  padding: 4px 0;
+}
+
+.toc-notion-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.toc-notion-link {
+  display: inline;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-decoration-color: var(--color-text-faint);
+  text-underline-offset: 2px;
+  transition: color 0.1s ease;
+}
+
+.toc-notion-link:hover {
+  color: var(--color-text);
+}
+
+.toc-notion-h1 {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.toc-notion-h2 {
+  font-size: 0.875rem;
+  color: var(--color-text-faint);
+}
+
+.toc-notion-h3 {
+  font-size: 0.8125rem;
+  color: var(--color-text-faint);
+}
+
+.toc-notion-delete {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  padding: 4px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-faint);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.toc-notion:hover .toc-notion-delete {
+  opacity: 1;
+}
+
+.toc-notion-delete:hover {
+  color: var(--color-danger);
+  background: var(--color-bg-danger-subtle);
+}
+
+/* ============================================================
+   Focus Mode
+   ============================================================ */
+
+.focus-mode-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #1a1a2e;
+  display: flex;
+  flex-direction: column;
+}
+
+.focus-mode-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.focus-mode-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  scroll-behavior: smooth;
+}
+
+.focus-mode-editor {
+  width: 100%;
+  max-width: 680px;
+  padding: 80px 24px;
+  color: #e2e8f0;
+}
+
+.focus-mode-editor .ProseMirror {
+  color: #e2e8f0;
+  caret-color: #3370ff;
+}
+
+.focus-mode-editor .ProseMirror h1,
+.focus-mode-editor .ProseMirror h2,
+.focus-mode-editor .ProseMirror h3 {
+  color: #f1f5f9;
+}
+
+.focus-mode-editor .ProseMirror p.is-editor-empty:first-child::before {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+/* Pomodoro Timer Dropdown */
+.pomodoro-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 200px;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 210;
+  overflow: hidden;
+}
+
+/* Ambient Sounds Dropdown */
+.ambient-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 180px;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  z-index: 210;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Backlinks Panel
+   ============================================================ */
+
+.backlinks-panel {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ============================================================
+   Roadmap Tooltip (dev feature-planning overlay on blocks)
+   ============================================================ */
+
+.roadmap-tooltip-anchor {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 30;
+}
+
+.roadmap-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--color-accent, #3370ff);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  border: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Show badge when hovering the block wrapper (NodeViewWrapper) */
+[class*="NodeViewWrapper"]:hover > .roadmap-tooltip-anchor > .roadmap-badge,
+.ProseMirror [draggable="true"]:hover > .roadmap-tooltip-anchor > .roadmap-badge,
+div[data-node-view-wrapper]:hover > .roadmap-tooltip-anchor > .roadmap-badge,
+.my-4:hover > .roadmap-tooltip-anchor > .roadmap-badge,
+.media-block:hover > .roadmap-tooltip-anchor > .roadmap-badge,
+.exec-code-block:hover > .roadmap-tooltip-anchor > .roadmap-badge,
+.roadmap-tooltip-anchor:hover > .roadmap-badge {
+  opacity: 1;
+}
+
+.roadmap-panel {
+  position: absolute;
+  top: 28px;
+  left: 0;
+  width: 320px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: var(--color-bg, #fff);
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 0;
+  z-index: 40;
+}
+
+.roadmap-panel-header {
+  padding: 10px 14px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted, #9ca3af);
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.roadmap-panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+
+.roadmap-entry {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--color-border-light, #f3f4f6);
+}
+
+.roadmap-entry:last-child {
+  border-bottom: none;
+}
+
+.roadmap-entry-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.roadmap-priority {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.roadmap-priority-high {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.roadmap-priority-medium {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.roadmap-priority-low {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.roadmap-effort {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-text-muted, #9ca3af);
+  background: var(--color-bg-secondary, #f9fafb);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.roadmap-entry-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text, #111827);
+  margin-bottom: 2px;
+}
+
+.roadmap-entry-desc {
+  font-size: 12px;
+  color: var(--color-text-secondary, #6b7280);
+  line-height: 1.4;
+}
+
+.roadmap-entry-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.roadmap-tag {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--color-accent-light, #eff6ff);
+  color: var(--color-accent, #3370ff);
+}
+
+/* Dark mode overrides */
+[data-theme="dark"] .roadmap-panel {
+  background: var(--color-bg, #1f2937);
+  border-color: var(--color-border, #374151);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .roadmap-priority-high {
+  background: #451a1a;
+  color: #f87171;
+}
+
+[data-theme="dark"] .roadmap-priority-medium {
+  background: #451a03;
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .roadmap-priority-low {
+  background: #052e16;
+  color: #4ade80;
+}
+
+[data-theme="dark"] .roadmap-tag {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+
+/* ============================================================
+   Workspace — Templates Section
+   ============================================================ */
+
+.workspace-templates {
+  padding: 0 48px;
+  margin-bottom: 32px;
+}
+
+.workspace-card-template {
+  border: 1px dashed var(--color-accent);
+  background: var(--color-bg-accent-light);
+}
+
+.workspace-card-template:hover {
+  background: var(--color-bg-accent-subtle);
+  border-style: solid;
+}
+
+.workspace-card-desc {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+/* ============================================================
+   God Mode Template
+   ============================================================ */
+
+.godmode-page {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--color-bg);
+  padding: 48px 24px;
+}
+
+.godmode-container {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.godmode-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 36px;
+}
+
+.godmode-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 6px;
+}
+
+.godmode-subtitle {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.godmode-mock-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #b45309;
+  background: #fef3c7;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+.dark .godmode-mock-badge {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.15);
+}
+
+.godmode-cancel-btn {
+  padding: 6px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.godmode-cancel-btn:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-text);
+}
+
 .runbook-history-badge {
   display: inline-flex;
   align-items: center;
@@ -6581,6 +7288,310 @@ html, body {
   border-radius: 3px;
 }
 
+/* ─── Configuration Form ─────────────────────────────────── */
+
+.godmode-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.godmode-repos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.godmode-section-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 12px;
+}
+
+.godmode-add-repo {
+  padding: 20px;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.godmode-input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.godmode-input {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.godmode-input:focus {
+  border-color: var(--color-accent);
+}
+
+.godmode-input-sm {
+  padding: 5px 8px;
+  font-size: 0.8125rem;
+}
+
+.godmode-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.15s;
+  margin-bottom: 10px;
+}
+
+.godmode-textarea:focus {
+  border-color: var(--color-accent);
+}
+
+.godmode-textarea-sm {
+  padding: 6px 10px;
+  font-size: 0.8125rem;
+  margin-bottom: 8px;
+}
+
+.godmode-select {
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+}
+
+.godmode-select-sm {
+  padding: 5px 8px;
+  font-size: 0.8125rem;
+}
+
+.godmode-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  background: none;
+  border: 1px solid var(--color-accent);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.godmode-add-btn:hover:not(:disabled) {
+  background: var(--color-bg-accent-light);
+}
+
+.godmode-add-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.godmode-add-btn-sm {
+  padding: 4px 10px;
+  font-size: 0.75rem;
+}
+
+/* ─── BUIDL Button ──────────────────────────────────────── */
+
+.godmode-buidl-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+  background: linear-gradient(135deg, #3370ff, #6366f1);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 14px rgba(51, 112, 255, 0.25);
+}
+
+.godmode-buidl-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(51, 112, 255, 0.35);
+}
+
+.godmode-buidl-btn:active {
+  transform: translateY(0);
+}
+
+/* ─── Repo Card ─────────────────────────────────────────── */
+
+.godmode-repo-card {
+  padding: 16px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+}
+
+.godmode-repo-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.godmode-repo-card-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.godmode-role-badge {
+  padding: 2px 8px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+}
+
+.godmode-role-primary {
+  color: #1d4ed8;
+  background: #dbeafe;
+}
+
+.dark .godmode-role-primary {
+  color: #93c5fd;
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.godmode-role-secondary {
+  color: #6b7280;
+  background: var(--color-bg-muted);
+}
+
+.godmode-repo-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.godmode-icon-btn {
+  padding: 4px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--color-text-faint);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.godmode-icon-btn:hover {
+  color: var(--color-danger);
+  background: var(--color-bg-danger-subtle);
+}
+
+.godmode-icon-btn-sm {
+  padding: 2px;
+  background: none;
+  border: none;
+  border-radius: 3px;
+  color: var(--color-text-faint);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.godmode-icon-btn-sm:hover {
+  color: var(--color-danger);
+}
+
+/* ─── Team Members ──────────────────────────────────────── */
+
+.godmode-team {
+  margin-top: 8px;
+}
+
+.godmode-team-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.godmode-team-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.godmode-text-btn {
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-accent);
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.godmode-text-btn:hover {
+  background: var(--color-bg-accent-light);
+}
+
+.godmode-member-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.godmode-member {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.8125rem;
+}
+
+.godmode-member-name {
+  color: var(--color-text);
+}
+
+.godmode-member-role {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
 .query-test-run-btn {
   display: block;
   width: calc(100% - 1.25rem);
@@ -6669,4 +7680,309 @@ html, body {
 .runbook-test-query-btn:hover {
   background: rgba(99, 102, 241, 0.1);
   border-color: #6366f1;
+}
+
+.godmode-member-role-developer {
+  color: #059669;
+  background: #d1fae5;
+}
+
+.dark .godmode-member-role-developer {
+  color: #6ee7b7;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.godmode-member-role-pm {
+  color: #7c3aed;
+  background: #ede9fe;
+}
+
+.dark .godmode-member-role-pm {
+  color: #c4b5fd;
+  background: rgba(139, 92, 246, 0.15);
+}
+
+.godmode-member-role-designer {
+  color: #db2777;
+  background: #fce7f3;
+}
+
+.dark .godmode-member-role-designer {
+  color: #f9a8d4;
+  background: rgba(236, 72, 153, 0.15);
+}
+
+.godmode-member-role-other {
+  color: var(--color-text-muted);
+  background: var(--color-bg-muted);
+}
+
+.godmode-add-member {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* ─── Analysis Progress ─────────────────────────────────── */
+
+.godmode-progress {
+  padding: 32px;
+  text-align: center;
+}
+
+.godmode-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.godmode-progress-phase {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.godmode-progress-percent {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+.godmode-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--color-bg-muted);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.godmode-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3370ff, #6366f1);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.godmode-progress-message {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ─── Error View ────────────────────────────────────────── */
+
+.godmode-error {
+  padding: 32px;
+  text-align: center;
+}
+
+.godmode-error-message {
+  font-size: 0.9375rem;
+  color: var(--color-danger);
+  margin: 0 0 16px;
+}
+
+.godmode-error-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* ─── God Mode Preview ─────────────────────────────── */
+
+.godmode-container-wide {
+  max-width: 960px;
+}
+
+.godmode-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.godmode-preview-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.godmode-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.godmode-back-btn:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+
+.godmode-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.godmode-create-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+.godmode-preview-doc {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 40px 48px;
+  min-height: 400px;
+}
+
+.godmode-preview-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.godmode-preview-doc .tiptap {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+.godmode-preview-doc .tiptap h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 32px 0 12px;
+  color: var(--color-text);
+}
+
+.godmode-preview-doc .tiptap h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 28px 0 10px;
+  color: var(--color-text);
+}
+
+.godmode-preview-doc .tiptap h3 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--color-text);
+}
+
+.godmode-preview-doc .tiptap p {
+  margin: 8px 0;
+}
+
+.godmode-preview-doc .tiptap table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.875rem;
+}
+
+.godmode-preview-doc .tiptap table th,
+.godmode-preview-doc .tiptap table td {
+  border: 1px solid var(--color-border);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.godmode-preview-doc .tiptap table th {
+  background: var(--color-bg-secondary);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--color-text-muted);
+}
+
+.godmode-preview-doc .tiptap blockquote {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 16px;
+  margin: 12px 0;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.godmode-preview-doc .tiptap ul,
+.godmode-preview-doc .tiptap ol {
+  padding-left: 24px;
+  margin: 8px 0;
+}
+
+.godmode-preview-doc .tiptap li {
+  margin: 4px 0;
+}
+
+.godmode-preview-doc .tiptap hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 24px 0;
+}
+
+.godmode-preview-doc .tiptap code {
+  background: var(--color-bg-secondary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.godmode-preview-doc .tiptap strong {
+  font-weight: 600;
+}
+
+/* ─── God Mode Swagger Toggle Button ───────────────── */
+
+.godmode-swagger-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 16px 0 4px;
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #49cc90;
+  background: rgba(73, 204, 144, 0.08);
+  border: 1px dashed #49cc90;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.godmode-swagger-toggle:hover {
+  background: rgba(73, 204, 144, 0.15);
+  border-style: solid;
+}
+
+.godmode-swagger-toggle-active {
+  color: #fff;
+  background: #49cc90;
+  border: 1px solid #49cc90;
+}
+.godmode-swagger-toggle-active:hover {
+  background: #3bb87e;
+  border-color: #3bb87e;
 }

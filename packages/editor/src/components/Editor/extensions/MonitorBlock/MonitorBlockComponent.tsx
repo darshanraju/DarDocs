@@ -13,6 +13,7 @@ import {
   Search,
   Settings,
 } from 'lucide-react';
+import { RoadmapTooltip } from '../../../UI/RoadmapTooltip';
 import {
   MONITOR_PROVIDERS,
   MONITOR_PROVIDER_LIST,
@@ -74,7 +75,8 @@ export function MonitorBlockComponent({ node, updateAttributes, deleteNode, sele
   // No provider selected — show picker
   if (!provider) {
     return (
-      <NodeViewWrapper className="my-4">
+      <NodeViewWrapper className="my-4 relative">
+        <RoadmapTooltip blockName="monitorBlock" />
         <div className={`monitor-block-wrapper ${selected ? 'is-selected' : ''}`}>
           <div className="monitor-block-header">
             <div className="monitor-block-header-left">
@@ -102,7 +104,8 @@ export function MonitorBlockComponent({ node, updateAttributes, deleteNode, sele
   // Provider selected but no URL — show input/create UI
   if (!url) {
     return (
-      <NodeViewWrapper className="my-4">
+      <NodeViewWrapper className="my-4 relative">
+        <RoadmapTooltip blockName="monitorBlock" />
         <div className={`monitor-block-wrapper ${selected ? 'is-selected' : ''}`}>
           <div className="monitor-block-header">
             <div className="monitor-block-header-left">
@@ -144,7 +147,8 @@ export function MonitorBlockComponent({ node, updateAttributes, deleteNode, sele
 
   // Provider + URL — render embed
   return (
-    <NodeViewWrapper className="my-4">
+    <NodeViewWrapper className="my-4 relative">
+      <RoadmapTooltip blockName="monitorBlock" />
       <div className={`monitor-block-wrapper ${selected ? 'is-selected' : ''}`}>
         <div className="embed-drag-handle" data-drag-handle>
           <GripVertical className="w-4 h-4 text-gray-400" />

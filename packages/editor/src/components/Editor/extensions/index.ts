@@ -16,6 +16,10 @@ import { EDITOR_PLACEHOLDER } from '@dardocs/core';
 import { SlashCommands } from './SlashCommands';
 import { CommentMark } from './CommentMark';
 import { BoardBlockExtension } from './BoardBlock/BoardBlockExtension';
+import { WikiLinkMark } from './WikiLink/WikiLinkExtension';
+import { SlackEmbedExtension } from './SlackEmbed/SlackEmbedExtension';
+import { GoogleSheetEmbedExtension } from './GoogleSheetEmbed/GoogleSheetEmbedExtension';
+import { TableOfContentsExtension } from './TableOfContents/TableOfContentsExtension';
 import { Whiteboard2BlockExtension } from '../../Whiteboard2/WhiteboardBlockExtension';
 import { MediaBlockExtension } from './MediaBlock/MediaBlockExtension';
 import { VideoBlockExtension } from './MediaBlock/VideoBlockExtension';
@@ -82,6 +86,10 @@ export function getExtensions(onSlashCommand: (query: string) => void, onSlashCo
     }),
     CommentMark,
     BoardBlockExtension,
+    WikiLinkMark,
+    SlackEmbedExtension,
+    GoogleSheetEmbedExtension,
+    TableOfContentsExtension,
     Whiteboard2BlockExtension,
     EmbedBlockExtension,
     MonitorBlockExtension,

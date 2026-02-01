@@ -26,6 +26,9 @@ import {
   CheckListIcon,
   GlobeIcon,
   BoundingBoxIcon,
+  ListViewIcon,
+  SlackIcon,
+  Rocket01Icon,
 } from '@hugeicons/core-free-icons';
 import { useBoardStore } from '../../stores/boardStore';
 import { useWhiteboard2Store } from '../Whiteboard2/whiteboardStore';
@@ -253,6 +256,36 @@ const commands: SlashCommand[] = [
     keywords: ['runbook', 'incident', 'oncall', 'troubleshoot', 'checklist', 'playbook', 'sop', 'analysis'],
     category: 'Blocks',
     action: (editor) => editor.chain().focus().insertRunbook().run(),
+  },
+  // ---- Navigation ----
+  {
+    name: 'Table of Contents',
+    icon: <HugeiconsIcon icon={ListViewIcon} size={20} color="#0fc6c2" />,
+    keywords: ['toc', 'table', 'contents', 'navigation', 'headings', 'outline'],
+    category: 'Blocks',
+    action: (editor) => editor.chain().focus().insertTableOfContents().run(),
+  },
+  {
+    name: 'Slack Thread',
+    icon: <HugeiconsIcon icon={SlackIcon} size={20} color="#4a154b" />,
+    keywords: ['slack', 'thread', 'message', 'chat', 'embed', 'conversation'],
+    category: 'Embeds',
+    action: (editor) =>
+      editor
+        .chain()
+        .focus()
+        .insertContent({ type: 'slackEmbed', attrs: { url: '', channel: '', timestamp: '', workspace: '' } })
+        .run(),
+  },
+  // ---- Templates ----
+  {
+    name: 'God Mode',
+    icon: <HugeiconsIcon icon={Rocket01Icon} size={20} color="#6366f1" />,
+    keywords: ['godmode', 'god', 'mode', 'template', 'repo', 'analysis', 'documentation', 'onboarding'],
+    category: 'Templates',
+    action: (_editor) => {
+      window.location.href = '/templates/god-mode';
+    },
   },
 ];
 

@@ -4,6 +4,7 @@ import type { NodeViewProps } from '@tiptap/react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Delete01Icon, Drag01Icon, PencilEdit01Icon, EyeIcon } from '@hugeicons/core-free-icons';
 import mermaid from 'mermaid';
+import { RoadmapTooltip } from '../../../UI/RoadmapTooltip';
 
 mermaid.initialize({
   startOnLoad: false,
@@ -99,7 +100,8 @@ export function MermaidBlockComponent({
   }, [deleteNode]);
 
   return (
-    <NodeViewWrapper className="my-4">
+    <NodeViewWrapper className="my-4 relative">
+      <RoadmapTooltip blockName="mermaidBlock" />
       <div className={`mermaid-block-wrapper ${selected ? 'is-selected' : ''}`}>
         {/* Drag handle */}
         <div className="embed-drag-handle" data-drag-handle>

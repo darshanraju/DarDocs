@@ -82,6 +82,10 @@ export { convertDocxToTipTap } from './docxConverter';
 export type { MonitorProviderId, MonitorProviderConfig } from './monitors';
 export { MONITOR_PROVIDERS, MONITOR_PROVIDER_LIST } from './monitors';
 
+// Block roadmap
+export type { RoadmapItem, BlockRoadmap } from './roadmap';
+export { blockRoadmap, getRoadmapForBlock } from './roadmap';
+
 // Workspace config
 export type {
   RepoConfig,
@@ -94,3 +98,28 @@ export type {
   WorkspaceConfig,
 } from './workspace';
 export { DEFAULT_WORKSPACE_CONFIG, parseGitHubRepoUrl } from './workspace';
+
+// God Mode templates
+export type {
+  RepoRole,
+  GodModeRepoConfig,
+  TeamMember,
+  GodModeConfig,
+  Contributor,
+  SystemConnection,
+  GlossaryTerm,
+  HotZone,
+  ApiEndpoint,
+  ErrorPattern,
+  SetupStep,
+  ArchDecision,
+  RepoAnalysis,
+  GodModeAnalysisResult,
+  AnalysisPhase,
+  AnalysisProgress,
+} from './godMode';
+export {
+  GOD_MODE_USE_MOCK_DATA,
+  runMockAnalysis,
+  generateGodModeDocument,
+} from './godMode';

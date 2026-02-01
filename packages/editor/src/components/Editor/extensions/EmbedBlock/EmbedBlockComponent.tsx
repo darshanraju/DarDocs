@@ -4,6 +4,7 @@ import type { NodeViewProps } from '@tiptap/react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Share01Icon, Delete01Icon, Drag01Icon, Link01Icon } from '@hugeicons/core-free-icons';
 import { EMBED_CONFIGS, parseGitHubUrl, parseGistUrl } from './embedUtils';
+import { RoadmapTooltip } from '../../../UI/RoadmapTooltip';
 import type { EmbedType, GitHubUrlInfo } from './embedUtils';
 
 export function EmbedBlockComponent({ node, updateAttributes, deleteNode, selected }: NodeViewProps) {
@@ -53,7 +54,8 @@ export function EmbedBlockComponent({ node, updateAttributes, deleteNode, select
   // URL input state
   if (!url) {
     return (
-      <NodeViewWrapper className="my-4">
+      <NodeViewWrapper className="my-4 relative">
+        <RoadmapTooltip blockName="embedBlock" />
         <div className={`embed-input-wrapper ${selected ? 'is-selected' : ''}`}>
           <div className="embed-input-header">
             <span className="embed-input-label" style={{ color: config.iconColor }}>
@@ -103,7 +105,8 @@ export function EmbedBlockComponent({ node, updateAttributes, deleteNode, select
   };
 
   return (
-    <NodeViewWrapper className="my-4">
+    <NodeViewWrapper className="my-4 relative">
+      <RoadmapTooltip blockName="embedBlock" />
       <div className={`embed-block-wrapper ${selected ? 'is-selected' : ''}`}>
         {/* Drag handle */}
         <div className="embed-drag-handle" data-drag-handle>

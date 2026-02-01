@@ -71,6 +71,9 @@ export type NodeType =
   | 'tableHeader'
   | 'boardBlock'
   | 'image'
+  | 'slackEmbed'
+  | 'googleSheetEmbed'
+  | 'tableOfContents'
   | 'videoBlock';
 
 // Supported TipTap mark types
@@ -82,6 +85,7 @@ export type MarkType =
   | 'code'
   | 'link'
   | 'highlight'
+  | 'wikiLink'
   | 'comment';
 
 // Create a new empty document

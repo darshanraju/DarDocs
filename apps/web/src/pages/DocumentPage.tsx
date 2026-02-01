@@ -7,6 +7,7 @@ import {
   CommentSection,
   CommentsSidebar,
   SearchBar,
+  SearchModal,
   TableOfContents,
   DocumentIcon,
   useDocumentStore,
@@ -15,6 +16,7 @@ import {
   useWorkspaceStore,
   useAuthStore,
 } from '@dardocs/editor';
+import type { SearchResult } from '@dardocs/editor';
 
 export function DocumentPage() {
   const { docId } = useParams<{ docId: string }>();
@@ -35,15 +37,20 @@ export function DocumentPage() {
     null
   );
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isDocSearchOpen, setIsDocSearchOpen] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Ctrl+F / Cmd+F to open search
+  // Ctrl+F / Cmd+F to open in-doc search, Ctrl+K / Cmd+K to open doc search
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
         e.preventDefault();
         setIsSearchOpen(true);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsDocSearchOpen(true);
       }
     };
 
@@ -54,6 +61,17 @@ export function DocumentPage() {
   const handleSearchClose = useCallback(() => {
     setIsSearchOpen(false);
   }, []);
+
+  const handleDocSearchClose = useCallback(() => {
+    setIsDocSearchOpen(false);
+  }, []);
+
+  const handleOpenDocument = useCallback(
+    (doc: SearchResult) => {
+      navigate(`/doc/${doc.id}`);
+    },
+    [navigate]
+  );
 
   // Set comment author from auth user
   useEffect(() => {
@@ -190,6 +208,11 @@ export function DocumentPage() {
       {isSearchOpen && (
         <SearchBar editor={editorInstance} onClose={handleSearchClose} />
       )}
+      <SearchModal
+        isOpen={isDocSearchOpen}
+        onClose={handleDocSearchClose}
+        onOpenDocument={handleOpenDocument}
+      />
       <div
         id="main-scroll-container"
         className="h-full overflow-y-auto overflow-x-hidden"
