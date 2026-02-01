@@ -155,6 +155,7 @@ html, body {
 .ProseMirror {
   outline: none;
   min-height: calc(100vh - 160px);
+  caret-color: var(--color-text);
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
