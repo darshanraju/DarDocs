@@ -14,7 +14,6 @@ import {
   Logout01Icon,
   UserGroupIcon,
   Setting07Icon,
-  Rocket01Icon,
 } from '@hugeicons/core-free-icons';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
 import { useWorkspaceConfigStore } from '../../stores/workspaceConfigStore';

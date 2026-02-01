@@ -1,43 +1,62 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useEditor, EditorContent } from '@tiptap/react';
+import type { JSONContent } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Link from '@tiptap/extension-link';
+import Underline from '@tiptap/extension-underline';
+import Highlight from '@tiptap/extension-highlight';
+import { Table } from '@tiptap/extension-table';
+import TableRow from '@tiptap/extension-table-row';
+import TableCell from '@tiptap/extension-table-cell';
+import TableHeader from '@tiptap/extension-table-header';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
   PlusSignIcon,
   Delete01Icon,
   Cancel01Icon,
   ArrowRight01Icon,
+  ArrowLeft01Icon,
+  FileAddIcon,
 } from '@hugeicons/core-free-icons';
 import { useGodModeStore } from '../../stores/godModeStore';
 import type { RepoRole, TeamMember } from '@dardocs/core';
 import { GOD_MODE_USE_MOCK_DATA } from '@dardocs/core';
 
 interface GodModeTemplateProps {
-  onComplete: (documentContent: import('@tiptap/react').JSONContent, title: string) => void;
+  onCreateDocument: (content: JSONContent, title: string) => void;
   onCancel: () => void;
 }
 
-export function GodModeTemplate({ onComplete, onCancel }: GodModeTemplateProps) {
+export function GodModeTemplate({ onCreateDocument, onCancel }: GodModeTemplateProps) {
   const {
     config,
-    isAnalyzing,
+    phase,
     progress,
     error,
+    generatedContent,
+    generatedTitle,
     addRepo,
     removeRepo,
     updateRepo,
     addTeamMember,
     removeTeamMember,
     runAnalysis,
+    backToConfig,
     reset,
   } = useGodModeStore();
 
   return (
     <div className="godmode-page">
-      <div className="godmode-container">
+      <div className={phase === 'preview' ? 'godmode-container godmode-container-wide' : 'godmode-container'}>
         <div className="godmode-header">
           <div>
-            <h1 className="godmode-title">God Mode</h1>
+            <h1 className="godmode-title">
+              {phase === 'preview' ? (generatedTitle || 'God Mode') : 'God Mode'}
+            </h1>
             <p className="godmode-subtitle">
-              Auto-generate comprehensive system documentation from your repositories.
+              {phase === 'preview'
+                ? 'Preview your generated document. Click "Create Document" to save it to your workspace.'
+                : 'Auto-generate comprehensive system documentation from your repositories.'}
               {GOD_MODE_USE_MOCK_DATA && (
                 <span className="godmode-mock-badge">MOCK DATA</span>
               )}
@@ -48,11 +67,7 @@ export function GodModeTemplate({ onComplete, onCancel }: GodModeTemplateProps) 
           </button>
         </div>
 
-        {isAnalyzing ? (
-          <AnalysisProgressView progress={progress} />
-        ) : error ? (
-          <ErrorView error={error} onRetry={runAnalysis} onReset={reset} />
-        ) : (
+        {phase === 'configuring' && (
           <ConfigurationForm
             config={config}
             onAddRepo={addRepo}
@@ -60,16 +75,94 @@ export function GodModeTemplate({ onComplete, onCancel }: GodModeTemplateProps) 
             onUpdateRepo={updateRepo}
             onAddTeamMember={addTeamMember}
             onRemoveTeamMember={removeTeamMember}
-            onBuild={async () => {
-              const result = await runAnalysis();
-              const { generateGodModeDocument } = await import('@dardocs/core');
-              const content = generateGodModeDocument(result);
-              const primaryRepo = config.repos.find((r) => r.role === 'primary');
-              const title = `God Mode — ${primaryRepo?.repo || 'System Overview'}`;
-              onComplete(content, title);
-            }}
+            onBuild={runAnalysis}
           />
         )}
+
+        {phase === 'analyzing' && (
+          <AnalysisProgressView progress={progress} />
+        )}
+
+        {phase === 'preview' && generatedContent && (
+          <DocumentPreview
+            content={generatedContent}
+            title={generatedTitle || 'God Mode'}
+            onCreateDocument={() => {
+              if (generatedContent && generatedTitle) {
+                onCreateDocument(generatedContent, generatedTitle);
+              }
+            }}
+            onBack={backToConfig}
+          />
+        )}
+
+        {phase === 'error' && (
+          <ErrorView error={error || 'Unknown error'} onRetry={runAnalysis} onReset={reset} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Document Preview (standalone TipTap viewer) ──────────────
+
+function DocumentPreview({
+  content,
+  title,
+  onCreateDocument,
+  onBack,
+}: {
+  content: JSONContent;
+  title: string;
+  onCreateDocument: () => void;
+  onBack: () => void;
+}) {
+  const editor = useEditor(
+    {
+      extensions: [
+        StarterKit.configure({ codeBlock: false }),
+        Link.configure({ openOnClick: false }),
+        Underline,
+        Highlight,
+        Table.configure({ resizable: false }),
+        TableRow,
+        TableCell,
+        TableHeader,
+      ],
+      content,
+      editable: false,
+      editorProps: {
+        attributes: {
+          class: 'prose prose-sm focus:outline-none max-w-none',
+        },
+      },
+    },
+    [],
+  );
+
+  // Update content if it changes
+  useEffect(() => {
+    if (editor && content) {
+      editor.commands.setContent(content);
+    }
+  }, [editor, content]);
+
+  return (
+    <div className="godmode-preview">
+      <div className="godmode-preview-actions">
+        <button className="godmode-back-btn" onClick={onBack}>
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={16} />
+          Back to config
+        </button>
+        <button className="godmode-create-btn" onClick={onCreateDocument}>
+          <HugeiconsIcon icon={FileAddIcon} size={16} />
+          Create Document
+        </button>
+      </div>
+
+      <div className="godmode-preview-doc">
+        <div className="godmode-preview-title">{title}</div>
+        <EditorContent editor={editor} />
       </div>
     </div>
   );

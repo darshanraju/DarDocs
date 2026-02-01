@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { JSONContent } from '@tiptap/react';
 import type {
   GodModeConfig,
   GodModeRepoConfig,
@@ -14,15 +15,18 @@ import {
   parseGitHubRepoUrl,
 } from '@dardocs/core';
 
+export type GodModePhase = 'configuring' | 'analyzing' | 'preview' | 'error';
+
 interface GodModeStore {
   // Configuration
   config: GodModeConfig;
-  isConfiguring: boolean;
+  phase: GodModePhase;
 
   // Analysis state
   analysisResult: GodModeAnalysisResult | null;
+  generatedContent: JSONContent | null;
+  generatedTitle: string | null;
   progress: AnalysisProgress | null;
-  isAnalyzing: boolean;
   error: string | null;
 
   // Config actions
@@ -33,7 +37,8 @@ interface GodModeStore {
   removeTeamMember: (repoId: string, memberName: string) => void;
 
   // Analysis actions
-  runAnalysis: () => Promise<GodModeAnalysisResult>;
+  runAnalysis: () => Promise<void>;
+  backToConfig: () => void;
   reset: () => void;
 }
 
@@ -45,10 +50,11 @@ const initialProgress: AnalysisProgress = {
 
 export const useGodModeStore = create<GodModeStore>((set, get) => ({
   config: { repos: [] },
-  isConfiguring: true,
+  phase: 'configuring',
   analysisResult: null,
+  generatedContent: null,
+  generatedTitle: null,
   progress: initialProgress,
-  isAnalyzing: false,
   error: null,
 
   addRepo: (url, role, description) => {
@@ -118,7 +124,7 @@ export const useGodModeStore = create<GodModeStore>((set, get) => ({
 
   runAnalysis: async () => {
     const { config } = get();
-    set({ isAnalyzing: true, error: null, isConfiguring: false });
+    set({ phase: 'analyzing', error: null });
 
     try {
       let result: GodModeAnalysisResult;
@@ -133,33 +139,46 @@ export const useGodModeStore = create<GodModeStore>((set, get) => ({
       }
 
       // Generate the document content from results
-      const _content = generateGodModeDocument(result);
+      const content = generateGodModeDocument(result);
+      const primaryRepo = config.repos.find((r) => r.role === 'primary');
+      const title = `God Mode — ${primaryRepo?.repo || 'System Overview'}`;
 
       set({
         analysisResult: result,
-        isAnalyzing: false,
+        generatedContent: content,
+        generatedTitle: title,
+        phase: 'preview',
         progress: { phase: 'complete', percent: 100, message: 'Analysis complete' },
       });
-
-      return result;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Analysis failed';
       set({
-        isAnalyzing: false,
+        phase: 'error',
         error: message,
         progress: { phase: 'error', percent: 0, message },
       });
-      throw err;
     }
+  },
+
+  backToConfig: () => {
+    set({
+      phase: 'configuring',
+      analysisResult: null,
+      generatedContent: null,
+      generatedTitle: null,
+      progress: initialProgress,
+      error: null,
+    });
   },
 
   reset: () => {
     set({
       config: { repos: [] },
-      isConfiguring: true,
+      phase: 'configuring',
       analysisResult: null,
+      generatedContent: null,
+      generatedTitle: null,
       progress: initialProgress,
-      isAnalyzing: false,
       error: null,
     });
   },

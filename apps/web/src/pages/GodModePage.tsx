@@ -45,6 +45,6 @@ export function GodModePage() {
   }, [navigate]);
 
   return (
-    <GodModeTemplate onComplete={handleComplete} onCancel={handleCancel} />
+    <GodModeTemplate onCreateDocument={handleComplete} onCancel={handleCancel} />
   );
 }

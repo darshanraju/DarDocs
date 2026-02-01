@@ -7099,3 +7099,168 @@ html, body {
   gap: 12px;
   justify-content: center;
 }
+
+/* ─── God Mode Preview ─────────────────────────────── */
+
+.godmode-container-wide {
+  max-width: 960px;
+}
+
+.godmode-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.godmode-preview-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.godmode-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.godmode-back-btn:hover {
+  color: var(--color-text);
+  border-color: var(--color-text-muted);
+}
+
+.godmode-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.godmode-create-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+.godmode-preview-doc {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 40px 48px;
+  min-height: 400px;
+}
+
+.godmode-preview-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.godmode-preview-doc .tiptap {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--color-text);
+}
+
+.godmode-preview-doc .tiptap h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 32px 0 12px;
+  color: var(--color-text);
+}
+
+.godmode-preview-doc .tiptap h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 28px 0 10px;
+  color: var(--color-text);
+}
+
+.godmode-preview-doc .tiptap h3 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  margin: 20px 0 8px;
+  color: var(--color-text);
+}
+
+.godmode-preview-doc .tiptap p {
+  margin: 8px 0;
+}
+
+.godmode-preview-doc .tiptap table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.875rem;
+}
+
+.godmode-preview-doc .tiptap table th,
+.godmode-preview-doc .tiptap table td {
+  border: 1px solid var(--color-border);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.godmode-preview-doc .tiptap table th {
+  background: var(--color-bg-secondary);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--color-text-muted);
+}
+
+.godmode-preview-doc .tiptap blockquote {
+  border-left: 3px solid var(--color-primary);
+  padding-left: 16px;
+  margin: 12px 0;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.godmode-preview-doc .tiptap ul,
+.godmode-preview-doc .tiptap ol {
+  padding-left: 24px;
+  margin: 8px 0;
+}
+
+.godmode-preview-doc .tiptap li {
+  margin: 4px 0;
+}
+
+.godmode-preview-doc .tiptap hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 24px 0;
+}
+
+.godmode-preview-doc .tiptap code {
+  background: var(--color-bg-secondary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.godmode-preview-doc .tiptap strong {
+  font-weight: 600;
+}
