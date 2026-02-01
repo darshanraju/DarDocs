@@ -22,6 +22,7 @@ import {
   BarChart3,
   Braces,
   Table2,
+  Globe,
 } from 'lucide-react';
 import { useBoardStore } from '../../stores/boardStore';
 import { useWhiteboard2Store } from '../Whiteboard2/whiteboardStore';
@@ -226,6 +227,13 @@ const commands: SlashCommand[] = [
     keywords: ['swagger', 'openapi', 'api', 'docs', 'rest', 'embed'],
     category: 'Embeds',
     action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'swagger' }).run(),
+  },
+  {
+    name: 'Webview',
+    icon: <Globe className="w-5 h-5" style={{ color: '#3b82f6' }} />,
+    keywords: ['webview', 'iframe', 'embed', 'website', 'url', 'web', 'page', 'site'],
+    category: 'Embeds',
+    action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'webview' }).run(),
   },
 ];
 
