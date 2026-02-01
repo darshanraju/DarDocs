@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import type { JSONContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -20,7 +20,7 @@ import {
 } from '@hugeicons/core-free-icons';
 import { useGodModeStore } from '../../stores/godModeStore';
 import type { RepoRole, TeamMember } from '@dardocs/core';
-import { GOD_MODE_USE_MOCK_DATA } from '@dardocs/core';
+import { GOD_MODE_USE_MOCK_DATA, generateGodModeDocument } from '@dardocs/core';
 
 interface GodModeTemplateProps {
   onCreateDocument: (content: JSONContent, title: string) => void;
@@ -35,12 +35,15 @@ export function GodModeTemplate({ onCreateDocument, onCancel }: GodModeTemplateP
     error,
     generatedContent,
     generatedTitle,
+    analysisResult,
+    swaggerRepos,
     addRepo,
     removeRepo,
     updateRepo,
     addTeamMember,
     removeTeamMember,
     runAnalysis,
+    toggleSwagger,
     backToConfig,
     reset,
   } = useGodModeStore();
@@ -87,9 +90,13 @@ export function GodModeTemplate({ onCreateDocument, onCancel }: GodModeTemplateP
           <DocumentPreview
             content={generatedContent}
             title={generatedTitle || 'God Mode'}
+            swaggerRepos={swaggerRepos}
+            onToggleSwagger={toggleSwagger}
             onCreateDocument={() => {
-              if (generatedContent && generatedTitle) {
-                onCreateDocument(generatedContent, generatedTitle);
+              if (analysisResult && generatedTitle) {
+                // Build final content with real embedBlock nodes (not preview placeholders)
+                const finalContent = generateGodModeDocument(analysisResult, swaggerRepos, false);
+                onCreateDocument(finalContent, generatedTitle);
               }
             }}
             onBack={backToConfig}
@@ -109,14 +116,20 @@ export function GodModeTemplate({ onCreateDocument, onCancel }: GodModeTemplateP
 function DocumentPreview({
   content,
   title,
+  swaggerRepos,
+  onToggleSwagger,
   onCreateDocument,
   onBack,
 }: {
   content: JSONContent;
   title: string;
+  swaggerRepos: string[];
+  onToggleSwagger: (repoName: string) => void;
   onCreateDocument: () => void;
   onBack: () => void;
 }) {
+  const docRef = useRef<HTMLDivElement>(null);
+
   const editor = useEditor(
     {
       extensions: [
@@ -140,12 +153,51 @@ function DocumentPreview({
     [],
   );
 
-  // Update content if it changes
+  // Update content if it changes (e.g. after swagger toggle)
   useEffect(() => {
     if (editor && content) {
       editor.commands.setContent(content);
     }
   }, [editor, content]);
+
+  // Inject "Add Swagger" / "Swagger Added" buttons above each API Surface heading
+  useEffect(() => {
+    const container = docRef.current;
+    if (!container) return;
+
+    // Small delay to let TipTap finish rendering after setContent
+    const timer = setTimeout(() => {
+      // Remove previously injected buttons
+      container.querySelectorAll('.godmode-swagger-toggle').forEach((el) => el.remove());
+
+      // Find all h2 elements
+      const headings = container.querySelectorAll('.tiptap h2');
+      headings.forEach((h2) => {
+        if (h2.textContent?.trim() !== 'API Surface') return;
+
+        // Walk backwards from the h2 to find the closest preceding h1 (repo name)
+        let repoName = '';
+        let el: Element | null = h2.previousElementSibling;
+        while (el) {
+          if (el.tagName === 'H1') {
+            repoName = (el.textContent || '').replace(/\s*\((Primary|Secondary)\)\s*$/, '');
+            break;
+          }
+          el = el.previousElementSibling;
+        }
+        if (!repoName) return;
+
+        const isActive = swaggerRepos.includes(repoName);
+        const btn = document.createElement('button');
+        btn.className = `godmode-swagger-toggle ${isActive ? 'godmode-swagger-toggle-active' : ''}`;
+        btn.textContent = isActive ? 'Swagger Added' : '+ Add Swagger';
+        btn.addEventListener('click', () => onToggleSwagger(repoName));
+        h2.parentElement?.insertBefore(btn, h2);
+      });
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [content, swaggerRepos, onToggleSwagger]);
 
   return (
     <div className="godmode-preview">
@@ -160,7 +212,7 @@ function DocumentPreview({
         </button>
       </div>
 
-      <div className="godmode-preview-doc">
+      <div className="godmode-preview-doc" ref={docRef}>
         <div className="godmode-preview-title">{title}</div>
         <EditorContent editor={editor} />
       </div>

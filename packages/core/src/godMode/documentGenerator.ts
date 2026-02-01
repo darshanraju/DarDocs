@@ -4,8 +4,15 @@ import type { GodModeAnalysisResult, RepoAnalysis } from './types';
 /**
  * Generates a full TipTap JSONContent document from God Mode analysis results.
  * Each repo gets its own set of sections, primary repo first.
+ *
+ * @param swaggerRepos - repo names whose API Surface should be a Swagger embed
+ * @param forPreview   - true → render a placeholder; false → real embedBlock node
  */
-export function generateGodModeDocument(result: GodModeAnalysisResult): JSONContent {
+export function generateGodModeDocument(
+  result: GodModeAnalysisResult,
+  swaggerRepos: string[] = [],
+  forPreview: boolean = true,
+): JSONContent {
   const content: JSONContent[] = [];
 
   // Sort: primary repos first
@@ -68,7 +75,7 @@ export function generateGodModeDocument(result: GodModeAnalysisResult): JSONCont
     content.push(...setupSection(repo));
 
     // 5. API Surface
-    content.push(...apiSurfaceSection(repo));
+    content.push(...apiSurfaceSection(repo, swaggerRepos.includes(repo.repoName), forPreview));
 
     // 6. Domain Glossary
     content.push(...glossarySection(repo));
@@ -143,8 +150,24 @@ function setupSection(repo: RepoAnalysis): JSONContent[] {
   ];
 }
 
-function apiSurfaceSection(repo: RepoAnalysis): JSONContent[] {
+function apiSurfaceSection(repo: RepoAnalysis, useSwagger: boolean, forPreview: boolean): JSONContent[] {
   if (repo.apiEndpoints.length === 0) return [];
+
+  if (useSwagger) {
+    if (forPreview) {
+      // Styled placeholder visible in the read-only preview
+      return [
+        heading(2, 'API Surface'),
+        swaggerPlaceholder(),
+      ];
+    }
+    // Real embedBlock node for the created document
+    return [
+      heading(2, 'API Surface'),
+      { type: 'embedBlock', attrs: { embedType: 'swagger', url: null } },
+    ];
+  }
+
   return [
     heading(2, 'API Surface'),
     table(
@@ -265,6 +288,29 @@ function blockquote(text: string): JSONContent {
   return {
     type: 'blockquote',
     content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+  };
+}
+
+function swaggerPlaceholder(): JSONContent {
+  return {
+    type: 'blockquote',
+    content: [
+      {
+        type: 'paragraph',
+        content: [
+          { type: 'text', marks: [{ type: 'bold' }], text: 'Swagger / OpenAPI Documentation' },
+        ],
+      },
+      {
+        type: 'paragraph',
+        content: [
+          {
+            type: 'text',
+            text: 'A Swagger embed will be placed here. You can configure the API spec URL after creating the document.',
+          },
+        ],
+      },
+    ],
   };
 }
 

@@ -29,6 +29,9 @@ interface GodModeStore {
   progress: AnalysisProgress | null;
   error: string | null;
 
+  // Swagger toggles (repo names that should use swagger embed)
+  swaggerRepos: string[];
+
   // Config actions
   addRepo: (url: string, role: RepoRole, description: string) => void;
   removeRepo: (id: string) => void;
@@ -38,6 +41,7 @@ interface GodModeStore {
 
   // Analysis actions
   runAnalysis: () => Promise<void>;
+  toggleSwagger: (repoName: string) => void;
   backToConfig: () => void;
   reset: () => void;
 }
@@ -56,6 +60,7 @@ export const useGodModeStore = create<GodModeStore>((set, get) => ({
   generatedTitle: null,
   progress: initialProgress,
   error: null,
+  swaggerRepos: [],
 
   addRepo: (url, role, description) => {
     const parsed = parseGitHubRepoUrl(url);
@@ -138,8 +143,8 @@ export const useGodModeStore = create<GodModeStore>((set, get) => ({
         throw new Error('Real analysis not yet implemented');
       }
 
-      // Generate the document content from results
-      const content = generateGodModeDocument(result);
+      // Generate the document content from results (preview mode, no swagger yet)
+      const content = generateGodModeDocument(result, [], true);
       const primaryRepo = config.repos.find((r) => r.role === 'primary');
       const title = `God Mode — ${primaryRepo?.repo || 'System Overview'}`;
 
@@ -160,6 +165,19 @@ export const useGodModeStore = create<GodModeStore>((set, get) => ({
     }
   },
 
+  toggleSwagger: (repoName: string) => {
+    const { swaggerRepos, analysisResult } = get();
+    const next = swaggerRepos.includes(repoName)
+      ? swaggerRepos.filter((r) => r !== repoName)
+      : [...swaggerRepos, repoName];
+
+    const content = analysisResult
+      ? generateGodModeDocument(analysisResult, next, true)
+      : get().generatedContent;
+
+    set({ swaggerRepos: next, generatedContent: content });
+  },
+
   backToConfig: () => {
     set({
       phase: 'configuring',
@@ -168,6 +186,7 @@ export const useGodModeStore = create<GodModeStore>((set, get) => ({
       generatedTitle: null,
       progress: initialProgress,
       error: null,
+      swaggerRepos: [],
     });
   },
 
@@ -180,6 +199,7 @@ export const useGodModeStore = create<GodModeStore>((set, get) => ({
       generatedTitle: null,
       progress: initialProgress,
       error: null,
+      swaggerRepos: [],
     });
   },
 }));

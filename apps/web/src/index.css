@@ -7264,3 +7264,35 @@ html, body {
 .godmode-preview-doc .tiptap strong {
   font-weight: 600;
 }
+
+/* ─── God Mode Swagger Toggle Button ───────────────── */
+
+.godmode-swagger-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 16px 0 4px;
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #49cc90;
+  background: rgba(73, 204, 144, 0.08);
+  border: 1px dashed #49cc90;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.godmode-swagger-toggle:hover {
+  background: rgba(73, 204, 144, 0.15);
+  border-style: solid;
+}
+
+.godmode-swagger-toggle-active {
+  color: #fff;
+  background: #49cc90;
+  border: 1px solid #49cc90;
+}
+.godmode-swagger-toggle-active:hover {
+  background: #3bb87e;
+  border-color: #3bb87e;
+}
