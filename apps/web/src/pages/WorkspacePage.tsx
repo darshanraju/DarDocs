@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { PlusSignIcon, File01Icon, Clock01Icon } from '@hugeicons/core-free-icons';
+import { PlusSignIcon, File01Icon, Clock01Icon, Rocket01Icon } from '@hugeicons/core-free-icons';
 import { useWorkspaceStore } from '@dardocs/editor';
 
 export function WorkspacePage() {
@@ -31,6 +31,25 @@ export function WorkspacePage() {
           <HugeiconsIcon icon={PlusSignIcon} size={20} />
           New document
         </button>
+      </div>
+
+      <div className="workspace-templates">
+        <h2 className="workspace-section-title">
+          <HugeiconsIcon icon={Rocket01Icon} size={16} />
+          Templates
+        </h2>
+        <div className="workspace-grid">
+          <button
+            className="workspace-card workspace-card-template"
+            onClick={() => navigate('/templates/god-mode')}
+          >
+            <span className="workspace-card-icon">🔮</span>
+            <span className="workspace-card-title">God Mode</span>
+            <span className="workspace-card-desc">
+              Auto-generate system docs from your repos
+            </span>
+          </button>
+        </div>
       </div>
 
       {recentDocs.length > 0 && (

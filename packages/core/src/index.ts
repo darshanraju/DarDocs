@@ -94,3 +94,28 @@ export type {
   WorkspaceConfig,
 } from './workspace';
 export { DEFAULT_WORKSPACE_CONFIG, parseGitHubRepoUrl } from './workspace';
+
+// God Mode templates
+export type {
+  RepoRole,
+  GodModeRepoConfig,
+  TeamMember,
+  GodModeConfig,
+  Contributor,
+  SystemConnection,
+  GlossaryTerm,
+  HotZone,
+  ApiEndpoint,
+  ErrorPattern,
+  SetupStep,
+  ArchDecision,
+  RepoAnalysis,
+  GodModeAnalysisResult,
+  AnalysisPhase,
+  AnalysisProgress,
+} from './godMode';
+export {
+  GOD_MODE_USE_MOCK_DATA,
+  runMockAnalysis,
+  generateGodModeDocument,
+} from './godMode';
