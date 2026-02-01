@@ -28,6 +28,7 @@ import {
   BoundingBoxIcon,
   ListViewIcon,
   SlackIcon,
+  Rocket01Icon,
 } from '@hugeicons/core-free-icons';
 import { useBoardStore } from '../../stores/boardStore';
 import { useWhiteboard2Store } from '../Whiteboard2/whiteboardStore';
@@ -275,6 +276,16 @@ const commands: SlashCommand[] = [
         .focus()
         .insertContent({ type: 'slackEmbed', attrs: { url: '', channel: '', timestamp: '', workspace: '' } })
         .run(),
+  },
+  // ---- Templates ----
+  {
+    name: 'God Mode',
+    icon: <HugeiconsIcon icon={Rocket01Icon} size={20} color="#6366f1" />,
+    keywords: ['godmode', 'god', 'mode', 'template', 'repo', 'analysis', 'documentation', 'onboarding'],
+    category: 'Templates',
+    action: (_editor) => {
+      window.location.href = '/templates/god-mode';
+    },
   },
 ];
 
