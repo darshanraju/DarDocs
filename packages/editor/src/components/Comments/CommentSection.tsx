@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
-import { Image, MoreHorizontal, Trash2, X } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Image01Icon, MoreHorizontalIcon, Delete01Icon, Cancel01Icon } from '@hugeicons/core-free-icons';
 import { useCommentStore } from '../../stores/commentStore';
 import type { Comment } from '@dardocs/core';
 
@@ -58,7 +59,7 @@ function CommentItem({
               className="comment-action-btn"
               onClick={() => setMenuOpen(!menuOpen)}
             >
-              <MoreHorizontal size={14} />
+              <HugeiconsIcon icon={MoreHorizontalIcon} size={14} />
             </button>
             {menuOpen && (
               <div className="comment-action-menu">
@@ -68,7 +69,7 @@ function CommentItem({
                     setMenuOpen(false);
                   }}
                 >
-                  <Trash2 size={14} />
+                  <HugeiconsIcon icon={Delete01Icon} size={14} />
                   Delete
                 </button>
               </div>
@@ -164,7 +165,7 @@ export function CommentSection() {
         <div className="comment-input-preview">
           <img src={attachedImage} alt="Attachment preview" />
           <button className="comment-input-preview-remove" onClick={removeAttachedImage}>
-            <X size={14} />
+            <HugeiconsIcon icon={Cancel01Icon} size={14} />
           </button>
         </div>
       )}
@@ -186,7 +187,7 @@ export function CommentSection() {
             onClick={handleImageUpload}
             title="Add image"
           >
-            <Image size={18} />
+            <HugeiconsIcon icon={Image01Icon} size={18} />
           </button>
         </div>
         <input

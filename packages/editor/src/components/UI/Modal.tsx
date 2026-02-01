@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { X } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Cancel01Icon } from '@hugeicons/core-free-icons';
 import { Button } from './Button';
 
 interface ModalProps {
@@ -53,7 +54,7 @@ export function Modal({ isOpen, onClose, title, children, footer }: ModalProps) 
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
             <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="w-4 h-4" />
+              <HugeiconsIcon icon={Cancel01Icon} size={16} />
             </Button>
           </div>
 

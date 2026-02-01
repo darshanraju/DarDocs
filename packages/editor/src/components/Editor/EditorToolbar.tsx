@@ -1,27 +1,28 @@
 import { useState } from 'react';
 import type { Editor } from '@tiptap/react';
+import { HugeiconsIcon } from '@hugeicons/react';
 import {
-  Bold,
-  Italic,
-  Underline,
-  Strikethrough,
-  List,
-  ListOrdered,
-  Quote,
-  Code,
-  Minus,
-  Link,
-  Undo,
-  Redo,
-  Heading1,
-  Heading2,
-  Heading3,
-  Heading4,
-  Heading5,
-  Heading6,
-  Type,
-  Highlighter,
-} from 'lucide-react';
+  TextBoldIcon,
+  TextItalicIcon,
+  TextUnderlineIcon,
+  TextStrikethroughIcon,
+  LeftToRightListBulletIcon,
+  LeftToRightListNumberIcon,
+  LeftToRightBlockQuoteIcon,
+  SourceCodeIcon,
+  MinusSignIcon,
+  Link01Icon,
+  UndoIcon,
+  RedoIcon,
+  Heading01Icon,
+  Heading02Icon,
+  Heading03Icon,
+  Heading04Icon,
+  Heading05Icon,
+  Heading06Icon,
+  TextAlignLeftIcon,
+  HighlighterIcon,
+} from '@hugeicons/core-free-icons';
 import { Button, Dropdown, Modal, Tooltip } from '../UI';
 
 interface EditorToolbarProps {
@@ -35,13 +36,13 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
   if (!editor) return null;
 
   const headingOptions = [
-    { value: 'paragraph', label: 'Paragraph', icon: <Type className="w-4 h-4" /> },
-    { value: '1', label: 'Heading 1', icon: <Heading1 className="w-4 h-4" /> },
-    { value: '2', label: 'Heading 2', icon: <Heading2 className="w-4 h-4" /> },
-    { value: '3', label: 'Heading 3', icon: <Heading3 className="w-4 h-4" /> },
-    { value: '4', label: 'Heading 4', icon: <Heading4 className="w-4 h-4" /> },
-    { value: '5', label: 'Heading 5', icon: <Heading5 className="w-4 h-4" /> },
-    { value: '6', label: 'Heading 6', icon: <Heading6 className="w-4 h-4" /> },
+    { value: 'paragraph', label: 'Paragraph', icon: <HugeiconsIcon icon={TextAlignLeftIcon} size={16} /> },
+    { value: '1', label: 'Heading 1', icon: <HugeiconsIcon icon={Heading01Icon} size={16} /> },
+    { value: '2', label: 'Heading 2', icon: <HugeiconsIcon icon={Heading02Icon} size={16} /> },
+    { value: '3', label: 'Heading 3', icon: <HugeiconsIcon icon={Heading03Icon} size={16} /> },
+    { value: '4', label: 'Heading 4', icon: <HugeiconsIcon icon={Heading04Icon} size={16} /> },
+    { value: '5', label: 'Heading 5', icon: <HugeiconsIcon icon={Heading05Icon} size={16} /> },
+    { value: '6', label: 'Heading 6', icon: <HugeiconsIcon icon={Heading06Icon} size={16} /> },
   ];
 
   const getCurrentHeadingLevel = () => {
@@ -89,7 +90,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               onClick={() => editor.chain().focus().undo().run()}
               disabled={!editor.can().undo()}
             >
-              <Undo className="w-4 h-4" />
+              <HugeiconsIcon icon={UndoIcon} size={16} />
             </Button>
           </Tooltip>
           <Tooltip content="Redo (Ctrl+Shift+Z)">
@@ -99,7 +100,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               onClick={() => editor.chain().focus().redo().run()}
               disabled={!editor.can().redo()}
             >
-              <Redo className="w-4 h-4" />
+              <HugeiconsIcon icon={RedoIcon} size={16} />
             </Button>
           </Tooltip>
         </div>
@@ -123,7 +124,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               isActive={editor.isActive('bold')}
               onClick={() => editor.chain().focus().toggleBold().run()}
             >
-              <Bold className="w-4 h-4" />
+              <HugeiconsIcon icon={TextBoldIcon} size={16} />
             </Button>
           </Tooltip>
           <Tooltip content="Italic (Ctrl+I)">
@@ -133,7 +134,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               isActive={editor.isActive('italic')}
               onClick={() => editor.chain().focus().toggleItalic().run()}
             >
-              <Italic className="w-4 h-4" />
+              <HugeiconsIcon icon={TextItalicIcon} size={16} />
             </Button>
           </Tooltip>
           <Tooltip content="Underline (Ctrl+U)">
@@ -143,7 +144,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               isActive={editor.isActive('underline')}
               onClick={() => editor.chain().focus().toggleUnderline().run()}
             >
-              <Underline className="w-4 h-4" />
+              <HugeiconsIcon icon={TextUnderlineIcon} size={16} />
             </Button>
           </Tooltip>
           <Tooltip content="Strikethrough (Ctrl+Shift+S)">
@@ -153,7 +154,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               isActive={editor.isActive('strike')}
               onClick={() => editor.chain().focus().toggleStrike().run()}
             >
-              <Strikethrough className="w-4 h-4" />
+              <HugeiconsIcon icon={TextStrikethroughIcon} size={16} />
             </Button>
           </Tooltip>
           <Tooltip content="Highlight">
@@ -163,7 +164,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               isActive={editor.isActive('highlight')}
               onClick={() => editor.chain().focus().toggleHighlight().run()}
             >
-              <Highlighter className="w-4 h-4" />
+              <HugeiconsIcon icon={HighlighterIcon} size={16} />
             </Button>
           </Tooltip>
         </div>
@@ -177,7 +178,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               isActive={editor.isActive('bulletList')}
               onClick={() => editor.chain().focus().toggleBulletList().run()}
             >
-              <List className="w-4 h-4" />
+              <HugeiconsIcon icon={LeftToRightListBulletIcon} size={16} />
             </Button>
           </Tooltip>
           <Tooltip content="Numbered List">
@@ -187,7 +188,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               isActive={editor.isActive('orderedList')}
               onClick={() => editor.chain().focus().toggleOrderedList().run()}
             >
-              <ListOrdered className="w-4 h-4" />
+              <HugeiconsIcon icon={LeftToRightListNumberIcon} size={16} />
             </Button>
           </Tooltip>
         </div>
@@ -201,7 +202,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               isActive={editor.isActive('blockquote')}
               onClick={() => editor.chain().focus().toggleBlockquote().run()}
             >
-              <Quote className="w-4 h-4" />
+              <HugeiconsIcon icon={LeftToRightBlockQuoteIcon} size={16} />
             </Button>
           </Tooltip>
           <Tooltip content="Code Block">
@@ -211,7 +212,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               isActive={editor.isActive('codeBlock')}
               onClick={() => editor.chain().focus().toggleCodeBlock().run()}
             >
-              <Code className="w-4 h-4" />
+              <HugeiconsIcon icon={SourceCodeIcon} size={16} />
             </Button>
           </Tooltip>
           <Tooltip content="Horizontal Rule">
@@ -220,7 +221,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               size="sm"
               onClick={() => editor.chain().focus().setHorizontalRule().run()}
             >
-              <Minus className="w-4 h-4" />
+              <HugeiconsIcon icon={MinusSignIcon} size={16} />
             </Button>
           </Tooltip>
         </div>
@@ -234,7 +235,7 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
               isActive={editor.isActive('link')}
               onClick={openLinkModal}
             >
-              <Link className="w-4 h-4" />
+              <HugeiconsIcon icon={Link01Icon} size={16} />
             </Button>
           </Tooltip>
         </div>

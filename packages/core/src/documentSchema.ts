@@ -42,6 +42,7 @@ export interface DarDocsDocument {
 export interface DocumentMetadata {
   id: string;
   title: string;
+  icon?: string;
   createdAt: string;
   updatedAt: string;
 }

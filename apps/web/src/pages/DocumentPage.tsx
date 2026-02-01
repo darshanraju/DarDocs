@@ -8,10 +8,12 @@ import {
   CommentsSidebar,
   SearchBar,
   TableOfContents,
+  DocumentIcon,
   useDocumentStore,
   useCommentStore,
   useBoardStore,
   useWorkspaceStore,
+  useAuthStore,
 } from '@dardocs/editor';
 
 export function DocumentPage() {
@@ -22,12 +24,12 @@ export function DocumentPage() {
     document,
     loadDocument,
     updateMetadata,
-    updateContent,
   } = useDocumentStore();
-  const { loadComments } = useCommentStore();
+  const { loadFromApi: loadCommentsFromApi, setCurrentUser } = useCommentStore();
   const { loadBoards } = useBoardStore();
   const { saveDocument, setActiveDocId, loadDocument: loadFromDB } =
     useWorkspaceStore();
+  const authUser = useAuthStore((s) => s.user);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const [editorInstance, setEditorInstance] = useState<TiptapEditor | null>(
     null
@@ -53,7 +55,14 @@ export function DocumentPage() {
     setIsSearchOpen(false);
   }, []);
 
-  // Load document from IndexedDB when docId changes
+  // Set comment author from auth user
+  useEffect(() => {
+    if (authUser) {
+      setCurrentUser({ id: authUser.id, name: authUser.name });
+    }
+  }, [authUser, setCurrentUser]);
+
+  // Load document from API when docId changes
   useEffect(() => {
     if (!docId) return;
 
@@ -65,7 +74,7 @@ export function DocumentPage() {
         const doc = await loadFromDB(docId);
         if (cancelled) return;
         loadDocument(doc);
-        loadComments(doc.comments || []);
+        loadCommentsFromApi(docId);
         loadBoards(doc.boards || {});
         setActiveDocId(docId);
       } catch {
@@ -80,7 +89,7 @@ export function DocumentPage() {
     return () => {
       cancelled = true;
     };
-  }, [docId, loadFromDB, loadDocument, loadComments, loadBoards, setActiveDocId]);
+  }, [docId, loadFromDB, loadDocument, loadCommentsFromApi, loadBoards, setActiveDocId]);
 
   // Auto-save: debounce saves to IndexedDB
   useEffect(() => {
@@ -114,6 +123,13 @@ export function DocumentPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [docId]);
 
+  const handleIconChange = useCallback(
+    (icon: string | undefined) => {
+      updateMetadata({ icon });
+    },
+    [updateMetadata]
+  );
+
   const handleTitleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       updateMetadata({ title: e.target.value });
@@ -136,10 +152,11 @@ export function DocumentPage() {
                 tr.insert(0, schema.nodes.paragraph.create());
                 return true;
               })
-              .focus('start')
+              .setTextSelection(1)
+              .focus()
               .run();
           } else {
-            editorInstance.commands.focus('start');
+            editorInstance.chain().setTextSelection(1).focus().run();
           }
         }
       }
@@ -181,15 +198,21 @@ export function DocumentPage() {
           <TableOfContents />
           <div className="flex-1 min-w-0">
             <div className="max-w-[720px] mx-auto px-6 py-8">
-              <input
-                ref={titleInputRef}
-                type="text"
-                value={document?.metadata.title || ''}
-                onChange={handleTitleChange}
-                onKeyDown={handleTitleKeyDown}
-                placeholder="Untitled"
-                className="doc-title-input"
-              />
+              <div className="doc-title-area">
+                <DocumentIcon
+                  icon={document?.metadata.icon}
+                  onIconChange={handleIconChange}
+                />
+                <input
+                  ref={titleInputRef}
+                  type="text"
+                  value={document?.metadata.title || ''}
+                  onChange={handleTitleChange}
+                  onKeyDown={handleTitleKeyDown}
+                  placeholder="Untitled"
+                  className="doc-title-input"
+                />
+              </div>
 
               {isViewMode ? (
                 <DocumentViewer />

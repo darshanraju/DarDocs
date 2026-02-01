@@ -6,6 +6,11 @@ export { useThemeStore } from './stores/themeStore';
 export { useWorkspaceStore } from './stores/workspaceStore';
 export type { TreeNode } from './stores/workspaceStore';
 export { useWorkspaceConfigStore } from './stores/workspaceConfigStore';
+export { useAuthStore } from './stores/authStore';
+
+// API client
+export { authApi, workspacesApi, documentsApi, commentsApi, membersApi, executeApi, ApiError } from './lib/api';
+export type { AuthUser, Workspace, DocTreeItem, DocFull, ApiComment, ApiCommentReply, WorkspaceMember, ExecResult } from './lib/api';
 
 // Hooks
 export { useDocument } from './hooks/useDocument';
@@ -32,4 +37,4 @@ export { LoadDocument } from './components/FileHandler/LoadDocument';
 export { ImportDocx } from './components/FileHandler/ImportDocx';
 
 // UI primitives
-export { Button, Dropdown, Modal, Tooltip } from './components/UI';
+export { Button, Dropdown, Modal, Tooltip, EmojiPicker, DocumentIcon } from './components/UI';

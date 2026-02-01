@@ -1,4 +1,4 @@
-export type EmbedType = 'figma' | 'google-sheet' | 'github' | 'github-gist' | 'grafana' | 'swagger';
+export type EmbedType = 'figma' | 'google-sheet' | 'github' | 'github-gist' | 'grafana' | 'swagger' | 'webview';
 
 export interface EmbedConfig {
   label: string;
@@ -79,6 +79,15 @@ export const EMBED_CONFIGS: Record<EmbedType, EmbedConfig> = {
     urlPattern: /^https?:\/\/.+/,
     getEmbedUrl: (url) => url,
     renderMode: 'swagger',
+    defaultHeight: 500,
+  },
+  webview: {
+    label: 'Webview',
+    iconColor: '#3b82f6',
+    placeholder: 'Paste any URL to embed as a webview (e.g., https://example.com)',
+    urlPattern: /^https?:\/\/.+/,
+    getEmbedUrl: (url) => url,
+    renderMode: 'iframe',
     defaultHeight: 500,
   },
 };
