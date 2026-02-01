@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DarDocs — Platform Strategy &amp; TAM Analysis</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #121929;
+    --surface2: #1a2236;
+    --border: #2a3550;
+    --text: #e2e8f0;
+    --text-dim: #8892a8;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --accent-purple: #8b5cf6;
+    --accent-green: #10b981;
+    --accent-orange: #f59e0b;
+    --accent-pink: #ec4899;
+    --accent-red: #ef4444;
+    --accent-teal: #14b8a6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    padding: 48px 24px 32px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #111827 0%, var(--bg) 100%);
+  }
+  .header h1 {
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header p {
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── Section titles ── */
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin: 48px 0 24px;
+    padding-left: 4px;
+  }
+
+  /* ── Core Hub ── */
+  .core-section {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0 32px;
+  }
+  .core-hub {
+    position: relative;
+    background: var(--surface);
+    border: 2px solid var(--accent-blue);
+    border-radius: 20px;
+    padding: 36px 48px;
+    text-align: center;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 0 60px rgba(59, 130, 246, 0.08), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+  .core-hub::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.2));
+    z-index: -1;
+    filter: blur(20px);
+  }
+  .core-hub h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .core-hub .subtitle {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .core-packages {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .pkg {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px;
+    color: var(--accent-cyan);
+  }
+
+  /* ── Connector lines (decorative) ── */
+  .connectors {
+    display: flex;
+    justify-content: center;
+    padding: 8px 0;
+  }
+  .connectors svg {
+    width: 600px;
+    height: 48px;
+  }
+
+  /* ── Product Angles Grid ── */
+  .angles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 20px;
+    padding-bottom: 24px;
+  }
+
+  .angle-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .angle-card:hover {
+    border-color: var(--card-accent, var(--accent-blue));
+  }
+  .angle-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--card-accent, var(--accent-blue));
+  }
+
+  .angle-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .angle-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    background: var(--card-accent, var(--accent-blue));
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .angle-tam {
+    text-align: right;
+  }
+  .angle-tam .tam-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--card-accent, var(--accent-blue));
+    line-height: 1;
+  }
+  .angle-tam .tam-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .angle-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .angle-card .angle-desc {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .angle-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .meta-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .meta-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+    min-width: 72px;
+    padding-top: 2px;
+    flex-shrink: 0;
+  }
+  .meta-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tag {
+    font-size: 12px;
+    padding: 2px 10px;
+    border-radius: 100px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .tag.persona-dev { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+  .tag.persona-devops { border-color: var(--accent-orange); color: var(--accent-orange); }
+  .tag.persona-pm { border-color: var(--accent-pink); color: var(--accent-pink); }
+  .tag.persona-enterprise { border-color: var(--accent-purple); color: var(--accent-purple); }
+  .tag.persona-startup { border-color: var(--accent-green); color: var(--accent-green); }
+  .tag.view { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.3); color: var(--accent-blue); }
+  .tag.edit { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--accent-green); }
+
+  .competitors {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .competitors strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ── User Flow Section ── */
+  .flow-section {
+    padding: 24px 0 48px;
+  }
+  .flow-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .flow-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+  }
+  .flow-card h4 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .flow-card .persona-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .flow-card .role {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+  }
+  .flow-steps {
+    list-style: none;
+    position: relative;
+    padding-left: 20px;
+  }
+  .flow-steps::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--border);
+  }
+  .flow-steps li {
+    position: relative;
+    font-size: 13px;
+    padding: 4px 0;
+    color: var(--text-dim);
+  }
+  .flow-steps li::before {
+    content: '';
+    position: absolute;
+    left: -19px;
+    top: 11px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 2px solid var(--accent-blue);
+  }
+
+  /* ── Architecture Diagram ── */
+  .arch-section {
+    padding: 24px 0 48px;
+  }
+  .arch-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    overflow-x: auto;
+  }
+  .arch-diagram pre {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .arch-diagram .hl-blue { color: var(--accent-blue); }
+  .arch-diagram .hl-cyan { color: var(--accent-cyan); }
+  .arch-diagram .hl-purple { color: var(--accent-purple); }
+  .arch-diagram .hl-green { color: var(--accent-green); }
+  .arch-diagram .hl-orange { color: var(--accent-orange); }
+  .arch-diagram .hl-pink { color: var(--accent-pink); }
+  .arch-diagram .hl-dim { color: var(--text-dim); }
+
+  /* ── TAM Summary Table ── */
+  .tam-section {
+    padding: 24px 0 64px;
+  }
+  .tam-table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .tam-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .tam-table thead {
+    background: var(--surface2);
+  }
+  .tam-table th {
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+  }
+  .tam-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .tam-table tr:last-child td {
+    border-bottom: none;
+  }
+  .tam-table tr:hover td {
+    background: rgba(59,130,246,0.03);
+  }
+  .tam-table .tam-num {
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .tam-table .phase-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+  }
+  .tam-table .phase-1 { border-color: var(--accent-green); color: var(--accent-green); }
+  .tam-table .phase-2 { border-color: var(--accent-blue); color: var(--accent-blue); }
+  .tam-table .phase-3 { border-color: var(--accent-purple); color: var(--accent-purple); }
+  .tam-table .tam-total-row td {
+    border-top: 2px solid var(--border);
+    font-weight: 700;
+    background: var(--surface2);
+  }
+
+  /* ── Phasing Timeline ── */
+  .timeline-section {
+    padding: 0 0 48px;
+  }
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .timeline-phase {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    position: relative;
+  }
+  .timeline-phase::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 14px 14px 0 0;
+  }
+  .timeline-phase.p1::before { background: var(--accent-green); }
+  .timeline-phase.p2::before { background: var(--accent-blue); }
+  .timeline-phase.p3::before { background: var(--accent-purple); }
+
+  .phase-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .phase-label.p1 { color: var(--accent-green); }
+  .phase-label.p2 { color: var(--accent-blue); }
+  .phase-label.p3 { color: var(--accent-purple); }
+
+  .timeline-phase h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .timeline-phase ul {
+    list-style: none;
+    padding: 0;
+  }
+  .timeline-phase li {
+    font-size: 13px;
+    color: var(--text-dim);
+    padding: 3px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+  .timeline-phase li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+  }
+
+  /* ── Revenue model ── */
+  .revenue-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 0 0 48px;
+  }
+  .revenue-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .revenue-card .amount {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .revenue-card .model-name {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .revenue-card .model-desc {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 16px 0;
+    margin-bottom: 16px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 32px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .angles-grid { grid-template-columns: 1fr; }
+    .timeline { grid-template-columns: 1fr; }
+    .header h1 { font-size: 28px; }
+    .arch-diagram { padding: 20px; }
+    .arch-diagram pre { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HEADER ═══════════════════════ -->
+<div class="header">
+  <h1>DarDocs Platform Strategy</h1>
+  <p>Product angles, user flows, access methods, and total addressable market analysis for a developer-first document platform.</p>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════════════ CORE HUB ═══════════════════════ -->
+<div class="section-title">Core Platform</div>
+<div class="core-section">
+  <div class="core-hub">
+    <h2>DarDocs Core</h2>
+    <p class="subtitle">The document format and editor engine that powers every product surface</p>
+    <div class="core-packages">
+      <div class="pkg">.dardocs.json</div>
+      <div class="pkg">@dardocs/core</div>
+      <div class="pkg">@dardocs/editor</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ LEGEND ═══════════════════════ -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-cyan)"></div> Developer</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-orange)"></div> DevOps / SRE</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-pink)"></div> Product Manager</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-purple)"></div> Enterprise / IT</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-green)"></div> Startup / SMB</div>
+</div>
+
+<!-- ═══════════════════════ PRODUCT ANGLES ═══════════════════════ -->
+<div class="section-title">Product Angles &amp; TAM</div>
+<div class="angles-grid">
+
+  <!-- Card 1: Embeddable Editor -->
+  <div class="angle-card" style="--card-accent: var(--accent-blue);">
+    <div class="angle-header">
+      <div class="angle-number">1</div>
+      <div class="angle-tam">
+        <div class="tam-value">$1.2B</div>
+        <div class="tam-label">TAM</div>
+      </div>
+    </div>
+    <h3>Embeddable Editor SDK</h3>
+    <p class="angle-desc">npm package that any React app can integrate. Rich text, tables, whiteboards, code blocks, embeds — dropped into internal tools, CRMs, portals, and documentation platforms.</p>
+    <div class="angle-meta">
+      <div class="meta-row">
+        <span class="meta-label">Personas</span>
+        <div class="meta-tags">
+          <span class="tag persona-dev">Developer</span>
+          <span class="tag persona-startup">Startup CTO</span>
+        </div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Access</span>
+        <div class="meta-tags">
+          <span class="tag edit">npm install</span>
+          <span class="tag view">React component</span>
+          <span class="tag edit">Full CRUD via API</span>
+        </div>
+      </div>
+    </div>
+    <div class="competitors"><strong>Competes with:</strong> CKEditor ($500–15k/yr), TinyMCE, Froala, Quill, Plate</div>
+  </div>
+
+  <!-- Card 2: SaaS -->
+  <div class="angle-card" style="--card-accent: var(--accent-green);">
+    <div class="angle-header">
+      <div class="angle-number">2</div>
+      <div class="angle-tam">
+        <div class="tam-value">$25B</div>
+        <div class="tam-label">TAM</div>
+      </div>
+    </div>
+    <h3>SaaS Collaboration Platform</h3>
+    <p class="angle-desc">Hosted web app — sign up, create documents, collaborate in real-time. Freemium model targeting small and mid-size teams who want Notion-level features without the complexity.</p>
+    <div class="angle-meta">
+      <div class="meta-row">
+        <span class="meta-label">Personas</span>
+        <div class="meta-tags">
+          <span class="tag persona-dev">Developer</span>
+          <span class="tag persona-pm">PM</span>
+          <span class="tag persona-startup">SMB Team</span>
+        </div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Access</span>
+        <div class="meta-tags">
+          <span class="tag view">Browser — View</span>
+          <span class="tag edit">Browser — Edit</span>
+          <span class="tag edit">Real-time collab</span>
+          <span class="tag view">Share links</span>
+        </div>
+      </div>
+    </div>
+    <div class="competitors"><strong>Competes with:</strong> Notion ($1B ARR), Coda, Slite, Google Docs (subset)</div>
+  </div>
+
+  <!-- Card 3: Self-hosted -->
+  <div class="angle-card" style="--card-accent: var(--accent-purple);">
+    <div class="angle-header">
+      <div class="angle-number">3</div>
+      <div class="angle-tam">
+        <div class="tam-value">$6B</div>
+        <div class="tam-label">TAM</div>
+      </div>
+    </div>
+    <h3>Self-Hosted Enterprise</h3>
+    <p class="angle-desc">Docker / Kubernetes deployment for regulated industries. Data stays on customer infrastructure. OIDC/SAML auth, audit logging, role-based access, air-gapped support.</p>
+    <div class="angle-meta">
+      <div class="meta-row">
+        <span class="meta-label">Personas</span>
+        <div class="meta-tags">
+          <span class="tag persona-enterprise">Enterprise IT</span>
+          <span class="tag persona-dev">Platform Eng</span>
+        </div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Access</span>
+        <div class="meta-tags">
+          <span class="tag view">Internal URL — View</span>
+          <span class="tag edit">Internal URL — Edit</span>
+          <span class="tag edit">SSO login</span>
+          <span class="tag view">REST API</span>
+        </div>
+      </div>
+    </div>
+    <div class="competitors"><strong>Competes with:</strong> Confluence DC (discontinued), SharePoint, BookStack, Wiki.js</div>
+  </div>
+
+  <!-- Card 4: VSCode Extension -->
+  <div class="angle-card" style="--card-accent: var(--accent-cyan);">
+    <div class="angle-header">
+      <div class="angle-number">4</div>
+      <div class="angle-tam">
+        <div class="tam-value">$2.5B</div>
+        <div class="tam-label">TAM</div>
+      </div>
+    </div>
+    <h3>VSCode Extension</h3>
+    <p class="angle-desc">Custom editor for .dardocs.json files inside VSCode. View and edit rich documents without leaving the IDE. Documentation lives in the repo, version-controlled with code.</p>
+    <div class="angle-meta">
+      <div class="meta-row">
+        <span class="meta-label">Personas</span>
+        <div class="meta-tags">
+          <span class="tag persona-dev">Developer</span>
+          <span class="tag persona-devops">DevOps</span>
+        </div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Access</span>
+        <div class="meta-tags">
+          <span class="tag view">VSCode — View</span>
+          <span class="tag edit">VSCode — Edit</span>
+          <span class="tag view">Git versioned</span>
+          <span class="tag view">PR diff view</span>
+        </div>
+      </div>
+    </div>
+    <div class="competitors"><strong>Competes with:</strong> Markdown, GitBook, Mintlify, Notion (docs use case)</div>
+  </div>
+
+  <!-- Card 5: Executable Runbooks -->
+  <div class="angle-card" style="--card-accent: var(--accent-orange);">
+    <div class="angle-header">
+      <div class="angle-number">5</div>
+      <div class="angle-tam">
+        <div class="tam-value">$3B</div>
+        <div class="tam-label">TAM</div>
+      </div>
+    </div>
+    <h3>Executable Runbooks</h3>
+    <p class="angle-desc">Documents with runnable code blocks. Bash, Python, SQL snippets execute against configured targets (k8s, AWS, databases). Runbooks become interactive — not just text to copy-paste.</p>
+    <div class="angle-meta">
+      <div class="meta-row">
+        <span class="meta-label">Personas</span>
+        <div class="meta-tags">
+          <span class="tag persona-devops">DevOps / SRE</span>
+          <span class="tag persona-dev">Developer</span>
+        </div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Access</span>
+        <div class="meta-tags">
+          <span class="tag view">Browser — View</span>
+          <span class="tag edit">Browser — Edit</span>
+          <span class="tag edit">Execute in-doc</span>
+          <span class="tag view">Audit trail</span>
+        </div>
+      </div>
+    </div>
+    <div class="competitors"><strong>Competes with:</strong> Runbook.md, PagerDuty runbooks, Rootly, internal wikis</div>
+  </div>
+
+  <!-- Card 6: API Documentation -->
+  <div class="angle-card" style="--card-accent: var(--accent-teal);">
+    <div class="angle-header">
+      <div class="angle-number">6</div>
+      <div class="angle-tam">
+        <div class="tam-value">$1.8B</div>
+        <div class="tam-label">TAM</div>
+      </div>
+    </div>
+    <h3>API Documentation</h3>
+    <p class="angle-desc">Rich-text API docs with embedded Swagger/OpenAPI specs, inline endpoint testing, and auto-generated reference pages. Developer portal meets document editor.</p>
+    <div class="angle-meta">
+      <div class="meta-row">
+        <span class="meta-label">Personas</span>
+        <div class="meta-tags">
+          <span class="tag persona-dev">Developer</span>
+          <span class="tag persona-pm">PM</span>
+        </div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Access</span>
+        <div class="meta-tags">
+          <span class="tag view">Public docs site</span>
+          <span class="tag edit">Editor for authors</span>
+          <span class="tag edit">CI/CD sync</span>
+          <span class="tag view">Embed in portal</span>
+        </div>
+      </div>
+    </div>
+    <div class="competitors"><strong>Competes with:</strong> Stoplight ($99–399/mo), ReadMe, SwaggerHub, Redocly</div>
+  </div>
+
+  <!-- Card 7: Living PRDs -->
+  <div class="angle-card" style="--card-accent: var(--accent-pink);">
+    <div class="angle-header">
+      <div class="angle-number">7</div>
+      <div class="angle-tam">
+        <div class="tam-value">$4B</div>
+        <div class="tam-label">TAM</div>
+      </div>
+    </div>
+    <h3>Living PRDs &amp; Specs</h3>
+    <p class="angle-desc">Product requirements documents with live data. Mermaid architecture diagrams, embedded Grafana dashboards, linked GitHub PRs showing implementation status. Specs that stay alive.</p>
+    <div class="angle-meta">
+      <div class="meta-row">
+        <span class="meta-label">Personas</span>
+        <div class="meta-tags">
+          <span class="tag persona-pm">Product Manager</span>
+          <span class="tag persona-dev">Tech Lead</span>
+        </div>
+      </div>
+      <div class="meta-row">
+        <span class="meta-label">Access</span>
+        <div class="meta-tags">
+          <span class="tag view">Browser — View</span>
+          <span class="tag edit">Browser — Edit</span>
+          <span class="tag view">Jira/Linear sync</span>
+          <span class="tag view">Live dashboards</span>
+        </div>
+      </div>
+    </div>
+    <div class="competitors"><strong>Competes with:</strong> Notion (PM use), Productboard, Coda, Google Docs + Jira</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ SYSTEM ARCHITECTURE ═══════════════════════ -->
+<div class="section-title">System Architecture — All Surfaces, One Core</div>
+<div class="arch-section">
+  <div class="arch-diagram">
+<pre>
+<span class="hl-dim">┌─────────────────────────────────────────────────────────────────────────────────────────────┐</span>
+<span class="hl-dim">│</span>                                    <span class="hl-blue">USER SURFACES</span>                                          <span class="hl-dim">│</span>
+<span class="hl-dim">│                                                                                             │</span>
+<span class="hl-dim">│</span>  <span class="hl-cyan">┌──────────────┐</span>  <span class="hl-green">┌──────────────┐</span>  <span class="hl-purple">┌──────────────┐</span>  <span class="hl-orange">┌──────────────┐</span>  <span class="hl-pink">┌──────────────┐</span>  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>  <span class="hl-cyan">│   VSCode     │</span>  <span class="hl-green">│   Browser    │</span>  <span class="hl-purple">│  Embedded    │</span>  <span class="hl-orange">│  CLI / CI    │</span>  <span class="hl-pink">│  REST API    │</span>  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>  <span class="hl-cyan">│   Extension  │</span>  <span class="hl-green">│   (SaaS)     │</span>  <span class="hl-purple">│  (npm pkg)   │</span>  <span class="hl-orange">│  (future)    │</span>  <span class="hl-pink">│  (future)    │</span>  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>  <span class="hl-cyan">│              │</span>  <span class="hl-green">│              │</span>  <span class="hl-purple">│              │</span>  <span class="hl-orange">│              │</span>  <span class="hl-pink">│              │</span>  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>  <span class="hl-cyan">│  View  Edit  │</span>  <span class="hl-green">│  View  Edit  │</span>  <span class="hl-purple">│  View  Edit  │</span>  <span class="hl-orange">│  Lint  Gen   │</span>  <span class="hl-pink">│  CRUD  Query │</span>  <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>  <span class="hl-cyan">└──────┬───────┘</span>  <span class="hl-green">└──────┬───────┘</span>  <span class="hl-purple">└──────┬───────┘</span>  <span class="hl-orange">└──────┬───────┘</span>  <span class="hl-pink">└──────┬───────┘</span>  <span class="hl-dim">│</span>
+<span class="hl-dim">│         │                │                │                │                │              │</span>
+<span class="hl-dim">│         └────────────────┼────────────────┼────────────────┼────────────────┘              │</span>
+<span class="hl-dim">│                          │                │                │                               │</span>
+<span class="hl-dim">│                          ▼                ▼                ▼                               │</span>
+<span class="hl-dim">│</span>               <span class="hl-blue">┌──────────────────────────────────────────────────┐</span>                        <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>               <span class="hl-blue">│              @dardocs/editor                     │</span>                        <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>               <span class="hl-blue">│  Tiptap + Extensions │ Slash Commands │ Toolbar  │</span>                        <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>               <span class="hl-blue">│  Tables │ Code Blocks │ Whiteboards │ Embeds    │</span>                        <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>               <span class="hl-blue">│  Comments │ Media │ Mermaid │ Video │ tldraw    │</span>                        <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>               <span class="hl-blue">└────────────────────────┬─────────────────────────┘</span>                        <span class="hl-dim">│</span>
+<span class="hl-dim">│                                        │                                                    │</span>
+<span class="hl-dim">│                                        ▼                                                    │</span>
+<span class="hl-dim">│</span>               <span class="hl-cyan">┌──────────────────────────────────────────────────┐</span>                        <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>               <span class="hl-cyan">│              @dardocs/core                       │</span>                        <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>               <span class="hl-cyan">│  Document Schema │ Serialization │ Validation    │</span>                        <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>               <span class="hl-cyan">│  .dardocs.json format │ Type definitions          │</span>                        <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>               <span class="hl-cyan">└────────────────────────┬─────────────────────────┘</span>                        <span class="hl-dim">│</span>
+<span class="hl-dim">│                                        │                                                    │</span>
+<span class="hl-dim">└────────────────────────────────────────┼────────────────────────────────────────────────────┘</span>
+                                         │
+<span class="hl-dim">┌────────────────────────────────────────┼────────────────────────────────────────────────────┐</span>
+<span class="hl-dim">│</span>                                    <span class="hl-green">BACKEND</span>                                                <span class="hl-dim">│</span>
+<span class="hl-dim">│                                        │                                                    │</span>
+<span class="hl-dim">│</span>         <span class="hl-green">┌──────────────┐</span>    <span class="hl-green">┌─────────┴──────────┐</span>    <span class="hl-green">┌──────────────┐</span>               <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>         <span class="hl-green">│  Hocuspocus  │</span>    <span class="hl-green">│   Next.js / API    │</span>    <span class="hl-green">│   Workers    │</span>               <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>         <span class="hl-green">│  (WebSocket) │</span>    <span class="hl-green">│   (Vercel or       │</span>    <span class="hl-green">│  (async jobs │</span>               <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>         <span class="hl-green">│              │</span>    <span class="hl-green">│    self-hosted)    │</span>    <span class="hl-green">│   export,    │</span>               <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>         <span class="hl-green">│  Real-time   │</span>    <span class="hl-green">│                    │</span>    <span class="hl-green">│   convert,   │</span>               <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>         <span class="hl-green">│  Yjs collab  │</span>    <span class="hl-green">│  Auth │ CRUD │ ACL │</span>    <span class="hl-green">│   index)     │</span>               <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>         <span class="hl-green">└──────┬───────┘</span>    <span class="hl-green">└─────────┬──────────┘</span>    <span class="hl-green">└──────┬───────┘</span>               <span class="hl-dim">│</span>
+<span class="hl-dim">│                │                     │                       │                              │</span>
+<span class="hl-dim">│                └─────────────────────┼───────────────────────┘                              │</span>
+<span class="hl-dim">│                                      │                                                      │</span>
+<span class="hl-dim">│</span>                       <span class="hl-dim">┌──────────────┼──────────────┐</span>                                    <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>                       <span class="hl-dim">▼              ▼              ▼</span>                                    <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>                <span class="hl-orange">┌──────────┐</span>  <span class="hl-purple">┌──────────┐</span>  <span class="hl-cyan">┌──────────┐</span>                              <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>                <span class="hl-orange">│PostgreSQL│</span>  <span class="hl-purple">│  S3 / R2 │</span>  <span class="hl-cyan">│  Redis   │</span>                              <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>                <span class="hl-orange">│(metadata,│</span>  <span class="hl-purple">│(documents│</span>  <span class="hl-cyan">│(sessions,│</span>                              <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>                <span class="hl-orange">│ users,   │</span>  <span class="hl-purple">│ & media) │</span>  <span class="hl-cyan">│ cache)   │</span>                              <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>                <span class="hl-orange">│ perms)   │</span>  <span class="hl-purple">│          │</span>  <span class="hl-cyan">│          │</span>                              <span class="hl-dim">│</span>
+<span class="hl-dim">│</span>                <span class="hl-orange">└──────────┘</span>  <span class="hl-purple">└──────────┘</span>  <span class="hl-cyan">└──────────┘</span>                              <span class="hl-dim">│</span>
+<span class="hl-dim">│                                                                                             │</span>
+<span class="hl-dim">│</span>  <span class="hl-dim">SaaS: Vercel + Fly.io + Neon + R2          Self-hosted: Docker Compose / Helm on customer K8s</span>  <span class="hl-dim">│</span>
+<span class="hl-dim">└─────────────────────────────────────────────────────────────────────────────────────────────┘</span>
+</pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════ USER FLOWS ═══════════════════════ -->
+<div class="section-title">User Journeys — View &amp; Update Flows</div>
+<div class="flow-section">
+  <div class="flow-grid">
+
+    <div class="flow-card">
+      <h4><div class="persona-dot" style="background:var(--accent-cyan)"></div> Developer — Docs in Repo</h4>
+      <p class="role">Writes documentation alongside code</p>
+      <ol class="flow-steps">
+        <li>Opens .dardocs.json in VSCode</li>
+        <li>Extension renders rich preview (view)</li>
+        <li>Switches to edit mode in VSCode</li>
+        <li>Adds Mermaid diagram, code block</li>
+        <li>Commits file with code changes</li>
+        <li>PR shows doc diff in GitHub</li>
+        <li>Teammates view in browser or VSCode</li>
+      </ol>
+    </div>
+
+    <div class="flow-card">
+      <h4><div class="persona-dot" style="background:var(--accent-cyan)"></div> Developer — Embedded Editor</h4>
+      <p class="role">Integrates editor into their product</p>
+      <ol class="flow-steps">
+        <li>npm install @dardocs/editor</li>
+        <li>Drops &lt;DarDocsEditor /&gt; into React app</li>
+        <li>Configures extensions (tables, code, etc.)</li>
+        <li>Users of their app create/edit documents</li>
+        <li>Serializes to .dardocs.json for storage</li>
+        <li>Free tier: basic text editing</li>
+        <li>Paid tier: whiteboards, collab, embeds</li>
+      </ol>
+    </div>
+
+    <div class="flow-card">
+      <h4><div class="persona-dot" style="background:var(--accent-orange)"></div> DevOps — Incident Runbook</h4>
+      <p class="role">Maintains and executes runbooks during incidents</p>
+      <ol class="flow-steps">
+        <li>Opens runbook in browser (SaaS or self-hosted)</li>
+        <li>Reads incident procedure (view)</li>
+        <li>Clicks "Run" on a bash code block</li>
+        <li>Command executes against configured k8s cluster</li>
+        <li>Output appears inline below the block</li>
+        <li>Edits runbook based on findings (edit)</li>
+        <li>Execution log saved for audit trail</li>
+      </ol>
+    </div>
+
+    <div class="flow-card">
+      <h4><div class="persona-dot" style="background:var(--accent-pink)"></div> PM — Living PRD</h4>
+      <p class="role">Writes specs with live data and tracks implementation</p>
+      <ol class="flow-steps">
+        <li>Creates new PRD from template (browser)</li>
+        <li>Writes requirements with rich text (edit)</li>
+        <li>Embeds Mermaid architecture diagram</li>
+        <li>Embeds Grafana dashboard for metrics</li>
+        <li>Links GitHub PRs for each requirement</li>
+        <li>Engineers view spec, see live status</li>
+        <li>Stakeholders view with comment mode</li>
+      </ol>
+    </div>
+
+    <div class="flow-card">
+      <h4><div class="persona-dot" style="background:var(--accent-purple)"></div> Enterprise IT — Self-Hosted</h4>
+      <p class="role">Deploys and administers DarDocs on company infra</p>
+      <ol class="flow-steps">
+        <li>Deploys via Helm chart to internal K8s</li>
+        <li>Configures OIDC/SAML for SSO</li>
+        <li>Connects to internal Postgres + S3</li>
+        <li>Sets up role-based access controls</li>
+        <li>Users access via internal URL (view/edit)</li>
+        <li>Audit logs track all document operations</li>
+        <li>Air-gapped — no external data flow</li>
+      </ol>
+    </div>
+
+    <div class="flow-card">
+      <h4><div class="persona-dot" style="background:var(--accent-green)"></div> Startup Team — SaaS</h4>
+      <p class="role">Small team using DarDocs for all documentation</p>
+      <ol class="flow-steps">
+        <li>Signs up at dardocs.com (free tier)</li>
+        <li>Creates team workspace</li>
+        <li>Writes docs, meeting notes, specs (edit)</li>
+        <li>Shares links for external review (view)</li>
+        <li>Upgrades for real-time collaboration</li>
+        <li>Exports to .dardocs.json for backup</li>
+        <li>Integrates Slack notifications</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════ PHASING ═══════════════════════ -->
+<div class="section-title">Phased Rollout</div>
+<div class="timeline-section">
+  <div class="timeline">
+    <div class="timeline-phase p1">
+      <div class="phase-label p1">Phase 1 — Foundation</div>
+      <h4>Extract &amp; Ship the SDK</h4>
+      <ul>
+        <li>Monorepo: @dardocs/core + @dardocs/editor</li>
+        <li>npm publish with free/paid extension tiers</li>
+        <li>VSCode extension (view-only first)</li>
+        <li>Documentation site</li>
+        <li>License key system</li>
+      </ul>
+    </div>
+    <div class="timeline-phase p2">
+      <div class="phase-label p2">Phase 2 — Platform</div>
+      <h4>SaaS + Collaboration</h4>
+      <ul>
+        <li>Next.js app with auth (Clerk/NextAuth)</li>
+        <li>Hocuspocus for real-time collaboration</li>
+        <li>Document CRUD API + permissions</li>
+        <li>Stripe billing integration</li>
+        <li>VSCode extension: edit mode</li>
+      </ul>
+    </div>
+    <div class="timeline-phase p3">
+      <div class="phase-label p3">Phase 3 — Enterprise</div>
+      <h4>Self-Hosted + Verticals</h4>
+      <ul>
+        <li>Docker / Helm deployment packages</li>
+        <li>OIDC/SAML SSO, SCIM provisioning</li>
+        <li>Audit logging, admin console</li>
+        <li>Executable code blocks (runbooks)</li>
+        <li>API docs features, PRD templates</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ REVENUE MODELS ═══════════════════════ -->
+<div class="section-title">Revenue Models by Angle</div>
+<div class="revenue-grid">
+  <div class="revenue-card">
+    <div class="amount" style="color:var(--accent-blue)">$29–599</div>
+    <div class="model-name">Editor SDK</div>
+    <div class="model-desc">Per-project license, monthly.<br>Free: basic text.<br>Pro: all extensions.<br>Enterprise: SLA + support.</div>
+  </div>
+  <div class="revenue-card">
+    <div class="amount" style="color:var(--accent-green)">$0–25</div>
+    <div class="model-name">SaaS / seat / mo</div>
+    <div class="model-desc">Free tier (personal use).<br>Team: $10/seat/mo.<br>Business: $25/seat/mo.<br>Collaboration + storage.</div>
+  </div>
+  <div class="revenue-card">
+    <div class="amount" style="color:var(--accent-purple)">$15k–100k</div>
+    <div class="model-name">Self-Hosted / yr</div>
+    <div class="model-desc">Annual license by org size.<br>Includes SSO, audit, support.<br>Premium support add-on.<br>Air-gapped deployment.</div>
+  </div>
+  <div class="revenue-card">
+    <div class="amount" style="color:var(--accent-cyan)">$0–9</div>
+    <div class="model-name">VSCode Ext / mo</div>
+    <div class="model-desc">Free: read-only viewer.<br>Pro: full editing in IDE.<br>Team: shared settings.<br>Distribution channel for SDK.</div>
+  </div>
+  <div class="revenue-card">
+    <div class="amount" style="color:var(--accent-orange)">$49–199</div>
+    <div class="model-name">Runbooks / seat / mo</div>
+    <div class="model-desc">Execution environment.<br>Target configuration.<br>Audit trail + approvals.<br>PagerDuty/OpsGenie integration.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ TAM SUMMARY TABLE ═══════════════════════ -->
+<div class="section-title">TAM Summary</div>
+<div class="tam-section">
+  <div class="tam-table-wrap">
+    <table class="tam-table">
+      <thead>
+        <tr>
+          <th style="width:30px">#</th>
+          <th>Product Angle</th>
+          <th>TAM</th>
+          <th>Primary Persona</th>
+          <th>View / Update Methods</th>
+          <th>Phase</th>
+          <th>Key Differentiator</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><strong>Embeddable Editor SDK</strong></td>
+          <td class="tam-num" style="color:var(--accent-blue)">$1.2B</td>
+          <td>Developers building products</td>
+          <td>npm install → React component → full CRUD</td>
+          <td><span class="phase-badge phase-1">Phase 1</span></td>
+          <td>React-native, modern stack vs jQuery-era incumbents</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><strong>SaaS Collaboration</strong></td>
+          <td class="tam-num" style="color:var(--accent-green)">$25B</td>
+          <td>Teams, PMs, startups</td>
+          <td>Browser edit/view, share links, real-time collab</td>
+          <td><span class="phase-badge phase-2">Phase 2</span></td>
+          <td>Dev-native: code blocks, diagrams, whiteboards built in</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><strong>Self-Hosted Enterprise</strong></td>
+          <td class="tam-num" style="color:var(--accent-purple)">$6B</td>
+          <td>Enterprise IT, regulated industries</td>
+          <td>Internal URL, SSO, REST API, admin console</td>
+          <td><span class="phase-badge phase-3">Phase 3</span></td>
+          <td>Fills Confluence DC gap (discontinued by Atlassian)</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><strong>VSCode Extension</strong></td>
+          <td class="tam-num" style="color:var(--accent-cyan)">$2.5B</td>
+          <td>Developers, DevOps</td>
+          <td>VSCode custom editor, view + edit, git-versioned</td>
+          <td><span class="phase-badge phase-1">Phase 1</span></td>
+          <td>Rich docs in IDE — not just markdown</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><strong>Executable Runbooks</strong></td>
+          <td class="tam-num" style="color:var(--accent-orange)">$3B</td>
+          <td>DevOps, SRE</td>
+          <td>Browser edit/view, inline execution, audit log</td>
+          <td><span class="phase-badge phase-3">Phase 3</span></td>
+          <td>Documents that DO things — run code, query systems</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>API Documentation</strong></td>
+          <td class="tam-num" style="color:var(--accent-teal)">$1.8B</td>
+          <td>Developers, PMs</td>
+          <td>Public docs site, author editor, CI/CD sync</td>
+          <td><span class="phase-badge phase-2">Phase 2</span></td>
+          <td>Rich text + live API testing in one tool</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>Living PRDs &amp; Specs</strong></td>
+          <td class="tam-num" style="color:var(--accent-pink)">$4B</td>
+          <td>Product Managers, Tech Leads</td>
+          <td>Browser edit/view, Jira/Linear sync, live embeds</td>
+          <td><span class="phase-badge phase-2">Phase 2</span></td>
+          <td>Specs with live data — Grafana, GitHub, Mermaid</td>
+        </tr>
+        <tr class="tam-total-row">
+          <td></td>
+          <td>Combined Addressable Market</td>
+          <td class="tam-num" style="color:var(--text)">$43.5B</td>
+          <td colspan="4" style="color:var(--text-dim)">Overlapping segments — realistic serviceable market is a fraction of total. The SDK and VSCode extension are the entry points; SaaS and enterprise are the scale plays.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ VIEW/UPDATE MATRIX ═══════════════════════ -->
+<div class="section-title">View &amp; Update Matrix — How Each Persona Accesses Documents</div>
+<div class="tam-section">
+  <div class="tam-table-wrap">
+    <table class="tam-table">
+      <thead>
+        <tr>
+          <th>Surface</th>
+          <th>View</th>
+          <th>Edit</th>
+          <th>Collaborate</th>
+          <th>Execute</th>
+          <th>Export</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Browser (SaaS)</strong></td>
+          <td style="color:var(--accent-green)">&#10003; Full render</td>
+          <td style="color:var(--accent-green)">&#10003; Tiptap editor</td>
+          <td style="color:var(--accent-green)">&#10003; Real-time (Yjs)</td>
+          <td style="color:var(--accent-green)">&#10003; Runbook mode</td>
+          <td style="color:var(--accent-green)">&#10003; JSON, PDF, DOCX</td>
+        </tr>
+        <tr>
+          <td><strong>Browser (Self-hosted)</strong></td>
+          <td style="color:var(--accent-green)">&#10003; Full render</td>
+          <td style="color:var(--accent-green)">&#10003; Tiptap editor</td>
+          <td style="color:var(--accent-green)">&#10003; Real-time (Yjs)</td>
+          <td style="color:var(--accent-green)">&#10003; Sandboxed exec</td>
+          <td style="color:var(--accent-green)">&#10003; JSON, PDF, DOCX</td>
+        </tr>
+        <tr>
+          <td><strong>VSCode Extension</strong></td>
+          <td style="color:var(--accent-green)">&#10003; Webview render</td>
+          <td style="color:var(--accent-green)">&#10003; Custom editor</td>
+          <td style="color:var(--text-dim)">&#x2013; Not initially</td>
+          <td style="color:var(--text-dim)">&#x2013; Via terminal</td>
+          <td style="color:var(--accent-green)">&#10003; Save as JSON</td>
+        </tr>
+        <tr>
+          <td><strong>Embedded (npm)</strong></td>
+          <td style="color:var(--accent-green)">&#10003; Component render</td>
+          <td style="color:var(--accent-green)">&#10003; Component edit</td>
+          <td style="color:var(--accent-green)">&#10003; If host sets up Yjs</td>
+          <td style="color:var(--text-dim)">&#x2013; Host responsibility</td>
+          <td style="color:var(--accent-green)">&#10003; JSON (getJSON)</td>
+        </tr>
+        <tr>
+          <td><strong>REST API</strong></td>
+          <td style="color:var(--accent-green)">&#10003; GET endpoint</td>
+          <td style="color:var(--accent-green)">&#10003; PUT/PATCH</td>
+          <td style="color:var(--text-dim)">&#x2013; Not real-time</td>
+          <td style="color:var(--text-dim)">&#x2013; Trigger via API</td>
+          <td style="color:var(--accent-green)">&#10003; Render endpoint</td>
+        </tr>
+        <tr>
+          <td><strong>CLI (future)</strong></td>
+          <td style="color:var(--accent-green)">&#10003; Terminal render</td>
+          <td style="color:var(--text-dim)">&#x2013; Not practical</td>
+          <td style="color:var(--text-dim)">&#x2013; N/A</td>
+          <td style="color:var(--accent-green)">&#10003; Run code blocks</td>
+          <td style="color:var(--accent-green)">&#10003; JSON, MD</td>
+        </tr>
+        <tr>
+          <td><strong>GitHub/GitLab</strong></td>
+          <td style="color:var(--accent-green)">&#10003; Renderer bot / action</td>
+          <td style="color:var(--text-dim)">&#x2013; Via PR</td>
+          <td style="color:var(--accent-green)">&#10003; PR reviews</td>
+          <td style="color:var(--text-dim)">&#x2013; CI actions</td>
+          <td style="color:var(--text-dim)">&#x2013; N/A</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<div class="footer">
+  DarDocs Platform Strategy — Generated for internal planning. TAM figures are approximate based on public market research and comparable company data (2024–2025).
+</div>
+
+</body>
+</html>
