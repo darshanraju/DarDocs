@@ -6180,6 +6180,11 @@ html, body {
   background: var(--color-bg-muted);
 }
 
+.wiki-link-menu-footer {
+  padding: 8px 12px;
+  border-top: 1px solid var(--color-border);
+}
+
 /* ============================================================
    Search Modal
    ============================================================ */
@@ -6350,86 +6355,78 @@ html, body {
 }
 
 /* ============================================================
-   Table of Contents
+   Table of Contents (Notion-style)
    ============================================================ */
 
-.toc-wrapper {
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  background: var(--color-bg);
-  overflow: hidden;
-  transition: box-shadow 0.15s ease;
+.toc-notion {
+  position: relative;
+  padding: 4px 0;
 }
 
-.toc-wrapper:hover {
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-}
-
-.toc-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-bg-subtle);
-}
-
-.toc-body {
-  padding: 8px 14px;
-}
-
-.toc-list {
+.toc-notion-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
-.toc-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 4px 8px;
+.toc-notion-link {
+  display: inline;
   border: none;
   background: transparent;
   text-align: left;
   cursor: pointer;
-  border-radius: 6px;
-  transition: background-color 0.1s ease;
-  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-decoration-color: var(--color-text-faint);
+  text-underline-offset: 2px;
+  transition: color 0.1s ease;
 }
 
-.toc-item:hover {
-  background: var(--color-bg-muted);
+.toc-notion-link:hover {
   color: var(--color-text);
 }
 
-.toc-item-indicator {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--color-text-faint);
-  flex-shrink: 0;
-}
-
-.toc-item-text {
-  font-size: 0.8125rem;
-  line-height: 1.4;
-  truncate: true;
-}
-
-.toc-item-h1 .toc-item-text {
-  font-weight: 600;
+.toc-notion-h1 {
   font-size: 0.875rem;
-}
-
-.toc-item-h2 .toc-item-text {
-  font-weight: 500;
-}
-
-.toc-item-h3 .toc-item-text {
-  font-weight: 400;
   color: var(--color-text-muted);
+}
+
+.toc-notion-h2 {
+  font-size: 0.875rem;
+  color: var(--color-text-faint);
+}
+
+.toc-notion-h3 {
+  font-size: 0.8125rem;
+  color: var(--color-text-faint);
+}
+
+.toc-notion-delete {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  padding: 4px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-faint);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.toc-notion:hover .toc-notion-delete {
+  opacity: 1;
+}
+
+.toc-notion-delete:hover {
+  color: var(--color-danger);
+  background: var(--color-bg-danger-subtle);
 }
 
 /* ============================================================
@@ -6521,4 +6518,37 @@ html, body {
   max-width: 680px;
   margin: 0 auto;
   padding: 0 24px;
+}
+
+/* ============================================================
+   Document Toolbar
+   ============================================================ */
+
+.doc-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+  flex-shrink: 0;
+}
+
+.doc-toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.doc-toolbar-btn:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-text);
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import type { Editor } from '@tiptap/react';
 import { FileText, Search } from 'lucide-react';
-import { useLibraryStore } from '../../stores/libraryStore';
+import { useWorkspaceStore, type TreeNode } from '../../stores/workspaceStore';
 
 interface WikiLinkMenuProps {
   editor: Editor | null;
@@ -11,24 +11,55 @@ interface WikiLinkMenuProps {
   query: string;
 }
 
+interface DocItem {
+  id: string;
+  title: string;
+}
+
+function flattenTree(nodes: TreeNode[]): DocItem[] {
+  const results: DocItem[] = [];
+  const walk = (items: TreeNode[]) => {
+    for (const item of items) {
+      results.push({ id: item.id, title: item.title });
+      if (item.children.length > 0) walk(item.children);
+    }
+  };
+  walk(nodes);
+  return results;
+}
+
 export function WikiLinkMenu({ editor, isOpen, onClose, position, query }: WikiLinkMenuProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const { getAllDocuments, search } = useLibraryStore();
   const menuRef = useRef<HTMLDivElement>(null);
+  const tree = useWorkspaceStore((s) => s.tree);
+
+  const allDocs = useMemo(() => flattenTree(tree), [tree]);
 
   const results = useMemo(() => {
     if (!query.trim()) {
-      return getAllDocuments().slice(0, 10);
+      return allDocs.slice(0, 10);
     }
-    return search(query).slice(0, 10);
-  }, [query, getAllDocuments, search]);
+    const lower = query.toLowerCase();
+    return allDocs
+      .filter((doc) => doc.title.toLowerCase().includes(lower))
+      .slice(0, 10);
+  }, [query, allDocs]);
+
+  const remaining = useMemo(() => {
+    if (!query.trim()) {
+      return Math.max(0, allDocs.length - 10);
+    }
+    const lower = query.toLowerCase();
+    const total = allDocs.filter((doc) => doc.title.toLowerCase().includes(lower)).length;
+    return Math.max(0, total - 10);
+  }, [query, allDocs]);
 
   useEffect(() => {
     setSelectedIndex(0);
   }, [results]);
 
   const insertLink = useCallback(
-    (doc: { id: string; title: string }) => {
+    (doc: DocItem) => {
       if (!editor) return;
 
       const { state } = editor;
@@ -116,38 +147,39 @@ export function WikiLinkMenu({ editor, isOpen, onClose, position, query }: WikiL
       <div className="wiki-link-menu-header">
         <Search className="w-3.5 h-3.5 text-gray-400" />
         <span className="text-xs text-gray-500">
-          {query ? `Searching: "${query}"` : 'Link to document'}
+          {query ? `Searching: "${query}"` : 'Link to page'}
         </span>
       </div>
 
       {results.length === 0 ? (
         <div className="wiki-link-menu-empty">
           <p className="text-xs text-gray-400">
-            {query ? 'No documents found' : 'No documents in library'}
-          </p>
-          <p className="text-xs text-gray-300 mt-1">
-            Save documents to build your library
+            {query ? 'No documents found' : 'No documents in workspace'}
           </p>
         </div>
       ) : (
-        results.map((doc, index) => (
-          <div
-            key={doc.id}
-            className={`wiki-link-menu-item ${index === selectedIndex ? 'is-selected' : ''}`}
-            onClick={() => insertLink(doc)}
-            onMouseEnter={() => setSelectedIndex(index)}
-          >
-            <FileText className="w-4 h-4 text-gray-400 flex-shrink-0" />
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium text-gray-800 truncate">
-                {doc.title || 'Untitled'}
+        <>
+          {results.map((doc, index) => (
+            <div
+              key={doc.id}
+              className={`wiki-link-menu-item ${index === selectedIndex ? 'is-selected' : ''}`}
+              onClick={() => insertLink(doc)}
+              onMouseEnter={() => setSelectedIndex(index)}
+            >
+              <FileText className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium text-gray-800 truncate">
+                  {doc.title || 'Untitled'}
+                </div>
               </div>
-              {doc.textPreview && (
-                <div className="text-xs text-gray-400 truncate">{doc.textPreview}</div>
-              )}
             </div>
-          </div>
-        ))
+          ))}
+          {remaining > 0 && (
+            <div className="wiki-link-menu-footer">
+              <span className="text-xs text-gray-400">... {remaining} more results</span>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

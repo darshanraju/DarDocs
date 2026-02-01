@@ -7,6 +7,8 @@ import {
   CommentSection,
   CommentsSidebar,
   SearchBar,
+  SearchModal,
+  FocusMode,
   TableOfContents,
   DocumentIcon,
   useDocumentStore,
@@ -15,6 +17,7 @@ import {
   useWorkspaceStore,
   useAuthStore,
 } from '@dardocs/editor';
+import type { SearchResult } from '@dardocs/editor';
 
 export function DocumentPage() {
   const { docId } = useParams<{ docId: string }>();
@@ -35,15 +38,21 @@ export function DocumentPage() {
     null
   );
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isDocSearchOpen, setIsDocSearchOpen] = useState(false);
+  const [isFocusMode, setIsFocusMode] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Ctrl+F / Cmd+F to open search
+  // Ctrl+F / Cmd+F to open in-doc search, Ctrl+K / Cmd+K to open doc search
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
         e.preventDefault();
         setIsSearchOpen(true);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsDocSearchOpen(true);
       }
     };
 
@@ -54,6 +63,17 @@ export function DocumentPage() {
   const handleSearchClose = useCallback(() => {
     setIsSearchOpen(false);
   }, []);
+
+  const handleDocSearchClose = useCallback(() => {
+    setIsDocSearchOpen(false);
+  }, []);
+
+  const handleOpenDocument = useCallback(
+    (doc: SearchResult) => {
+      navigate(`/doc/${doc.id}`);
+    },
+    [navigate]
+  );
 
   // Set comment author from auth user
   useEffect(() => {
@@ -190,10 +210,34 @@ export function DocumentPage() {
       {isSearchOpen && (
         <SearchBar editor={editorInstance} onClose={handleSearchClose} />
       )}
+      <SearchModal
+        isOpen={isDocSearchOpen}
+        onClose={handleDocSearchClose}
+        onOpenDocument={handleOpenDocument}
+      />
+      <FocusMode isActive={isFocusMode} onExit={() => setIsFocusMode(false)}>
+        <Editor isViewMode={false} onEditorReady={handleEditorReady} />
+      </FocusMode>
       <div
         id="main-scroll-container"
         className="h-full overflow-y-auto overflow-x-hidden"
       >
+        {/* Focus mode toggle */}
+        <div className="doc-toolbar">
+          <button
+            onClick={() => setIsFocusMode(true)}
+            className="doc-toolbar-btn"
+            title="Focus mode"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <circle cx="12" cy="12" r="6" />
+              <circle cx="12" cy="12" r="2" />
+            </svg>
+            <span>Focus</span>
+          </button>
+        </div>
+
         <div className="flex min-h-full">
           <TableOfContents />
           <div className="flex-1 min-w-0">

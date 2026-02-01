@@ -34,6 +34,7 @@ export { CommentSection } from './components/Comments/CommentSection';
 export { CommentsSidebar } from './components/Comments/CommentsSidebar';
 export { BacklinksPanel } from './components/Backlinks/BacklinksPanel';
 export { SearchModal } from './components/Search/SearchModal';
+export type { SearchResult } from './components/Search/SearchModal';
 export { FocusMode } from './components/FocusMode/FocusMode';
 
 // Stores (library)

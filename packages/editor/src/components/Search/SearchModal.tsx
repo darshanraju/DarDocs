@@ -1,25 +1,48 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Search, FileText, X } from 'lucide-react';
-import { useLibraryStore, type DocumentIndexEntry } from '../../stores/libraryStore';
+import { useWorkspaceStore, type TreeNode } from '../../stores/workspaceStore';
+
+export interface SearchResult {
+  id: string;
+  title: string;
+  updatedAt?: string;
+}
 
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onOpenDocument: (doc: DocumentIndexEntry) => void;
+  onOpenDocument: (doc: SearchResult) => void;
+}
+
+function flattenTree(nodes: TreeNode[]): SearchResult[] {
+  const results: SearchResult[] = [];
+  const walk = (items: TreeNode[]) => {
+    for (const item of items) {
+      results.push({ id: item.id, title: item.title, updatedAt: item.updatedAt });
+      if (item.children.length > 0) walk(item.children);
+    }
+  };
+  walk(nodes);
+  return results;
 }
 
 export function SearchModal({ isOpen, onClose, onOpenDocument }: SearchModalProps) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { search, getAllDocuments } = useLibraryStore();
+  const tree = useWorkspaceStore((s) => s.tree);
+
+  const allDocs = useMemo(() => flattenTree(tree), [tree]);
 
   const results = useMemo(() => {
     if (!query.trim()) {
-      return getAllDocuments().slice(0, 15);
+      return allDocs.slice(0, 15);
     }
-    return search(query).slice(0, 15);
-  }, [query, search, getAllDocuments]);
+    const lower = query.toLowerCase();
+    return allDocs
+      .filter((doc) => doc.title.toLowerCase().includes(lower))
+      .slice(0, 15);
+  }, [query, allDocs]);
 
   // Focus input when opened
   useEffect(() => {
@@ -102,10 +125,7 @@ export function SearchModal({ isOpen, onClose, onOpenDocument }: SearchModalProp
           {results.length === 0 ? (
             <div className="px-4 py-8 text-center">
               <p className="text-sm text-gray-400">
-                {query ? `No results for "${query}"` : 'No documents in library'}
-              </p>
-              <p className="text-xs text-gray-300 mt-1">
-                Save documents to build your searchable library
+                {query ? `No results for "${query}"` : 'No documents yet'}
               </p>
             </div>
           ) : (
@@ -124,22 +144,12 @@ export function SearchModal({ isOpen, onClose, onOpenDocument }: SearchModalProp
                   <div className="text-sm font-medium text-gray-800 truncate">
                     {doc.title || 'Untitled'}
                   </div>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    {doc.headings.slice(0, 3).map((h, i) => (
-                      <span key={i} className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">
-                        {h}
-                      </span>
-                    ))}
+                </div>
+                {doc.updatedAt && (
+                  <div className="text-xs text-gray-300 flex-shrink-0">
+                    {new Date(doc.updatedAt).toLocaleDateString()}
                   </div>
-                  {doc.textPreview && (
-                    <div className="text-xs text-gray-400 mt-1 line-clamp-1">
-                      {doc.textPreview}
-                    </div>
-                  )}
-                </div>
-                <div className="text-xs text-gray-300 flex-shrink-0">
-                  {new Date(doc.updatedAt).toLocaleDateString()}
-                </div>
+                )}
               </div>
             ))
           )}
