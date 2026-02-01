@@ -32,6 +32,13 @@ export { TableOfContents } from './components/TableOfContents/TableOfContents';
 export { Sidebar } from './components/Sidebar/Sidebar';
 export { CommentSection } from './components/Comments/CommentSection';
 export { CommentsSidebar } from './components/Comments/CommentsSidebar';
+export { BacklinksPanel } from './components/Backlinks/BacklinksPanel';
+export { SearchModal } from './components/Search/SearchModal';
+export { FocusMode } from './components/FocusMode/FocusMode';
+
+// Stores (library)
+export { useLibraryStore, extractTextFromContent, extractHeadingsFromContent } from './stores/libraryStore';
+export type { DocumentIndexEntry } from './stores/libraryStore';
 
 // File handlers
 export { SaveDocument } from './components/FileHandler/SaveDocument';

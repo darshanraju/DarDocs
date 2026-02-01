@@ -13,6 +13,10 @@ import Image from '@tiptap/extension-image';
 import { common, createLowlight } from 'lowlight';
 import { useDocumentStore } from '../../stores/documentStore';
 import { BoardBlockExtension } from '../Editor/extensions/BoardBlock/BoardBlockExtension';
+import { WikiLinkMark } from '../Editor/extensions/WikiLink/WikiLinkExtension';
+import { SlackEmbedExtension } from '../Editor/extensions/SlackEmbed/SlackEmbedExtension';
+import { GoogleSheetEmbedExtension } from '../Editor/extensions/GoogleSheetEmbed/GoogleSheetEmbedExtension';
+import { TableOfContentsExtension } from '../Editor/extensions/TableOfContents/TableOfContentsExtension';
 
 const lowlight = createLowlight(common);
 
@@ -41,6 +45,10 @@ export function DocumentViewer() {
         TableHeader,
         Image,
         BoardBlockExtension,
+        WikiLinkMark,
+        SlackEmbedExtension,
+        GoogleSheetEmbedExtension,
+        TableOfContentsExtension,
       ],
       content: document?.content || { type: 'doc', content: [{ type: 'paragraph' }] },
       editable: false,

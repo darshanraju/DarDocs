@@ -57,6 +57,21 @@ export const slashCommandDefinitions: SlashCommandDefinition[] = [
     description: 'Insert a drawing board',
     keywords: ['board', 'whiteboard', 'drawing', 'canvas', 'sketch'],
   },
+  {
+    name: 'Table of Contents',
+    description: 'Auto-generated outline of headings',
+    keywords: ['toc', 'contents', 'outline', 'navigation', 'index'],
+  },
+  {
+    name: 'Slack Thread',
+    description: 'Embed a Slack conversation',
+    keywords: ['slack', 'thread', 'message', 'conversation', 'chat'],
+  },
+  {
+    name: 'Google Sheet',
+    description: 'Embed a live spreadsheet',
+    keywords: ['sheet', 'google', 'spreadsheet', 'excel', 'gsheet'],
+  },
 ];
 
 /**
