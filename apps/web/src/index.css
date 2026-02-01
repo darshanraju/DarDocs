@@ -6165,6 +6165,270 @@ html, body {
   word-break: break-word;
 }
 
+/* === Phase 4: Templates Panel === */
+
+.runbook-add-step-buttons {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.runbook-add-step-buttons .runbook-add-step-btn {
+  flex: 1;
+}
+
+.runbook-template-btn {
+  border-style: dashed;
+  background: rgba(139, 92, 246, 0.04);
+  border-color: rgba(139, 92, 246, 0.3);
+  color: #8b5cf6;
+}
+
+.runbook-template-btn:hover {
+  background: rgba(139, 92, 246, 0.08);
+  border-color: #8b5cf6;
+  color: #7c3aed;
+}
+
+.runbook-templates-panel {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.runbook-templates-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-bg-subtle);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.runbook-templates-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.runbook-template-category {
+  padding: 0.375rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.runbook-template-category:last-child {
+  border-bottom: none;
+}
+
+.runbook-template-category-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0;
+  display: block;
+}
+
+.runbook-template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.25rem 0;
+}
+
+.runbook-template-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.375rem 0.5rem;
+  border: none;
+  background: transparent;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s;
+}
+
+.runbook-template-item:hover {
+  background: var(--color-bg-muted);
+}
+
+.runbook-template-name {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.runbook-template-desc {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* === Phase 4: Execution History Panel === */
+
+.runbook-history-panel {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  margin: 0.5rem 0.75rem;
+  overflow: hidden;
+}
+
+.runbook-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-bg-subtle);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.runbook-history-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.runbook-history-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--color-text-faint);
+  font-size: 0.8125rem;
+}
+
+.runbook-history-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.runbook-history-item {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.runbook-history-item:last-child {
+  border-bottom: none;
+}
+
+.runbook-history-item-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+}
+
+.runbook-history-item-header:hover {
+  background: var(--color-bg-muted);
+}
+
+.runbook-history-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.runbook-history-status-completed {
+  background: rgba(0, 179, 134, 0.1);
+  color: #00b386;
+}
+
+.runbook-history-status-failed {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.runbook-history-time {
+  font-size: 0.6875rem;
+  color: var(--color-text-faint);
+  flex: 1;
+}
+
+.runbook-history-expand {
+  font-size: 0.6875rem;
+  color: var(--color-text-faint);
+  transition: transform 0.15s;
+}
+
+.runbook-history-expand.expanded {
+  transform: rotate(90deg);
+}
+
+.runbook-history-details {
+  padding: 0.375rem 0.75rem 0.75rem;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+}
+
+.runbook-history-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  font-size: 0.75rem;
+}
+
+.runbook-history-step-status {
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+.runbook-history-step-label {
+  color: var(--color-text-secondary);
+  flex: 1;
+}
+
+.runbook-history-step-confidence {
+  font-size: 0.6875rem;
+  color: var(--color-text-faint);
+}
+
+.runbook-history-conclusion {
+  margin-top: 0.5rem;
+  padding-top: 0.375rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  line-height: 1.4;
+}
+
+.runbook-history-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  font-size: 0.75rem;
+  transition: all 0.15s;
+}
+
+.runbook-history-close:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-text);
+}
+
 /* ============================================================
    Wiki Links
    ============================================================ */
@@ -6832,6 +7096,198 @@ div[data-node-view-wrapper]:hover > .roadmap-tooltip-anchor > .roadmap-badge,
   color: var(--color-text);
 }
 
+.runbook-history-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.runbook-history-badge-completed {
+  background: rgba(0, 179, 134, 0.15);
+  color: #00b386;
+}
+
+.runbook-history-badge-failed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.runbook-history-date {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  flex: 1;
+}
+
+.runbook-history-summary {
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.runbook-history-detail {
+  padding: 0.375rem 0.75rem 0.75rem;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+}
+
+.runbook-history-step-conf {
+  font-size: 0.6875rem;
+  color: var(--color-text-faint);
+  white-space: nowrap;
+}
+
+/* === Phase 4: Inline AI Setup === */
+
+.runbook-inline-ai-setup {
+  margin: 0;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(99, 102, 241, 0.05));
+  border-bottom: 1px solid var(--color-border);
+}
+
+.runbook-inline-ai-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.runbook-inline-ai-form {
+  display: flex;
+  gap: 0.375rem;
+  align-items: center;
+}
+
+.runbook-inline-ai-form .runbook-step-select {
+  width: auto;
+  min-width: 160px;
+}
+
+.runbook-inline-ai-form .runbook-step-input {
+  flex: 1;
+}
+
+.runbook-inline-ai-form .runbook-add-btn {
+  white-space: nowrap;
+}
+
+/* === Phase 4: Drag and Drop === */
+
+.runbook-step-drag-wrapper {
+  position: relative;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.runbook-step-drag-wrapper[draggable="true"] {
+  cursor: grab;
+}
+
+.runbook-step-drag-wrapper[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.runbook-step-drag-wrapper.drag-over {
+  box-shadow: inset 0 -2px 0 0 var(--color-accent);
+}
+
+.runbook-step-drag-wrapper.drag-over::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--color-accent);
+  border-radius: 1px;
+}
+
+/* === Phase 4: Query Test Panel === */
+
+.query-test-panel {
+  margin-top: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.query-test-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.375rem 0.625rem;
+  background: var(--color-bg-subtle);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.query-test-title {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.query-test-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  font-size: 0.75rem;
+}
+
+.query-test-close:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-text);
+}
+
+.query-test-info {
+  padding: 0.5rem 0.625rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.query-test-row {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.query-test-label {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  min-width: 70px;
+}
+
+.query-test-value {
+  color: var(--color-text);
+  word-break: break-all;
+}
+
+.query-test-query {
+  font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, monospace;
+  font-size: 0.6875rem;
+  background: var(--color-bg-muted);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
 /* ─── Configuration Form ─────────────────────────────────── */
 
 .godmode-form {
@@ -7134,6 +7590,96 @@ div[data-node-view-wrapper]:hover > .roadmap-tooltip-anchor > .roadmap-badge,
   letter-spacing: 0.3px;
   padding: 1px 4px;
   border-radius: 3px;
+}
+
+.query-test-run-btn {
+  display: block;
+  width: calc(100% - 1.25rem);
+  margin: 0 0.625rem 0.5rem;
+  padding: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  background: var(--color-accent);
+  color: white;
+  transition: background 0.15s;
+}
+
+.query-test-run-btn:hover:not(:disabled) {
+  background: var(--color-accent-hover);
+}
+
+.query-test-run-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.query-test-result {
+  padding: 0.5rem 0.625rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.query-test-result-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.query-test-result-data {
+  margin: 0;
+  padding: 0.5rem;
+  font-size: 0.6875rem;
+  background: var(--color-bg-muted);
+  border-radius: 0.375rem;
+  overflow-x: auto;
+  max-height: 200px;
+  overflow-y: auto;
+  color: var(--color-text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, monospace;
+}
+
+.query-test-error {
+  padding: 0.5rem 0.625rem;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-danger);
+  font-size: 0.75rem;
+  background: var(--color-bg-danger-subtle);
+}
+
+/* Automation config row (time range + test btn) */
+.runbook-automation-row {
+  display: flex;
+  gap: 0.375rem;
+  align-items: center;
+}
+
+.runbook-automation-row .runbook-step-input-sm {
+  flex: 1;
+}
+
+.runbook-test-query-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.625rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  background: rgba(99, 102, 241, 0.05);
+  color: #6366f1;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.runbook-test-query-btn:hover {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: #6366f1;
 }
 
 .godmode-member-role-developer {

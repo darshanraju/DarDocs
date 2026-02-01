@@ -9,6 +9,8 @@ import { RunbookStepItem } from './RunbookStep';
 import { useCommentStore } from '../../../../stores/commentStore';
 import { useWorkspaceConfigStore } from '../../../../stores/workspaceConfigStore';
 import { useRunbookExecution } from '../../../../hooks/useRunbookExecution';
+import { STEP_TEMPLATES, TEMPLATE_CATEGORIES, createStepFromTemplate } from './StepTemplates';
+import { RunbookHistoryPanel, recordExecution } from './RunbookHistory';
 import { RoadmapTooltip } from '../../../UI/RoadmapTooltip';
 
 export function RunbookBlockComponent({
@@ -26,12 +28,18 @@ export function RunbookBlockComponent({
   const [editingConclusion, setEditingConclusion] = useState(false);
   const [conclusionText, setConclusionText] = useState(conclusion || '');
   const [executionMode, setExecutionMode] = useState<'manual' | 'auto'>('manual');
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [showInlineAiSetup, setShowInlineAiSetup] = useState(false);
+  const [inlineApiKey, setInlineApiKey] = useState('');
+  const [inlineProvider, setInlineProvider] = useState<'anthropic' | 'openai'>('anthropic');
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const addDocumentComment = useCommentStore(s => s.addDocumentComment);
   const workspaceConfig = useWorkspaceConfigStore(s => s.config);
+  const updateAIConfig = useWorkspaceConfigStore(s => s.updateAIConfig);
   const execution = useRunbookExecution();
 
-  // Refs for tracking which steps we've already synced to avoid re-processing
   const processedStartsRef = useRef<Set<string>>(new Set());
   const processedCompletionsRef = useRef<Set<string>>(new Set());
 
@@ -57,6 +65,14 @@ export function RunbookBlockComponent({
     setAddingStep(false);
   }, [newStepLabel, newStepDescription, typedSteps, updateAttributes]);
 
+  const handleAddFromTemplate = useCallback((templateIndex: number) => {
+    const template = STEP_TEMPLATES[templateIndex];
+    if (!template) return;
+    const step = createStepFromTemplate(template);
+    updateAttributes({ steps: [...typedSteps, step] });
+    setShowTemplates(false);
+  }, [typedSteps, updateAttributes]);
+
   const handleDeleteStep = useCallback((stepId: string) => {
     updateAttributes({ steps: typedSteps.filter(s => s.id !== stepId) });
   }, [typedSteps, updateAttributes]);
@@ -65,6 +81,34 @@ export function RunbookBlockComponent({
     updateAttributes({
       steps: typedSteps.map(s => s.id === stepId ? { ...s, ...updates } : s),
     });
+  }, [typedSteps, updateAttributes]);
+
+  // --- Drag and Drop Reorder ---
+  const handleDragStart = useCallback((e: React.DragEvent, index: number) => {
+    e.dataTransfer.setData('text/plain', String(index));
+    e.dataTransfer.effectAllowed = 'move';
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverIndex(index);
+  }, []);
+
+  const handleDragLeave = useCallback(() => {
+    setDragOverIndex(null);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    setDragOverIndex(null);
+    const dragIndex = parseInt(e.dataTransfer.getData('text/plain'));
+    if (isNaN(dragIndex) || dragIndex === dropIndex) return;
+
+    const newSteps = [...typedSteps];
+    const [moved] = newSteps.splice(dragIndex, 1);
+    newSteps.splice(dropIndex, 0, moved);
+    updateAttributes({ steps: newSteps });
   }, [typedSteps, updateAttributes]);
 
   // --- Manual Execution ---
@@ -121,20 +165,25 @@ export function RunbookBlockComponent({
       updateAttributes({ steps: updatedSteps });
     } else {
       const hasFailed = updatedSteps.some(s => s.status === 'failed');
+      const finalStatus = hasFailed ? 'failed' : 'completed';
       updateAttributes({
         steps: updatedSteps,
-        status: hasFailed ? 'failed' : 'completed',
+        status: finalStatus,
         completedAt: new Date().toISOString(),
       });
+      recordExecution(node.attrs.runbookId, title, finalStatus as 'completed' | 'failed', updatedSteps);
     }
-  }, [typedSteps, updateAttributes]);
+  }, [typedSteps, updateAttributes, node.attrs.runbookId, title]);
 
   // --- Auto Execution (AI) ---
   const handleAutoExecute = useCallback(() => {
     if (typedSteps.length === 0) return;
 
     const aiConfig = workspaceConfig?.ai;
-    if (!aiConfig?.apiKey) return;
+    if (!aiConfig?.apiKey) {
+      setShowInlineAiSetup(true);
+      return;
+    }
 
     processedStartsRef.current = new Set();
     processedCompletionsRef.current = new Set();
@@ -172,7 +221,15 @@ export function RunbookBlockComponent({
     });
   }, [typedSteps, title, node.attrs.runbookId, updateAttributes, execution, workspaceConfig]);
 
-  // Sync auto-execution step progress to node attrs
+  // Inline AI setup save
+  const handleSaveInlineAi = useCallback(async () => {
+    if (!inlineApiKey.trim()) return;
+    await updateAIConfig({ provider: inlineProvider, apiKey: inlineApiKey.trim() });
+    setShowInlineAiSetup(false);
+    setInlineApiKey('');
+  }, [inlineApiKey, inlineProvider, updateAIConfig]);
+
+  // Sync auto-execution step progress
   useEffect(() => {
     if (executionMode !== 'auto') return;
 
@@ -219,6 +276,7 @@ export function RunbookBlockComponent({
         conclusion: execution.conclusion,
       });
       setConclusionText(execution.conclusion);
+      recordExecution(node.attrs.runbookId, title, execution.overallStatus, typedSteps, execution.conclusion);
       setExecutionMode('manual');
     }
 
@@ -229,9 +287,10 @@ export function RunbookBlockComponent({
         conclusion: `Auto-execution error: ${execution.error}`,
       });
       setConclusionText(`Auto-execution error: ${execution.error}`);
+      recordExecution(node.attrs.runbookId, title, 'failed', typedSteps, `Error: ${execution.error}`);
       setExecutionMode('manual');
     }
-  }, [execution.conclusion, execution.overallStatus, execution.error, execution.isExecuting, executionMode, updateAttributes]);
+  }, [execution.conclusion, execution.overallStatus, execution.error, execution.isExecuting, executionMode, updateAttributes, node.attrs.runbookId, title, typedSteps]);
 
   const handleReset = useCallback(() => {
     if (executionMode === 'auto' && execution.isExecuting) {
@@ -341,8 +400,7 @@ export function RunbookBlockComponent({
                 <button
                   className="runbook-auto-btn"
                   onClick={handleAutoExecute}
-                  disabled={!hasAiConfig}
-                  title={hasAiConfig ? 'Run with AI agent' : 'Configure AI in workspace settings first'}
+                  title={hasAiConfig ? 'Run with AI agent' : 'Configure AI to get started'}
                 >
                   {'\u2728'} AI Execute
                 </button>
@@ -355,16 +413,24 @@ export function RunbookBlockComponent({
             )}
             {(typedStatus === 'completed' || typedStatus === 'failed') && (
               <>
+                <button className="runbook-action-btn" onClick={() => setShowHistory(true)}>
+                  History
+                </button>
                 <button className="runbook-action-btn" onClick={handleCopyToClipboard}>
                   Copy
                 </button>
                 <button className="runbook-action-btn" onClick={handleExportAsComment}>
-                  Export as Comment
+                  Export
                 </button>
                 <button className="runbook-reset-btn" onClick={handleReset}>
                   Reset
                 </button>
               </>
+            )}
+            {typedStatus === 'idle' && (
+              <button className="runbook-action-btn" onClick={() => setShowHistory(true)} title="View execution history">
+                History
+              </button>
             )}
             <button
               onClick={deleteNode}
@@ -375,6 +441,45 @@ export function RunbookBlockComponent({
             </button>
           </div>
         </div>
+
+        {/* Inline AI Setup */}
+        {showInlineAiSetup && (
+          <div className="runbook-inline-ai-setup">
+            <div className="runbook-inline-ai-header">
+              <span>Configure AI to use AI Execute</span>
+              <button className="runbook-cancel-btn" onClick={() => setShowInlineAiSetup(false)}>{'\u2715'}</button>
+            </div>
+            <div className="runbook-inline-ai-form">
+              <select
+                className="runbook-step-select"
+                value={inlineProvider}
+                onChange={e => setInlineProvider(e.target.value as 'anthropic' | 'openai')}
+              >
+                <option value="anthropic">Anthropic (Claude)</option>
+                <option value="openai">OpenAI (GPT)</option>
+              </select>
+              <input
+                className="runbook-step-input"
+                type="password"
+                placeholder="API Key"
+                value={inlineApiKey}
+                onChange={e => setInlineApiKey(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') handleSaveInlineAi(); }}
+              />
+              <button className="runbook-add-btn" onClick={handleSaveInlineAi} disabled={!inlineApiKey.trim()}>
+                Save & Continue
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Execution history panel */}
+        {showHistory && (
+          <RunbookHistoryPanel
+            runbookId={node.attrs.runbookId}
+            onClose={() => setShowHistory(false)}
+          />
+        )}
 
         {/* AI execution error */}
         {execution.error && typedStatus === 'running' && (
@@ -404,27 +509,36 @@ export function RunbookBlockComponent({
         <div className="runbook-steps">
           {typedSteps.length === 0 && typedStatus === 'idle' ? (
             <div className="runbook-empty">
-              No steps defined. Add steps to build your runbook.
+              No steps defined. Add steps or use a template to get started.
             </div>
           ) : (
             typedSteps.map((step: RunbookStep, index: number) => (
-              <RunbookStepItem
+              <div
                 key={step.id}
-                step={step}
-                index={index}
-                isRunning={typedStatus === 'running'}
-                isEditable={typedStatus === 'idle'}
-                isAutoMode={isAutoRunning}
-                executionState={execution.steps.get(step.id)}
-                onAction={handleStepAction}
-                onUpdate={handleUpdateStep}
-                onDelete={handleDeleteStep}
-              />
+                className={`runbook-step-drag-wrapper ${dragOverIndex === index ? 'drag-over' : ''}`}
+                draggable={typedStatus === 'idle'}
+                onDragStart={e => handleDragStart(e, index)}
+                onDragOver={e => handleDragOver(e, index)}
+                onDragLeave={handleDragLeave}
+                onDrop={e => handleDrop(e, index)}
+              >
+                <RunbookStepItem
+                  step={step}
+                  index={index}
+                  isRunning={typedStatus === 'running'}
+                  isEditable={typedStatus === 'idle'}
+                  isAutoMode={isAutoRunning}
+                  executionState={execution.steps.get(step.id)}
+                  onAction={handleStepAction}
+                  onUpdate={handleUpdateStep}
+                  onDelete={handleDeleteStep}
+                />
+              </div>
             ))
           )}
         </div>
 
-        {/* Add step button (idle only) */}
+        {/* Add step area (idle only) */}
         {typedStatus === 'idle' && (
           <div className="runbook-add-step-area">
             {addingStep ? (
@@ -459,34 +573,57 @@ export function RunbookBlockComponent({
                   }}
                 />
                 <div className="runbook-add-step-actions">
-                  <button
-                    className="runbook-add-btn"
-                    onClick={handleAddStep}
-                    disabled={!newStepLabel.trim()}
-                  >
+                  <button className="runbook-add-btn" onClick={handleAddStep} disabled={!newStepLabel.trim()}>
                     Add Step
                   </button>
-                  <button
-                    className="runbook-cancel-btn"
-                    onClick={() => {
-                      setAddingStep(false);
-                      setNewStepLabel('');
-                      setNewStepDescription('');
-                    }}
-                  >
+                  <button className="runbook-cancel-btn" onClick={() => { setAddingStep(false); setNewStepLabel(''); setNewStepDescription(''); }}>
                     Cancel
                   </button>
                 </div>
               </div>
+            ) : showTemplates ? (
+              <div className="runbook-templates-panel">
+                <div className="runbook-templates-header">
+                  <span className="runbook-templates-title">Step Templates</span>
+                  <button className="runbook-cancel-btn" onClick={() => setShowTemplates(false)}>{'\u2715'}</button>
+                </div>
+                {TEMPLATE_CATEGORIES.map(category => (
+                  <div key={category} className="runbook-template-category">
+                    <span className="runbook-template-category-label">{category}</span>
+                    <div className="runbook-template-list">
+                      {STEP_TEMPLATES.map((template, i) =>
+                        template.category === category ? (
+                          <button
+                            key={i}
+                            className="runbook-template-item"
+                            onClick={() => handleAddFromTemplate(i)}
+                          >
+                            <span className="runbook-template-name">{template.name}</span>
+                            <span className="runbook-template-desc">{template.description}</span>
+                            {template.step.automation?.connector && (
+                              <span className="runbook-step-connector-badge">{template.step.automation.connector}</span>
+                            )}
+                          </button>
+                        ) : null
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : (
-              <button className="runbook-add-step-btn" onClick={() => setAddingStep(true)}>
-                + Add Step
-              </button>
+              <div className="runbook-add-step-buttons">
+                <button className="runbook-add-step-btn" onClick={() => setAddingStep(true)}>
+                  + Add Step
+                </button>
+                <button className="runbook-add-step-btn runbook-template-btn" onClick={() => setShowTemplates(true)}>
+                  + From Template
+                </button>
+              </div>
             )}
           </div>
         )}
 
-        {/* Conclusion (after completion) */}
+        {/* Conclusion */}
         {(typedStatus === 'completed' || typedStatus === 'failed') && (
           <div className="runbook-conclusion">
             <div className="runbook-conclusion-header">
@@ -514,15 +651,8 @@ export function RunbookBlockComponent({
                   autoFocus
                 />
                 <div className="runbook-add-step-actions">
-                  <button className="runbook-add-btn" onClick={handleSaveConclusion}>
-                    Save
-                  </button>
-                  <button
-                    className="runbook-cancel-btn"
-                    onClick={() => setEditingConclusion(false)}
-                  >
-                    Cancel
-                  </button>
+                  <button className="runbook-add-btn" onClick={handleSaveConclusion}>Save</button>
+                  <button className="runbook-cancel-btn" onClick={() => setEditingConclusion(false)}>Cancel</button>
                 </div>
               </div>
             ) : conclusion ? (
