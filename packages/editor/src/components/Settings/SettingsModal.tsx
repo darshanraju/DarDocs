@@ -4,6 +4,7 @@ import {
   GitBranch,
   Activity,
   Bot,
+  RefreshCw,
   Plus,
   Trash2,
   Eye,
@@ -11,6 +12,7 @@ import {
   Check,
 } from 'lucide-react';
 import { useWorkspaceConfigStore } from '../../stores/workspaceConfigStore';
+import { AutoUpdateSettings } from './AutoUpdateSettings';
 import type {
   GrafanaCredentials,
   SentryCredentials,
@@ -19,7 +21,7 @@ import type {
   AIConfig,
 } from '@dardocs/core';
 
-type Tab = 'repos' | 'providers' | 'ai';
+type Tab = 'repos' | 'providers' | 'ai' | 'auto-update';
 
 export function SettingsModal() {
   const { config, settingsOpen, closeSettings } = useWorkspaceConfigStore();
@@ -59,12 +61,21 @@ export function SettingsModal() {
             <Bot className="w-4 h-4" />
             AI
           </button>
+          <button
+            className={`settings-tab ${activeTab === 'auto-update' ? 'is-active' : ''}`}
+            onClick={() => setActiveTab('auto-update')}
+          >
+            <RefreshCw className="w-4 h-4" />
+            Auto-Update
+            <span className="settings-tab-badge">Soon</span>
+          </button>
         </div>
 
         <div className="settings-body">
           {activeTab === 'repos' && <RepoSettings />}
           {activeTab === 'providers' && <ProviderSettings />}
           {activeTab === 'ai' && <AISettings />}
+          {activeTab === 'auto-update' && <AutoUpdateSettings />}
         </div>
       </div>
     </div>

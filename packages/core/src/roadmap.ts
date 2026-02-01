@@ -910,6 +910,41 @@ export const blockRoadmap: BlockRoadmap = {
       tags: ['collaboration', 'architecture'],
     },
   ],
+
+  autoUpdate: [
+    {
+      id: 'auto-update-staleness-detection',
+      title: 'Diff-aware staleness detection',
+      description: 'Analyze git diffs on merge to master and flag documents whose source files changed.',
+      priority: 'high',
+      effort: 'medium',
+      tags: ['ci', 'github', 'backend'],
+    },
+    {
+      id: 'auto-update-ai-diff-analysis',
+      title: 'AI-powered document patching',
+      description: 'Send diffs to an AI agent that generates targeted document updates for review.',
+      priority: 'high',
+      effort: 'large',
+      tags: ['ai', 'compute', 'backend'],
+    },
+    {
+      id: 'auto-update-github-action',
+      title: 'GitHub Actions integration',
+      description: 'Trigger staleness checks and AI analysis automatically via a GitHub Actions workflow.',
+      priority: 'medium',
+      effort: 'small',
+      tags: ['ci', 'github'],
+    },
+    {
+      id: 'auto-update-review-queue',
+      title: 'Suggested update review queue',
+      description: 'In-editor UI for reviewing, accepting, or rejecting AI-suggested document changes.',
+      priority: 'medium',
+      effort: 'medium',
+      tags: ['frontend', 'ux'],
+    },
+  ],
 };
 
 /** Look up roadmap items for a given block node name. */

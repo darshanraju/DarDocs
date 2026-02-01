@@ -3811,6 +3811,432 @@ html, body {
   color: var(--color-text);
 }
 
+/* Settings tab badge (e.g. "Soon") */
+.settings-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.0625rem 0.375rem;
+  background: var(--color-bg-accent-subtle, #eff6ff);
+  color: var(--color-accent);
+  border-radius: 1rem;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+/* ============================================================
+   Auto-Update Settings (Mock / Coming Soon)
+   ============================================================ */
+
+/* Coming-soon banner */
+.autoupdate-coming-soon-banner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding: 0.75rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 0.5rem;
+  background: var(--color-bg-accent-subtle, #eff6ff);
+  margin-bottom: 0.5rem;
+}
+
+.autoupdate-coming-soon-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 0.125rem 0.5rem;
+  background: var(--color-accent);
+  color: white;
+  border-radius: 1rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.autoupdate-coming-soon-text {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.45;
+}
+
+/* Section sub-tabs */
+.autoupdate-section-tabs {
+  display: flex;
+  gap: 0.125rem;
+  padding: 0.25rem;
+  background: var(--color-bg-subtle);
+  border-radius: 0.375rem;
+  margin-bottom: 0.625rem;
+}
+
+.autoupdate-section-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  background: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.autoupdate-section-tab:hover {
+  color: var(--color-text);
+}
+
+.autoupdate-section-tab.is-active {
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.autoupdate-roadmap-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.25rem;
+  border-radius: 1rem;
+  background: var(--color-accent);
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 700;
+}
+
+/* Disabled inputs in mock */
+.autoupdate-disabled-input {
+  opacity: 0.7;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.autoupdate-disabled-btn {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Configuration section */
+.autoupdate-config {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.autoupdate-global-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+
+/* Trigger checkboxes */
+.autoupdate-trigger-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.autoupdate-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.autoupdate-checkbox.is-checked {
+  opacity: 1;
+}
+
+.autoupdate-checkbox-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: 0.1875rem;
+  background: var(--color-bg);
+  flex-shrink: 0;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.autoupdate-checkbox-box.is-checked {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.autoupdate-checkbox-box.is-checked::after {
+  content: '';
+  display: block;
+  width: 0.3125rem;
+  height: 0.5rem;
+  border: solid white;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg) translateY(-0.5px);
+}
+
+/* Watch rules */
+.autoupdate-watch-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.autoupdate-watch-rules-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.autoupdate-watch-card {
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  transition: border-color 0.15s;
+}
+
+.autoupdate-watch-card.is-stale {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.04);
+}
+
+.autoupdate-watch-card.is-updating {
+  border-color: var(--color-accent);
+  background: var(--color-bg-accent-subtle, rgba(59, 130, 246, 0.04));
+}
+
+.autoupdate-watch-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.autoupdate-watch-card-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.autoupdate-status-badge {
+  padding: 0.0625rem 0.375rem;
+  border-radius: 1rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.autoupdate-status-badge.is-current {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.autoupdate-status-badge.is-stale {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.autoupdate-status-badge.is-updating {
+  background: var(--color-bg-accent-subtle, #eff6ff);
+  color: var(--color-accent);
+}
+
+.autoupdate-watch-card-paths {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.autoupdate-path-chip {
+  padding: 0.125rem 0.375rem;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+
+.autoupdate-watch-card-meta {
+  font-size: 0.6875rem;
+  color: var(--color-text-faint);
+}
+
+.autoupdate-watch-card-meta code {
+  padding: 0.0625rem 0.25rem;
+  background: var(--color-bg-subtle);
+  border-radius: 0.1875rem;
+  font-size: 0.6875rem;
+}
+
+/* Activity section */
+.autoupdate-activity {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.autoupdate-event-card {
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  transition: border-color 0.15s;
+}
+
+.autoupdate-event-card.is-pending {
+  border-left: 3px solid #f59e0b;
+}
+
+.autoupdate-event-card.is-applied {
+  border-left: 3px solid #22c55e;
+}
+
+.autoupdate-event-card.is-dismissed {
+  border-left: 3px solid var(--color-text-faint);
+  opacity: 0.65;
+}
+
+.autoupdate-event-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.autoupdate-event-doc {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.autoupdate-event-status {
+  padding: 0.0625rem 0.375rem;
+  border-radius: 1rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.autoupdate-event-status.is-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.autoupdate-event-status.is-applied {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.autoupdate-event-status.is-dismissed {
+  background: var(--color-bg-muted);
+  color: var(--color-text-faint);
+}
+
+.autoupdate-event-trigger {
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+}
+
+.autoupdate-event-summary {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.autoupdate-event-time {
+  font-size: 0.625rem;
+  color: var(--color-text-faint);
+}
+
+.autoupdate-event-actions {
+  display: flex;
+  gap: 0.375rem;
+  margin-top: 0.25rem;
+}
+
+.autoupdate-action-btn {
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  cursor: not-allowed;
+  border: none;
+  transition: background-color 0.15s;
+}
+
+.autoupdate-action-review {
+  background: var(--color-accent);
+  color: white;
+}
+
+.autoupdate-action-dismiss {
+  background: var(--color-bg-muted);
+  color: var(--color-text-muted);
+}
+
+/* Roadmap section */
+.autoupdate-roadmap-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+/* Dark mode overrides */
+[data-theme="dark"] .autoupdate-coming-soon-banner {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+[data-theme="dark"] .autoupdate-status-badge.is-current {
+  background: #14532d;
+  color: #86efac;
+}
+
+[data-theme="dark"] .autoupdate-status-badge.is-stale {
+  background: #78350f;
+  color: #fcd34d;
+}
+
+[data-theme="dark"] .autoupdate-event-status.is-pending {
+  background: #78350f;
+  color: #fcd34d;
+}
+
+[data-theme="dark"] .autoupdate-event-status.is-applied {
+  background: #14532d;
+  color: #86efac;
+}
+
+[data-theme="dark"] .autoupdate-watch-card.is-stale {
+  border-color: rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.06);
+}
+
+[data-theme="dark"] .autoupdate-watch-card.is-updating {
+  background: rgba(59, 130, 246, 0.06);
+}
+
 /* ============================================================
    Mermaid Diagram Block
    ============================================================ */
