@@ -23,6 +23,8 @@ import {
   AnalyticsIcon,
   ApiIcon,
   Table02Icon,
+  GlobeIcon,
+  BoundingBoxIcon,
 } from '@hugeicons/core-free-icons';
 import { useBoardStore } from '../../stores/boardStore';
 import { useWhiteboard2Store } from '../Whiteboard2/whiteboardStore';
@@ -227,6 +229,21 @@ const commands: SlashCommand[] = [
     keywords: ['swagger', 'openapi', 'api', 'docs', 'rest', 'embed'],
     category: 'Embeds',
     action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'swagger' }).run(),
+  },
+  {
+    name: 'Webview',
+    icon: <HugeiconsIcon icon={GlobeIcon} size={20} color="#3b82f6" />,
+    keywords: ['webview', 'iframe', 'embed', 'website', 'url', 'web', 'page', 'site'],
+    category: 'Embeds',
+    action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'webview' }).run(),
+  },
+  // ---- Programs ----
+  {
+    name: 'Program',
+    icon: <HugeiconsIcon icon={BoundingBoxIcon} size={20} color="#7c3aed" />,
+    keywords: ['program', 'pipeline', 'flow', 'workflow', 'automation', 'n8n', 'dag'],
+    category: 'Blocks',
+    action: (editor) => editor.chain().focus().insertProgram().run(),
   },
 ];
 

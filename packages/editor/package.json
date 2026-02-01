@@ -9,6 +9,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@dardocs/core": "*"
+    "@dardocs/core": "*",
+    "@xyflow/react": "^12.10.0"
   }
 }

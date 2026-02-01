@@ -11,10 +11,14 @@ import {
   FileAddIcon,
   ArrowLeft01Icon,
   SidebarLeft01Icon,
+  Logout01Icon,
+  UserGroupIcon,
 } from '@hugeicons/core-free-icons';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
 import type { TreeNode } from '../../stores/workspaceStore';
+import { useAuthStore } from '../../stores/authStore';
 import { DarkModeToggle } from '../TableOfContents/DarkModeToggle';
+import { ShareModal } from './ShareModal';
 import { useNavigate, useParams } from 'react-router';
 
 export function Sidebar() {
@@ -29,10 +33,12 @@ export function Sidebar() {
     toggleExpanded,
     setActiveDocId,
   } = useWorkspaceStore();
+  const { user, signOut } = useAuthStore();
 
   const navigate = useNavigate();
   const params = useParams<{ docId: string }>();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [contextMenu, setContextMenu] = useState<{
     id: string;
     x: number;
@@ -242,6 +248,13 @@ export function Sidebar() {
           <HugeiconsIcon icon={PlusSignIcon} size={16} />
           <span>New page</span>
         </button>
+        <button
+          className="sidebar-share-btn"
+          onClick={() => setShowShareModal(true)}
+          title="Share workspace"
+        >
+          <HugeiconsIcon icon={UserGroupIcon} size={16} />
+        </button>
       </div>
 
       <nav className="sidebar-nav">
@@ -255,6 +268,22 @@ export function Sidebar() {
           tree.map((node) => renderNode(node, 0))
         )}
       </nav>
+
+      {user && (
+        <div className="sidebar-footer">
+          <span className="sidebar-user-name" title={user.email}>
+            {user.name}
+          </span>
+          <button
+            className="sidebar-more-btn"
+            style={{ opacity: 1 }}
+            onClick={signOut}
+            title="Sign out"
+          >
+            <HugeiconsIcon icon={Logout01Icon} size={14} />
+          </button>
+        </div>
+      )}
 
       {/* Context menu */}
       {contextMenu && (
@@ -289,6 +318,10 @@ export function Sidebar() {
             Delete
           </button>
         </div>
+      )}
+
+      {showShareModal && (
+        <ShareModal onClose={() => setShowShareModal(false)} />
       )}
     </div>
   );
