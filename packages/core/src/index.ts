@@ -56,5 +56,14 @@ export {
   getCommandsByKeyword,
 } from './slashCommands';
 
+// Runbook
+export type {
+  RunbookStep,
+  RunbookStepType,
+  RunbookStepStatus,
+  RunbookStatus,
+} from './runbookSchema';
+export { createRunbookStep, generateRunbookSummary } from './runbookSchema';
+
 // Docx converter
 export { convertDocxToTipTap } from './docxConverter';

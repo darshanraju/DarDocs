@@ -23,6 +23,7 @@ import {
   AnalyticsIcon,
   ApiIcon,
   Table02Icon,
+  CheckListIcon,
 } from '@hugeicons/core-free-icons';
 import { useBoardStore } from '../../stores/boardStore';
 import { useWhiteboard2Store } from '../Whiteboard2/whiteboardStore';
@@ -227,6 +228,14 @@ const commands: SlashCommand[] = [
     keywords: ['swagger', 'openapi', 'api', 'docs', 'rest', 'embed'],
     category: 'Embeds',
     action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'swagger' }).run(),
+  },
+  // ---- Runbooks ----
+  {
+    name: 'Runbook',
+    icon: <HugeiconsIcon icon={CheckListIcon} size={20} color="#f97316" />,
+    keywords: ['runbook', 'incident', 'oncall', 'troubleshoot', 'checklist', 'playbook', 'sop', 'analysis'],
+    category: 'Blocks',
+    action: (editor) => editor.chain().focus().insertRunbook().run(),
   },
 ];
 

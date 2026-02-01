@@ -22,6 +22,7 @@ import { VideoBlockExtension } from './MediaBlock/VideoBlockExtension';
 import { DropPasteHandler } from './MediaBlock/DropPasteHandler';
 import { EmbedBlockExtension } from './EmbedBlock/EmbedBlockExtension';
 import { MermaidBlockExtension } from './MermaidBlock/MermaidBlockExtension';
+import { RunbookBlockExtension } from './RunbookBlock/RunbookBlockExtension';
 import { SelectionHighlight } from './SelectionHighlight';
 import { DocumentGaps } from './DocumentGaps';
 import { SearchHighlight } from './SearchHighlight';
@@ -82,6 +83,7 @@ export function getExtensions(onSlashCommand: (query: string) => void, onSlashCo
     Whiteboard2BlockExtension,
     EmbedBlockExtension,
     MermaidBlockExtension,
+    RunbookBlockExtension,
     SelectionHighlight,
     DocumentGaps,
     SearchHighlight,
