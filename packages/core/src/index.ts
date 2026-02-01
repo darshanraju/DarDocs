@@ -56,6 +56,25 @@ export {
   getCommandsByKeyword,
 } from './slashCommands';
 
+// Runbook
+export type {
+  RunbookStep,
+  RunbookStepType,
+  RunbookStepStatus,
+  RunbookStatus,
+  StepAutomation,
+  StepVerdict,
+  AgentMessageType,
+  AgentMessage,
+  ExecuteRunbookPayload,
+  StepStartedPayload,
+  StepDataPayload,
+  StepCompletedPayload,
+  ExecutionCompletedPayload,
+  ExecutionErrorPayload,
+} from './runbookSchema';
+export { createRunbookStep, generateRunbookSummary } from './runbookSchema';
+
 // Docx converter
 export { convertDocxToTipTap } from './docxConverter';
 

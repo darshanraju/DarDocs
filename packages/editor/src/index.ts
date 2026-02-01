@@ -17,6 +17,8 @@ export { useDocument } from './hooks/useDocument';
 export { useEditorActions } from './hooks/useEditor';
 export { useFileSystem } from './hooks/useFileSystem';
 export { useSlashCommands } from './hooks/useSlashCommands';
+export { useRunbookExecution } from './hooks/useRunbookExecution';
+export type { StepExecutionState, ExecutionState } from './hooks/useRunbookExecution';
 
 // Editor
 export { Editor } from './components/Editor/Editor';

@@ -5210,3 +5210,917 @@ html, body {
   line-height: 1;
 }
 
+/* ============================================================
+   Runbook Block
+   ============================================================ */
+
+.runbook-block-wrapper {
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+  transition: border-color 0.15s;
+  background: var(--color-bg);
+}
+
+.runbook-block-wrapper:hover {
+  border-color: var(--color-text-placeholder);
+}
+
+.runbook-block-wrapper.is-selected {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+.runbook-block-wrapper:hover .embed-drag-handle {
+  opacity: 1;
+}
+
+.block-node-selected .runbook-block-wrapper {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+/* Header */
+.runbook-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0.75rem;
+  background: var(--color-bg-subtle);
+  border-bottom: 1px solid var(--color-border);
+  gap: 0.5rem;
+}
+
+.runbook-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.runbook-icon {
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.runbook-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.runbook-title:hover {
+  color: var(--color-accent);
+}
+
+.runbook-title-input {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  border: 1px solid var(--color-accent);
+  border-radius: 0.25rem;
+  padding: 0.125rem 0.375rem;
+  outline: none;
+  background: var(--color-bg);
+  flex: 1;
+  min-width: 100px;
+}
+
+.runbook-status-badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 0.125rem 0.5rem;
+  border-radius: 1rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.runbook-status-idle {
+  background: var(--color-bg-muted);
+  color: var(--color-text-muted);
+}
+
+.runbook-status-running {
+  background: rgba(51, 112, 255, 0.1);
+  color: var(--color-accent);
+}
+
+.runbook-status-completed {
+  background: rgba(0, 179, 134, 0.1);
+  color: #00b386;
+}
+
+.runbook-status-failed {
+  background: var(--color-bg-danger-subtle);
+  color: var(--color-danger);
+}
+
+/* Header actions */
+.runbook-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+}
+
+.runbook-start-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3125rem 0.75rem;
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s;
+}
+
+.runbook-start-btn:hover {
+  background: var(--color-accent-hover);
+}
+
+.runbook-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3125rem 0.625rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.runbook-reset-btn:hover {
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+}
+
+.runbook-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3125rem 0.625rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.runbook-action-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Progress bar */
+.runbook-progress {
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.runbook-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--color-bg-muted);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.runbook-progress-fill {
+  height: 100%;
+  background: var(--color-accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.runbook-progress-fill.has-failures {
+  background: var(--color-danger);
+}
+
+.runbook-progress-text {
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* Steps list */
+.runbook-steps {
+  padding: 0;
+}
+
+.runbook-empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--color-text-faint);
+  font-size: 0.875rem;
+}
+
+/* Individual step */
+.runbook-step {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.15s;
+}
+
+.runbook-step:last-child {
+  border-bottom: none;
+}
+
+.runbook-step.runbook-step-running {
+  background: rgba(51, 112, 255, 0.04);
+}
+
+.runbook-step.runbook-step-passed {
+  background: rgba(0, 179, 134, 0.03);
+}
+
+.runbook-step.runbook-step-failed {
+  background: rgba(239, 68, 68, 0.03);
+}
+
+/* Step indicator */
+.runbook-step-indicator {
+  flex-shrink: 0;
+  padding-top: 0.125rem;
+}
+
+.runbook-step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.runbook-step-icon-pending {
+  border: 1.5px solid var(--color-text-faint);
+  color: var(--color-text-faint);
+}
+
+.runbook-step-icon-running {
+  background: var(--color-accent);
+  color: white;
+  animation: runbook-pulse 1.5s ease-in-out infinite;
+}
+
+.runbook-step-icon-passed {
+  background: #00b386;
+  color: white;
+}
+
+.runbook-step-icon-failed {
+  background: var(--color-danger);
+  color: white;
+}
+
+.runbook-step-icon-skipped {
+  background: var(--color-bg-muted);
+  color: var(--color-text-muted);
+}
+
+@keyframes runbook-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Step content */
+.runbook-step-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.runbook-step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.runbook-step-number {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.runbook-step-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-text);
+  flex: 1;
+  min-width: 0;
+}
+
+.runbook-step-description {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  margin: 0.25rem 0 0;
+  line-height: 1.4;
+}
+
+.runbook-step-edit-actions {
+  display: flex;
+  gap: 0.125rem;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.runbook-step:hover .runbook-step-edit-actions {
+  opacity: 1;
+}
+
+.runbook-step-action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  transition: all 0.15s;
+}
+
+.runbook-step-action-icon:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-text);
+}
+
+.runbook-step-delete:hover {
+  background: var(--color-bg-danger-subtle);
+  color: var(--color-danger);
+}
+
+/* Running step action area */
+.runbook-step-action-area {
+  margin-top: 0.5rem;
+}
+
+.runbook-step-notes-input {
+  width: 100%;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  outline: none;
+  background: var(--color-bg);
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.runbook-step-notes-input:focus {
+  border-color: var(--color-accent);
+}
+
+.runbook-step-notes-input::placeholder {
+  color: var(--color-text-faint);
+}
+
+.runbook-step-buttons {
+  display: flex;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+}
+
+.runbook-btn-pass,
+.runbook-btn-fail,
+.runbook-btn-skip {
+  padding: 0.3125rem 0.75rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.runbook-btn-pass {
+  background: rgba(0, 179, 134, 0.1);
+  color: #00b386;
+}
+
+.runbook-btn-pass:hover {
+  background: #00b386;
+  color: white;
+}
+
+.runbook-btn-fail {
+  background: var(--color-bg-danger-subtle);
+  color: var(--color-danger);
+}
+
+.runbook-btn-fail:hover {
+  background: var(--color-danger);
+  color: white;
+}
+
+.runbook-btn-skip {
+  background: var(--color-bg-muted);
+  color: var(--color-text-muted);
+}
+
+.runbook-btn-skip:hover {
+  background: var(--color-text-muted);
+  color: white;
+}
+
+/* Step result (after completion) */
+.runbook-step-result {
+  margin-top: 0.375rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.runbook-step-notes {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  font-style: italic;
+  margin: 0;
+}
+
+.runbook-step-timestamp {
+  font-size: 0.6875rem;
+  color: var(--color-text-faint);
+  white-space: nowrap;
+}
+
+/* Step edit form */
+.runbook-step-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+/* Add step area */
+.runbook-add-step-area {
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.runbook-add-step-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  border: 1px dashed var(--color-border);
+  background: transparent;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+  justify-content: center;
+}
+
+.runbook-add-step-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: rgba(51, 112, 255, 0.04);
+}
+
+.runbook-add-step-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.runbook-step-input {
+  width: 100%;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  outline: none;
+  background: var(--color-bg);
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.runbook-step-input:focus {
+  border-color: var(--color-accent);
+}
+
+.runbook-step-input::placeholder {
+  color: var(--color-text-faint);
+}
+
+.runbook-add-step-actions {
+  display: flex;
+  gap: 0.375rem;
+  justify-content: flex-end;
+  margin-top: 0.25rem;
+}
+
+.runbook-add-btn {
+  padding: 0.25rem 0.75rem;
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.runbook-add-btn:hover {
+  background: var(--color-accent-hover);
+}
+
+.runbook-add-btn:disabled {
+  background: var(--color-accent-disabled);
+  cursor: default;
+}
+
+.runbook-cancel-btn {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.runbook-cancel-btn:hover {
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
+}
+
+/* Conclusion */
+.runbook-conclusion {
+  padding: 0.75rem;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg-subtle);
+}
+
+.runbook-conclusion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.runbook-conclusion-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.runbook-conclusion-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.runbook-conclusion-textarea {
+  width: 100%;
+  min-height: 60px;
+  padding: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  outline: none;
+  background: var(--color-bg);
+  resize: vertical;
+  box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: border-color 0.15s;
+}
+
+.runbook-conclusion-textarea:focus {
+  border-color: var(--color-accent);
+}
+
+.runbook-conclusion-textarea::placeholder {
+  color: var(--color-text-faint);
+}
+
+.runbook-conclusion-text {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.runbook-conclusion-placeholder {
+  font-size: 0.8125rem;
+  color: var(--color-text-faint);
+  font-style: italic;
+  margin: 0;
+}
+
+/* === AI Execution UI === */
+
+.runbook-auto-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  color: #fff;
+  transition: all 0.15s ease;
+}
+
+.runbook-auto-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.runbook-auto-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.runbook-execution-error {
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  font-size: 0.8125rem;
+}
+
+.runbook-step-connector-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
+/* Automation config in step edit form */
+.runbook-automation-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+.runbook-automation-toggle:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+.runbook-automation-config {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  margin-top: 4px;
+  background: var(--color-bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--color-border-light);
+}
+
+.runbook-step-select {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 0.8125rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.runbook-step-select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.runbook-step-input-sm {
+  max-width: 180px;
+}
+
+/* AI streaming progress within a step */
+.runbook-step-ai-progress {
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--color-bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--color-border-light);
+}
+
+.runbook-step-ai-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 3px 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.runbook-ai-source {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 5px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.runbook-ai-source-gathering {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.runbook-ai-source-analyzing {
+  background: rgba(139, 92, 246, 0.15);
+  color: #8b5cf6;
+}
+
+.runbook-ai-text {
+  color: var(--color-text-secondary);
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.runbook-step-ai-loading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-faint);
+}
+
+.runbook-ai-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--color-border);
+  border-top-color: #8b5cf6;
+  border-radius: 50%;
+  animation: runbook-spin 0.8s linear infinite;
+}
+
+@keyframes runbook-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* AI verdict display */
+.runbook-step-verdict {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: var(--color-bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--color-border-light);
+}
+
+.runbook-verdict-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.runbook-verdict-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  border-radius: 4px;
+}
+
+.runbook-verdict-passed {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.runbook-verdict-failed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.runbook-verdict-skipped {
+  background: rgba(156, 163, 175, 0.15);
+  color: #9ca3af;
+}
+
+.runbook-verdict-confidence {
+  font-size: 0.6875rem;
+  color: var(--color-text-faint);
+}
+
+.runbook-verdict-explanation {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  margin: 0 0 6px;
+}
+
+.runbook-verdict-suggestions {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--color-border-light);
+}
+
+.runbook-verdict-suggestions-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.runbook-verdict-suggestions ul {
+  margin: 4px 0 0;
+  padding-left: 16px;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.runbook-verdict-suggestions li {
+  margin-bottom: 2px;
+}
+
+.runbook-verdict-raw {
+  margin-top: 8px;
+}
+
+.runbook-verdict-raw summary {
+  font-size: 0.6875rem;
+  color: var(--color-text-faint);
+  cursor: pointer;
+  user-select: none;
+}
+
+.runbook-verdict-raw summary:hover {
+  color: var(--color-text-secondary);
+}
+
+.runbook-verdict-raw pre {
+  margin-top: 4px;
+  padding: 8px;
+  font-size: 0.6875rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  overflow-x: auto;
+  max-height: 200px;
+  overflow-y: auto;
+  color: var(--color-text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}

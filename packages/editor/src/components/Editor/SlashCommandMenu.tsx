@@ -23,6 +23,7 @@ import {
   AnalyticsIcon,
   ApiIcon,
   Table02Icon,
+  CheckListIcon,
   GlobeIcon,
   BoundingBoxIcon,
 } from '@hugeicons/core-free-icons';
@@ -244,6 +245,14 @@ const commands: SlashCommand[] = [
     keywords: ['program', 'pipeline', 'flow', 'workflow', 'automation', 'n8n', 'dag'],
     category: 'Blocks',
     action: (editor) => editor.chain().focus().insertProgram().run(),
+  },
+  // ---- Runbooks ----
+  {
+    name: 'Runbook',
+    icon: <HugeiconsIcon icon={CheckListIcon} size={20} color="#f97316" />,
+    keywords: ['runbook', 'incident', 'oncall', 'troubleshoot', 'checklist', 'playbook', 'sop', 'analysis'],
+    category: 'Blocks',
+    action: (editor) => editor.chain().focus().insertRunbook().run(),
   },
 ];
 

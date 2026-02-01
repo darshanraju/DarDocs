@@ -3,6 +3,7 @@
   "references": [
     { "path": "./packages/core" },
     { "path": "./packages/editor" },
-    { "path": "./apps/web" }
+    { "path": "./apps/web" },
+    { "path": "./apps/agent" }
   ]
 }
