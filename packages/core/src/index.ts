@@ -82,6 +82,10 @@ export { convertDocxToTipTap } from './docxConverter';
 export type { MonitorProviderId, MonitorProviderConfig } from './monitors';
 export { MONITOR_PROVIDERS, MONITOR_PROVIDER_LIST } from './monitors';
 
+// Block roadmap
+export type { RoadmapItem, BlockRoadmap } from './roadmap';
+export { blockRoadmap, getRoadmapForBlock } from './roadmap';
+
 // Workspace config
 export type {
   RepoConfig,

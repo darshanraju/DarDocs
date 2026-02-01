@@ -4,3 +4,4 @@ export { Modal } from './Modal';
 export { Tooltip } from './Tooltip';
 export { EmojiPicker } from './EmojiPicker';
 export { DocumentIcon } from './DocumentIcon';
+export { RoadmapTooltip } from './RoadmapTooltip';
