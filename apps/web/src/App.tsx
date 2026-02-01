@@ -82,12 +82,12 @@ function App() {
   }, []);
 
   return (
-    <div className="flex h-screen bg-white">
+    <div className="app-shell">
       {/* Table of Contents sidebar */}
       <TableOfContents />
 
       {/* Main content + Comments sidebar */}
-      <main className="flex-1 overflow-hidden bg-white relative">
+      <main className="app-main">
         {isSearchOpen && (
           <SearchBar editor={editorInstance} onClose={handleSearchClose} />
         )}

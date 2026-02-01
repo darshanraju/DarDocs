@@ -2,6 +2,7 @@
 export { useDocumentStore } from './stores/documentStore';
 export { useBoardStore } from './stores/boardStore';
 export { useCommentStore } from './stores/commentStore';
+export { useThemeStore } from './stores/themeStore';
 
 // Hooks
 export { useDocument } from './hooks/useDocument';
