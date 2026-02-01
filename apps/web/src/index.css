@@ -739,6 +739,108 @@ html, body {
   color: #9ca3af;
 }
 
+/* ---- Search Bar ---- */
+
+.search-bar {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 6px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.05);
+  animation: search-bar-in 0.12s ease-out;
+}
+
+@keyframes search-bar-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-bar-input {
+  width: 200px;
+  padding: 5px 8px;
+  border: none;
+  outline: none;
+  font-size: 0.8125rem;
+  color: #374151;
+  background: transparent;
+  font-family: inherit;
+}
+
+.search-bar-input::placeholder {
+  color: #9ca3af;
+}
+
+.search-bar-count {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  min-width: 48px;
+  text-align: center;
+  user-select: none;
+}
+
+.search-bar-divider {
+  width: 1px;
+  height: 18px;
+  background: #e5e7eb;
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+.search-bar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 5px;
+  cursor: pointer;
+  color: #6b7280;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.search-bar-btn:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.search-bar-btn:disabled {
+  color: #d1d5db;
+  cursor: default;
+}
+
+.search-bar-btn:disabled:hover {
+  background: transparent;
+  color: #d1d5db;
+}
+
+/* Search highlight decorations in editor */
+.search-highlight {
+  background-color: rgba(255, 213, 0, 0.35);
+  border-radius: 1px;
+}
+
+.search-highlight-current {
+  background-color: rgba(255, 145, 0, 0.55);
+  border-radius: 1px;
+  box-shadow: 0 0 0 1px rgba(255, 145, 0, 0.3);
+}
+
 /* Selection styles */
 ::selection {
   background-color: rgba(51, 112, 255, 0.2);

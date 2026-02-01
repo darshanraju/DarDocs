@@ -7,6 +7,7 @@ import {
   TableOfContents,
   CommentSection,
   CommentsSidebar,
+  SearchBar,
   useDocumentStore,
 } from '@dardocs/editor';
 
@@ -15,6 +16,24 @@ function App() {
   const { document, createDocument, updateMetadata } = useDocumentStore();
   const titleInputRef = useRef<HTMLInputElement>(null);
   const [editorInstance, setEditorInstance] = useState<TiptapEditor | null>(null);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // Ctrl+F / Cmd+F to open search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleSearchClose = useCallback(() => {
+    setIsSearchOpen(false);
+  }, []);
 
   // Create a new document on first load
   useEffect(() => {
@@ -68,7 +87,10 @@ function App() {
       <TableOfContents />
 
       {/* Main content + Comments sidebar */}
-      <main className="flex-1 overflow-hidden bg-white">
+      <main className="flex-1 overflow-hidden bg-white relative">
+        {isSearchOpen && (
+          <SearchBar editor={editorInstance} onClose={handleSearchClose} />
+        )}
         <div id="main-scroll-container" className="h-full overflow-y-auto overflow-x-hidden">
           <div className="flex min-h-full">
             {/* Document content */}
