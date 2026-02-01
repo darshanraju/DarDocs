@@ -72,59 +72,60 @@
 .dark {
   color-scheme: dark;
 
-  /* Backgrounds */
-  --color-bg: #111827;
-  --color-bg-subtle: #1f2937;
-  --color-bg-muted: #374151;
-  --color-bg-code: #1e293b;
-  --color-bg-inlinecode: #1e293b;
-  --color-bg-accent-light: rgba(51, 112, 255, 0.1);
-  --color-bg-accent-subtle: rgba(51, 112, 255, 0.15);
-  --color-bg-danger-subtle: rgba(239, 68, 68, 0.1);
-  --color-bg-warning-subtle: rgba(245, 158, 11, 0.1);
+  /* Backgrounds — Notion-style warm neutrals */
+  --color-bg: #191919;
+  --color-bg-subtle: #202020;
+  --color-bg-muted: #2c2c2c;
+  --color-bg-code: #252525;
+  --color-bg-inlinecode: #2f2f2f;
+  --color-bg-accent-light: rgba(35, 131, 226, 0.08);
+  --color-bg-accent-subtle: rgba(35, 131, 226, 0.12);
+  --color-bg-danger-subtle: rgba(235, 87, 87, 0.1);
+  --color-bg-warning-subtle: rgba(203, 145, 47, 0.1);
+  --color-bg-hover: #272727;
 
-  /* Text */
-  --color-text: #f9fafb;
-  --color-text-secondary: #e5e7eb;
-  --color-text-tertiary: #d1d5db;
-  --color-text-muted: #9ca3af;
-  --color-text-faint: #6b7280;
-  --color-text-placeholder: #4b5563;
-  --color-text-code: #e2e8f0;
-  --color-text-code-inline: #cbd5e1;
+  /* Text — warm grays, not blue-tinted */
+  --color-text: #ebebeb;
+  --color-text-secondary: #d4d4d4;
+  --color-text-tertiary: #9b9a97;
+  --color-text-muted: #737373;
+  --color-text-faint: #5a5a5a;
+  --color-text-placeholder: #4a4a4a;
+  --color-text-code: #d4d4d4;
+  --color-text-code-inline: #c4c4c4;
 
-  /* Borders */
-  --color-border: #374151;
-  --color-border-code: #334155;
+  /* Borders — subtle warm dividers */
+  --color-border: #2d2d2d;
+  --color-border-code: #333333;
 
-  /* Accent */
-  --color-accent: #5b8cff;
-  --color-accent-hover: #3370ff;
-  --color-accent-disabled: #1e3a5f;
+  /* Accent — Notion blue */
+  --color-accent: #2383e2;
+  --color-accent-hover: #1a73d4;
+  --color-accent-disabled: #1a3a5c;
 
   /* Danger */
-  --color-danger: #f87171;
-  --color-danger-dark: #fca5a5;
+  --color-danger: #eb5757;
+  --color-danger-dark: #ff8a8a;
 
   /* Highlight */
-  --color-highlight: rgba(254, 240, 138, 0.3);
-  --color-highlight-comment: rgba(255, 191, 0, 0.2);
-  --color-highlight-comment-border: #d97706;
-  --color-highlight-comment-hover: rgba(255, 191, 0, 0.35);
-  --color-highlight-quote-border: #d97706;
+  --color-highlight: rgba(255, 212, 0, 0.25);
+  --color-highlight-comment: rgba(255, 191, 0, 0.15);
+  --color-highlight-comment-border: #c28b2d;
+  --color-highlight-comment-hover: rgba(255, 191, 0, 0.3);
+  --color-highlight-quote-border: #c28b2d;
 
   /* Selection */
-  --color-selection: rgba(91, 140, 255, 0.3);
-  --color-selection-cell: rgba(91, 140, 255, 0.15);
+  --color-selection: rgba(35, 131, 226, 0.35);
+  --color-selection-cell: rgba(35, 131, 226, 0.15);
 
   /* Scrollbar */
-  --color-scrollbar-thumb: #4b5563;
-  --color-scrollbar-thumb-hover: #6b7280;
+  --color-scrollbar-thumb: #3a3a3a;
+  --color-scrollbar-thumb-hover: #505050;
 
   /* Shadows */
-  --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.3), 0 1px 4px rgba(0, 0, 0, 0.2);
+  --shadow-popover: 0 4px 24px rgba(0, 0, 0, 0.5), 0 0 1px rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0, 0, 0, 0.5);
 }
 
 /* ============================================================
@@ -2393,8 +2394,8 @@ html, body {
 }
 
 .dark .comment-card:hover {
-  border-color: rgba(91, 140, 255, 0.3);
-  box-shadow: 0 2px 8px rgba(91, 140, 255, 0.12);
+  border-color: rgba(35, 131, 226, 0.3);
+  box-shadow: 0 2px 8px rgba(35, 131, 226, 0.12);
 }
 
 .comment-card-quote {
@@ -2727,7 +2728,7 @@ html, body {
 }
 
 .dark .github-card-label {
-  color: #a5b4fc;
+  color: #81b0e8;
 }
 
 /* Gist embed */
