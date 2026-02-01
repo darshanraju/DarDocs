@@ -39,7 +39,10 @@ export type NodeType =
   | 'tableCell'
   | 'tableHeader'
   | 'boardBlock'
-  | 'image';
+  | 'image'
+  | 'slackEmbed'
+  | 'googleSheetEmbed'
+  | 'tableOfContents';
 
 // Supported TipTap mark types
 export type MarkType =
@@ -49,7 +52,8 @@ export type MarkType =
   | 'strike'
   | 'code'
   | 'link'
-  | 'highlight';
+  | 'highlight'
+  | 'wikiLink';
 
 // Create a new empty document
 export function createNewDocument(title: string = 'Untitled Document'): DarDocsDocument {

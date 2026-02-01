@@ -1,20 +1,33 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Toaster, toast } from 'sonner';
-import { Menu, Home, ChevronRight, Pin, Share2, ChevronDown, Bell, MoreHorizontal, Search, Plus, Smile, Image, FileText } from 'lucide-react';
+import { Menu, Home, ChevronRight, Pin, Share2, ChevronDown, Bell, MoreHorizontal, Search, Plus, Smile, Image, FileText, Focus } from 'lucide-react';
 import { Editor } from './components/Editor/Editor';
 import { DocumentViewer } from './components/Viewer/DocumentViewer';
+import { SearchModal } from './components/Search/SearchModal';
+import { BacklinksPanel } from './components/Backlinks/BacklinksPanel';
+import { FocusMode } from './components/FocusMode/FocusMode';
 import { useDocumentStore } from './stores/documentStore';
 import { useBoardStore } from './stores/boardStore';
+import { useLibraryStore, extractTextFromContent, extractHeadingsFromContent } from './stores/libraryStore';
+import type { DocumentIndexEntry } from './stores/libraryStore';
 import { APP_NAME, DARDOCS_EXTENSION } from './lib/constants';
 
 function App() {
   const [isViewMode, setIsViewMode] = useState(false);
   const [showModeDropdown, setShowModeDropdown] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isFocusMode, setIsFocusMode] = useState(false);
   const { document, hasUnsavedChanges, createDocument, updateMetadata, markSaved } = useDocumentStore();
   const { getAllBoards } = useBoardStore();
+  const { indexDocument, loadFromStorage } = useLibraryStore();
   const titleInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Load library from localStorage on mount
+  useEffect(() => {
+    loadFromStorage();
+  }, [loadFromStorage]);
 
   // Create a new document on first load
   useEffect(() => {
@@ -22,6 +35,27 @@ function App() {
       createDocument('');
     }
   }, [document, createDocument]);
+
+  // Index current document in library whenever it changes
+  useEffect(() => {
+    if (!document?.metadata?.id || !document.content) return;
+
+    const text = extractTextFromContent(document.content as Record<string, unknown>);
+    const headings = extractHeadingsFromContent(document.content as Record<string, unknown>);
+
+    const entry: DocumentIndexEntry = {
+      id: document.metadata.id,
+      title: document.metadata.title,
+      createdAt: document.metadata.createdAt,
+      updatedAt: document.metadata.updatedAt,
+      headings,
+      textPreview: text.slice(0, 200),
+      textContent: text,
+      links: [],
+    };
+
+    indexDocument(entry);
+  }, [document?.metadata?.id, document?.metadata?.title, document?.content, document?.metadata?.updatedAt, indexDocument]);
 
   // Handle title change
   const handleTitleChange = useCallback(
@@ -108,6 +142,18 @@ function App() {
         e.preventDefault();
         handleNew();
       }
+
+      // Ctrl+K: Search
+      if (ctrlKey && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+
+      // Ctrl+Shift+F: Focus mode
+      if (ctrlKey && e.shiftKey && e.key === 'F') {
+        e.preventDefault();
+        setIsFocusMode((prev) => !prev);
+      }
     };
 
     window.document.addEventListener('keydown', handleKeyDown);
@@ -171,6 +217,48 @@ function App() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [hasUnsavedChanges]);
 
+  // Handle opening a document from search
+  const handleOpenDocumentFromSearch = useCallback((_doc: DocumentIndexEntry) => {
+    toast.info(`Document "${_doc.title}" found — full navigation requires cloud storage`);
+  }, []);
+
+  const mainContent = (
+    <>
+      {/* Document options */}
+      <div className="flex items-center gap-4 mb-6 text-sm text-gray-400">
+        <button className="flex items-center gap-1.5 hover:text-gray-600">
+          <Smile className="w-4 h-4" />
+          Add Icon
+        </button>
+        <button className="flex items-center gap-1.5 hover:text-gray-600">
+          <Image className="w-4 h-4" />
+          Add Cover
+        </button>
+        <button className="flex items-center gap-1.5 hover:text-gray-600">
+          <FileText className="w-4 h-4" />
+          Show Document Details
+        </button>
+      </div>
+
+      {/* Title */}
+      <input
+        ref={titleInputRef}
+        type="text"
+        value={document?.metadata.title || ''}
+        onChange={handleTitleChange}
+        onKeyDown={handleTitleKeyDown}
+        placeholder="Enter title here"
+        className="w-full text-4xl font-semibold text-gray-900 placeholder-gray-300 border-none outline-none mb-4 bg-transparent"
+      />
+
+      {/* Editor */}
+      {isViewMode ? <DocumentViewer /> : <Editor isViewMode={false} />}
+
+      {/* Backlinks panel */}
+      <BacklinksPanel />
+    </>
+  );
+
   return (
     <div className="flex flex-col h-screen bg-white">
       {/* Hidden file input */}
@@ -217,6 +305,15 @@ function App() {
             Share
           </button>
 
+          {/* Focus Mode toggle */}
+          <button
+            onClick={() => setIsFocusMode(true)}
+            className="p-2 hover:bg-gray-100 rounded text-gray-500"
+            title="Focus mode (Ctrl+Shift+F)"
+          >
+            <Focus className="w-5 h-5" />
+          </button>
+
           {/* Mode dropdown */}
           <div className="relative" ref={dropdownRef}>
             <button
@@ -250,7 +347,11 @@ function App() {
           <button className="p-2 hover:bg-gray-100 rounded text-gray-500">
             <MoreHorizontal className="w-5 h-5" />
           </button>
-          <button className="p-2 hover:bg-gray-100 rounded text-gray-500">
+          <button
+            onClick={() => setIsSearchOpen(true)}
+            className="p-2 hover:bg-gray-100 rounded text-gray-500"
+            title="Search (Ctrl+K)"
+          >
             <Search className="w-5 h-5" />
           </button>
           <button
@@ -272,44 +373,51 @@ function App() {
         </button>
         <span className="text-gray-300">|</span>
         <span>{hasUnsavedChanges ? 'Unsaved changes' : 'Saved'}</span>
+        <span className="text-gray-300">|</span>
+        <button
+          onClick={() => setIsSearchOpen(true)}
+          className="hover:text-[#3370ff] cursor-pointer"
+        >
+          Search docs (Ctrl+K)
+        </button>
+        <span className="text-gray-300">|</span>
+        <button
+          onClick={() => setIsFocusMode(true)}
+          className="hover:text-[#3370ff] cursor-pointer"
+        >
+          Focus mode
+        </button>
       </div>
 
       {/* Main content */}
       <main className="flex-1 overflow-hidden bg-white">
         <div className="h-full overflow-y-auto">
           <div className="max-w-[720px] mx-auto px-6 py-8">
-            {/* Document options */}
-            <div className="flex items-center gap-4 mb-6 text-sm text-gray-400">
-              <button className="flex items-center gap-1.5 hover:text-gray-600">
-                <Smile className="w-4 h-4" />
-                Add Icon
-              </button>
-              <button className="flex items-center gap-1.5 hover:text-gray-600">
-                <Image className="w-4 h-4" />
-                Add Cover
-              </button>
-              <button className="flex items-center gap-1.5 hover:text-gray-600">
-                <FileText className="w-4 h-4" />
-                Show Document Details
-              </button>
-            </div>
-
-            {/* Title */}
-            <input
-              ref={titleInputRef}
-              type="text"
-              value={document?.metadata.title || ''}
-              onChange={handleTitleChange}
-              onKeyDown={handleTitleKeyDown}
-              placeholder="Enter title here"
-              className="w-full text-4xl font-semibold text-gray-900 placeholder-gray-300 border-none outline-none mb-4 bg-transparent"
-            />
-
-            {/* Editor */}
-            {isViewMode ? <DocumentViewer /> : <Editor isViewMode={false} />}
+            {mainContent}
           </div>
         </div>
       </main>
+
+      {/* Focus Mode overlay */}
+      <FocusMode isActive={isFocusMode} onExit={() => setIsFocusMode(false)}>
+        <div className="max-w-[720px] mx-auto px-6">
+          <input
+            type="text"
+            value={document?.metadata.title || ''}
+            onChange={handleTitleChange}
+            placeholder="Enter title here"
+            className="w-full text-4xl font-semibold text-gray-100 placeholder-gray-600 border-none outline-none mb-4 bg-transparent"
+          />
+          <Editor isViewMode={false} />
+        </div>
+      </FocusMode>
+
+      {/* Search Modal */}
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onOpenDocument={handleOpenDocumentFromSearch}
+      />
 
       {/* Toast notifications */}
       <Toaster position="bottom-right" />

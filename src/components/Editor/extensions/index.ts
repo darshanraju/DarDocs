@@ -14,6 +14,10 @@ import { common, createLowlight } from 'lowlight';
 import { EDITOR_PLACEHOLDER } from '../../../lib/constants';
 import { SlashCommands } from './SlashCommands';
 import { BoardBlockExtension } from './BoardBlock/BoardBlockExtension';
+import { WikiLinkMark } from './WikiLink/WikiLinkExtension';
+import { SlackEmbedExtension } from './SlackEmbed/SlackEmbedExtension';
+import { GoogleSheetEmbedExtension } from './GoogleSheetEmbed/GoogleSheetEmbedExtension';
+import { TableOfContentsExtension } from './TableOfContents/TableOfContentsExtension';
 
 // Create lowlight instance with common languages
 const lowlight = createLowlight(common);
@@ -60,5 +64,9 @@ export function getExtensions(onSlashCommand: (query: string) => void, onSlashCo
       onClose: onSlashCommandClose,
     }),
     BoardBlockExtension,
+    WikiLinkMark,
+    SlackEmbedExtension,
+    GoogleSheetEmbedExtension,
+    TableOfContentsExtension,
   ];
 }

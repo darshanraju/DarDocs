@@ -11,6 +11,9 @@ import {
   Minus,
   Table,
   Palette,
+  MessageSquare,
+  Table2,
+  ListTree,
 } from 'lucide-react';
 
 interface SlashCommand {
@@ -100,6 +103,27 @@ const commands: SlashCommand[] = [
     icon: <Palette className="w-5 h-5" />,
     keywords: ['board', 'whiteboard', 'drawing', 'canvas', 'sketch'],
     action: (editor) => editor.chain().focus().insertBoard().run(),
+  },
+  {
+    name: 'Table of Contents',
+    description: 'Auto-generated outline of headings',
+    icon: <ListTree className="w-5 h-5" />,
+    keywords: ['toc', 'contents', 'outline', 'navigation', 'index'],
+    action: (editor) => editor.chain().focus().insertTableOfContents().run(),
+  },
+  {
+    name: 'Slack Thread',
+    description: 'Embed a Slack conversation',
+    icon: <MessageSquare className="w-5 h-5" />,
+    keywords: ['slack', 'thread', 'message', 'conversation', 'chat'],
+    action: (editor) => editor.chain().focus().insertSlackEmbed('').run(),
+  },
+  {
+    name: 'Google Sheet',
+    description: 'Embed a live spreadsheet',
+    icon: <Table2 className="w-5 h-5" />,
+    keywords: ['sheet', 'google', 'spreadsheet', 'excel', 'gsheet'],
+    action: (editor) => editor.chain().focus().insertGoogleSheet('').run(),
   },
 ];
 

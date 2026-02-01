@@ -3,6 +3,7 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import type { JSONContent } from '@tiptap/react';
 import { getExtensions } from './extensions';
 import { SlashCommandMenu } from './SlashCommandMenu';
+import { WikiLinkMenu } from './WikiLinkMenu';
 import { useDocumentStore } from '../../stores/documentStore';
 import { debounce } from 'lodash-es';
 import { EDITOR_SAVE_DEBOUNCE_MS, EDITOR_PLACEHOLDER } from '../../lib/constants';
@@ -16,6 +17,12 @@ export function Editor({ isViewMode = false }: EditorProps) {
   const [slashMenuOpen, setSlashMenuOpen] = useState(false);
   const [slashQuery, setSlashQuery] = useState('');
   const [slashMenuPosition, setSlashMenuPosition] = useState({ top: 0, left: 0 });
+
+  // Wiki-link state
+  const [wikiLinkMenuOpen, setWikiLinkMenuOpen] = useState(false);
+  const [wikiLinkQuery, setWikiLinkQuery] = useState('');
+  const [wikiLinkMenuPosition, setWikiLinkMenuPosition] = useState({ top: 0, left: 0 });
+
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
   const handleSlashCommand = useCallback((query: string) => {
@@ -38,10 +45,46 @@ export function Editor({ isViewMode = false }: EditorProps) {
           class: 'prose prose-sm focus:outline-none max-w-none min-h-[300px]',
           'data-placeholder': EDITOR_PLACEHOLDER,
         },
+        handleKeyDown: (view, event) => {
+          // Detect [[ for wiki-link trigger
+          if (event.key === '[' && !wikiLinkMenuOpen) {
+            const { state } = view;
+            const { selection } = state;
+            const { $from } = selection;
+            const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
+
+            if (textBefore.endsWith('[')) {
+              // Second [ typed — trigger wiki-link menu
+              setTimeout(() => {
+                setWikiLinkMenuOpen(true);
+                setWikiLinkQuery('');
+              }, 0);
+            }
+          }
+          return false;
+        },
       },
-      onUpdate: ({ editor }) => {
+      onUpdate: ({ editor: ed }) => {
         if (!isViewMode) {
-          debouncedUpdateContent(editor.getJSON());
+          debouncedUpdateContent(ed.getJSON());
+        }
+
+        // Update wiki-link query if menu is open
+        if (wikiLinkMenuOpen) {
+          const { state } = ed;
+          const { selection } = state;
+          const { $from } = selection;
+          const textBefore = $from.parent.textContent.slice(0, $from.parentOffset);
+          const bracketIndex = textBefore.lastIndexOf('[[');
+
+          if (bracketIndex !== -1) {
+            const query = textBefore.slice(bracketIndex + 2);
+            setWikiLinkQuery(query);
+          } else {
+            // [[ was deleted, close menu
+            setWikiLinkMenuOpen(false);
+            setWikiLinkQuery('');
+          }
         }
       },
     },
@@ -75,29 +118,41 @@ export function Editor({ isViewMode = false }: EditorProps) {
     }
   }, [editor, isViewMode]);
 
+  // Helper to get cursor position for menus
+  const getCursorPosition = useCallback(() => {
+    if (!editor) return { top: 0, left: 0 };
+
+    const { view } = editor;
+    const { state } = view;
+    const { selection } = state;
+    const coords = view.coordsAtPos(selection.from);
+    const editorRect = editorContainerRef.current?.getBoundingClientRect();
+
+    if (editorRect) {
+      return {
+        top: coords.bottom + 8,
+        left: Math.max(coords.left, editorRect.left),
+      };
+    }
+    return { top: coords.bottom + 8, left: coords.left };
+  }, [editor]);
+
   // Update slash menu position based on cursor
   useEffect(() => {
     if (!editor || !slashMenuOpen) return;
+    setSlashMenuPosition(getCursorPosition());
+  }, [editor, slashMenuOpen, slashQuery, getCursorPosition]);
 
-    const updatePosition = () => {
-      const { view } = editor;
-      const { state } = view;
-      const { selection } = state;
+  // Update wiki-link menu position based on cursor
+  useEffect(() => {
+    if (!editor || !wikiLinkMenuOpen) return;
+    setWikiLinkMenuPosition(getCursorPosition());
+  }, [editor, wikiLinkMenuOpen, wikiLinkQuery, getCursorPosition]);
 
-      // Get cursor coordinates
-      const coords = view.coordsAtPos(selection.from);
-      const editorRect = editorContainerRef.current?.getBoundingClientRect();
-
-      if (editorRect) {
-        setSlashMenuPosition({
-          top: coords.bottom + 8,
-          left: Math.max(coords.left, editorRect.left),
-        });
-      }
-    };
-
-    updatePosition();
-  }, [editor, slashMenuOpen, slashQuery]);
+  const handleWikiLinkClose = useCallback(() => {
+    setWikiLinkMenuOpen(false);
+    setWikiLinkQuery('');
+  }, []);
 
   return (
     <div ref={editorContainerRef} className="relative">
@@ -108,6 +163,13 @@ export function Editor({ isViewMode = false }: EditorProps) {
         isOpen={slashMenuOpen}
         onClose={handleSlashCommandClose}
         position={slashMenuPosition}
+      />
+      <WikiLinkMenu
+        editor={editor}
+        isOpen={wikiLinkMenuOpen}
+        onClose={handleWikiLinkClose}
+        position={wikiLinkMenuPosition}
+        query={wikiLinkQuery}
       />
     </div>
   );
