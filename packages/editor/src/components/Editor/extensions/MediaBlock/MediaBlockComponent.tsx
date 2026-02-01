@@ -1,0 +1,279 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { NodeViewWrapper } from '@tiptap/react';
+import type { NodeViewProps } from '@tiptap/react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import {
+  Delete01Icon,
+  TextAlignLeftIcon,
+  TextAlignCenterIcon,
+  TextAlignRightIcon,
+  ImageAdd01Icon,
+  Upload01Icon,
+  Cancel01Icon,
+} from '@hugeicons/core-free-icons';
+import { openImagePicker, readFileAsDataURL } from './mediaUtils';
+
+export function MediaBlockComponent({
+  node,
+  updateAttributes,
+  deleteNode,
+  selected,
+  editor,
+}: NodeViewProps) {
+  const { src, alt, width, alignment } = node.attrs;
+  const [isHovered, setIsHovered] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const resizeRef = useRef({
+    startX: 0,
+    startWidth: 0,
+    containerWidth: 0,
+    handle: '',
+  });
+
+  // --- Resize ---
+
+  const handleResizeStart = useCallback(
+    (e: React.MouseEvent, handle: string) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const img = imageRef.current;
+      const wrapper = wrapperRef.current;
+      if (!img || !wrapper) return;
+
+      setIsResizing(true);
+      resizeRef.current = {
+        startX: e.clientX,
+        startWidth: img.offsetWidth,
+        containerWidth: wrapper.offsetWidth,
+        handle,
+      };
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const { startX, startWidth, containerWidth, handle } = resizeRef.current;
+      const isLeft = handle.includes('w');
+      const deltaX = isLeft ? startX - e.clientX : e.clientX - startX;
+      const newWidthPx = Math.max(60, startWidth + deltaX);
+      const newWidthPercent = Math.min(
+        100,
+        Math.round((newWidthPx / containerWidth) * 100)
+      );
+      updateAttributes({ width: newWidthPercent });
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, updateAttributes]);
+
+  // --- Actions ---
+
+  const handleReplace = useCallback(async () => {
+    const file = await openImagePicker();
+    if (!file) return;
+    const dataUrl = await readFileAsDataURL(file);
+    updateAttributes({ src: dataUrl });
+  }, [updateAttributes]);
+
+  const handleDelete = useCallback(() => {
+    deleteNode();
+  }, [deleteNode]);
+
+  const setAlign = useCallback(
+    (align: string) => {
+      updateAttributes({ alignment: align });
+    },
+    [updateAttributes]
+  );
+
+  // --- Upload placeholder (no src yet) ---
+
+  const handleUpload = useCallback(async () => {
+    const file = await openImagePicker();
+    if (!file) return;
+    const dataUrl = await readFileAsDataURL(file);
+    updateAttributes({ src: dataUrl });
+  }, [updateAttributes]);
+
+  // --- Fullscreen ---
+
+  const handleDoubleClick = useCallback(() => {
+    if (src) setIsFullscreen(true);
+  }, [src]);
+
+  const closeFullscreen = useCallback(() => {
+    setIsFullscreen(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isFullscreen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsFullscreen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown, true);
+    return () => document.removeEventListener('keydown', handleKeyDown, true);
+  }, [isFullscreen]);
+
+  if (!src) {
+    return (
+      <NodeViewWrapper className="media-block">
+        <div className="media-placeholder" onClick={handleUpload}>
+          <HugeiconsIcon icon={Upload01Icon} size={32} className="text-gray-300" />
+          <span className="text-sm text-gray-400">Click to upload image</span>
+        </div>
+      </NodeViewWrapper>
+    );
+  }
+
+  // --- Render ---
+
+  const justifyContent =
+    alignment === 'left'
+      ? 'flex-start'
+      : alignment === 'right'
+        ? 'flex-end'
+        : 'center';
+
+  const showControls = (isHovered || selected) && editor.isEditable;
+
+  return (
+    <NodeViewWrapper className="media-block" data-drag-handle>
+      <div
+        ref={wrapperRef}
+        className="media-block-wrapper"
+        style={{ display: 'flex', justifyContent }}
+      >
+        <div
+          ref={containerRef}
+          className={[
+            'media-block-container',
+            selected ? 'is-selected' : '',
+            isResizing ? 'is-resizing' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          style={{
+            width: width ? `${width}%` : undefined,
+            maxWidth: '100%',
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <img
+            ref={imageRef}
+            src={src}
+            alt={alt || ''}
+            draggable={false}
+            onDoubleClick={handleDoubleClick}
+          />
+
+          {/* Resize handles */}
+          {showControls && (
+            <>
+              <div
+                className="media-resize-handle nw"
+                onMouseDown={(e) => handleResizeStart(e, 'nw')}
+              />
+              <div
+                className="media-resize-handle ne"
+                onMouseDown={(e) => handleResizeStart(e, 'ne')}
+              />
+              <div
+                className="media-resize-handle sw"
+                onMouseDown={(e) => handleResizeStart(e, 'sw')}
+              />
+              <div
+                className="media-resize-handle se"
+                onMouseDown={(e) => handleResizeStart(e, 'se')}
+              />
+            </>
+          )}
+
+          {/* Hover toolbar */}
+          {showControls && (
+            <div className="media-toolbar">
+              <button
+                onClick={() => setAlign('left')}
+                title="Align left"
+                className={alignment === 'left' ? 'active' : ''}
+              >
+                <HugeiconsIcon icon={TextAlignLeftIcon} size={16} />
+              </button>
+              <button
+                onClick={() => setAlign('center')}
+                title="Align center"
+                className={alignment === 'center' || !alignment ? 'active' : ''}
+              >
+                <HugeiconsIcon icon={TextAlignCenterIcon} size={16} />
+              </button>
+              <button
+                onClick={() => setAlign('right')}
+                title="Align right"
+                className={alignment === 'right' ? 'active' : ''}
+              >
+                <HugeiconsIcon icon={TextAlignRightIcon} size={16} />
+              </button>
+              <div className="media-toolbar-divider" />
+              <button onClick={handleReplace} title="Replace image">
+                <HugeiconsIcon icon={ImageAdd01Icon} size={16} />
+              </button>
+              <button
+                onClick={handleDelete}
+                title="Delete"
+                className="media-toolbar-delete"
+              >
+                <HugeiconsIcon icon={Delete01Icon} size={16} />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Fullscreen overlay */}
+      {isFullscreen &&
+        createPortal(
+          <div className="media-fullscreen-overlay" onClick={closeFullscreen}>
+            <button
+              className="media-fullscreen-close"
+              onClick={closeFullscreen}
+              title="Close (Esc)"
+            >
+              <HugeiconsIcon icon={Cancel01Icon} size={24} />
+            </button>
+            <img
+              src={src}
+              alt={alt || ''}
+              className="media-fullscreen-content"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>,
+          document.body
+        )}
+    </NodeViewWrapper>
+  );
+}
