@@ -1,7 +1,8 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import { ExternalLink, Trash2, GripVertical, Link } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Share01Icon, Delete01Icon, Drag01Icon, Link01Icon } from '@hugeicons/core-free-icons';
 import { EMBED_CONFIGS, parseGitHubUrl, parseGistUrl } from './embedUtils';
 import type { EmbedType, GitHubUrlInfo } from './embedUtils';
 
@@ -61,7 +62,7 @@ export function EmbedBlockComponent({ node, updateAttributes, deleteNode, select
           </div>
           <div className="embed-input-body">
             <div className="embed-input-row">
-              <Link className="w-4 h-4 text-gray-400 flex-shrink-0" />
+              <HugeiconsIcon icon={Link01Icon} size={16} className="text-gray-400 flex-shrink-0" />
               <input
                 ref={inputRef}
                 type="url"
@@ -106,7 +107,7 @@ export function EmbedBlockComponent({ node, updateAttributes, deleteNode, select
       <div className={`embed-block-wrapper ${selected ? 'is-selected' : ''}`}>
         {/* Drag handle */}
         <div className="embed-drag-handle" data-drag-handle>
-          <GripVertical className="w-4 h-4 text-gray-400" />
+          <HugeiconsIcon icon={Drag01Icon} size={16} className="text-gray-400" />
         </div>
 
         {/* Header bar */}
@@ -122,7 +123,7 @@ export function EmbedBlockComponent({ node, updateAttributes, deleteNode, select
               className="embed-action-btn"
               title={`Open in ${config.label}`}
             >
-              <ExternalLink className="w-3.5 h-3.5" />
+              <HugeiconsIcon icon={Share01Icon} size={14} />
               <span>Open</span>
             </a>
             <button
@@ -130,7 +131,7 @@ export function EmbedBlockComponent({ node, updateAttributes, deleteNode, select
               className="embed-action-btn embed-action-delete"
               title="Remove embed"
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <HugeiconsIcon icon={Delete01Icon} size={14} />
             </button>
           </div>
         </div>

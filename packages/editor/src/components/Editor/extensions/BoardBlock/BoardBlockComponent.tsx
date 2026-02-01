@@ -3,7 +3,8 @@ import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { Tldraw, getSnapshot, loadSnapshot } from 'tldraw';
 import type { Editor as TldrawEditor } from 'tldraw';
-import { Trash2, Maximize2, Minimize2, GripVertical } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Delete01Icon, Maximize01Icon, Minimize01Icon, Drag01Icon } from '@hugeicons/core-free-icons';
 import { throttle } from 'lodash-es';
 import { useBoardStore } from '../../../../stores/boardStore';
 import { BOARD_SAVE_DEBOUNCE_MS } from '@dardocs/core';
@@ -141,7 +142,7 @@ export function BoardBlockComponent({ node, updateAttributes, deleteNode, select
           className="absolute left-0 top-0 bottom-0 w-8 flex items-center justify-center cursor-grab opacity-0 hover:opacity-100 transition-opacity z-10"
           data-drag-handle
         >
-          <GripVertical className="w-4 h-4 text-gray-400" />
+          <HugeiconsIcon icon={Drag01Icon} size={16} className="text-gray-400" />
         </div>
 
         {/* Toolbar */}
@@ -152,9 +153,9 @@ export function BoardBlockComponent({ node, updateAttributes, deleteNode, select
             title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
           >
             {isFullscreen ? (
-              <Minimize2 className="w-4 h-4 text-gray-600" />
+              <HugeiconsIcon icon={Minimize01Icon} size={16} className="text-gray-600" />
             ) : (
-              <Maximize2 className="w-4 h-4 text-gray-600" />
+              <HugeiconsIcon icon={Maximize01Icon} size={16} className="text-gray-600" />
             )}
           </button>
           <button
@@ -162,7 +163,7 @@ export function BoardBlockComponent({ node, updateAttributes, deleteNode, select
             className="p-1.5 bg-white rounded border border-gray-200 hover:bg-red-50 hover:border-red-200 transition-colors"
             title="Delete whiteboard"
           >
-            <Trash2 className="w-4 h-4 text-gray-600 hover:text-red-600" />
+            <HugeiconsIcon icon={Delete01Icon} size={16} className="text-gray-600 hover:text-red-600" />
           </button>
         </div>
 

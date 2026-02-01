@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
 
 interface DropdownOption {
   value: string;
@@ -49,7 +50,7 @@ export function Dropdown({
           {selectedOption?.icon}
           {selectedOption?.label || placeholder}
         </span>
-        <ChevronDown className="w-4 h-4 ml-2" />
+        <HugeiconsIcon icon={ArrowDown01Icon} size={16} className="ml-2" />
       </button>
 
       {isOpen && (

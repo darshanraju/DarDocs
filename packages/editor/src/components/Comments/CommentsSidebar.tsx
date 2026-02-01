@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { Editor } from '@tiptap/react';
-import { ChevronsRight, ChevronsLeft } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowRight01Icon, ArrowLeft01Icon } from '@hugeicons/core-free-icons';
 import { useCommentStore, type Comment } from '../../stores/commentStore';
 import { CommentPanel, formatTime, UserAvatar } from './CommentPanel';
 
@@ -162,7 +163,7 @@ export function CommentsSidebar({ editor }: CommentsSidebarProps) {
           onClick={() => setUserOverride(true)}
           title="Show comments"
         >
-          <ChevronsLeft size={18} />
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
           {unresolvedComments.length > 0 && (
             <span className="comments-sidebar-badge">
               {unresolvedComments.length}
@@ -190,7 +191,7 @@ export function CommentsSidebar({ editor }: CommentsSidebarProps) {
           onClick={() => setUserOverride(false)}
           title="Hide comments"
         >
-          <ChevronsRight size={18} />
+          <HugeiconsIcon icon={ArrowRight01Icon} size={18} />
         </button>
       </div>
       <div

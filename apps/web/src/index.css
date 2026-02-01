@@ -12,28 +12,29 @@
 :root {
   /* Backgrounds */
   --color-bg: #ffffff;
-  --color-bg-subtle: #f9fafb;
-  --color-bg-muted: #f3f4f6;
-  --color-bg-code: #f8fafc;
-  --color-bg-inlinecode: #f1f5f9;
-  --color-bg-accent-light: #f0f5ff;
+  --color-bg-subtle: #f9f9f9;
+  --color-bg-muted: #f5f5f4;
+  --color-bg-code: #f8f8f7;
+  --color-bg-inlinecode: #f3f3f2;
+  --color-bg-accent-light: #f5f5f4;
   --color-bg-accent-subtle: #eef2ff;
   --color-bg-danger-subtle: #fef2f2;
   --color-bg-warning-subtle: #fffbeb;
+  --color-bg-hover: #f5f5f4;
 
   /* Text */
-  --color-text: #1f2937;
-  --color-text-secondary: #374151;
-  --color-text-tertiary: #4b5563;
-  --color-text-muted: #6b7280;
-  --color-text-faint: #9ca3af;
-  --color-text-placeholder: #d1d5db;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #404040;
+  --color-text-tertiary: #595959;
+  --color-text-muted: #8c8c8c;
+  --color-text-faint: #bfbfbf;
+  --color-text-placeholder: #d9d9d9;
   --color-text-code: #334155;
   --color-text-code-inline: #475569;
 
   /* Borders */
-  --color-border: #e5e7eb;
-  --color-border-code: #e2e8f0;
+  --color-border: #ebebeb;
+  --color-border-code: #e8e8e8;
 
   /* Accent */
   --color-accent: #3370ff;
@@ -56,13 +57,16 @@
   --color-selection-cell: rgba(51, 112, 255, 0.1);
 
   /* Scrollbar */
-  --color-scrollbar-thumb: #d1d5db;
-  --color-scrollbar-thumb-hover: #9ca3af;
+  --color-scrollbar-thumb: #d9d9d9;
+  --color-scrollbar-thumb-hover: #bfbfbf;
 
   /* Shadows */
-  --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.05);
+  --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.03);
+  --shadow-float: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.03);
+
+  /* Menu sizing */
+  --menu-item-height: 28px;
 }
 
 .dark {
@@ -141,7 +145,7 @@
   position: relative;
 }
 
-/* Lark-style system font stack */
+/* System font stack */
 html, body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI",
     "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", "Noto Sans CJK SC",
@@ -149,6 +153,8 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--color-bg);
+  letter-spacing: -0.15px;
+  color: var(--color-text-secondary);
 }
 
 /* Editor-specific styles */
@@ -676,14 +682,14 @@ html, body {
   display: flex;
   align-items: center;
   gap: 0.875rem;
-  padding: 0.5rem 1rem;
+  padding: 0.375rem 1rem;
   cursor: pointer;
   transition: background-color 0.1s;
 }
 
 .slash-command-item:hover,
 .slash-command-item.is-selected {
-  background-color: var(--color-bg-muted);
+  background-color: var(--color-bg-hover);
 }
 
 .slash-command-item-icon {
@@ -897,7 +903,7 @@ html, body {
   min-width: 260px;
   height: 100vh;
   background: var(--color-bg);
-  border-right: 1px solid var(--color-bg-muted);
+  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -914,7 +920,7 @@ html, body {
   padding-top: 12px;
   gap: 4px;
   flex-shrink: 0;
-  border-right: 1px solid var(--color-bg-muted);
+  border-right: 1px solid var(--color-border);
   background: var(--color-bg);
 }
 
@@ -941,7 +947,8 @@ html, body {
   align-items: center;
   gap: 6px;
   width: 100%;
-  padding: 6px 10px;
+  height: var(--menu-item-height);
+  padding: 0 10px;
   border: 1px dashed var(--color-border);
   background: transparent;
   border-radius: 6px;
@@ -952,9 +959,9 @@ html, body {
 }
 
 .sidebar-new-btn:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-  background: var(--color-bg-accent-light);
+  border-color: var(--color-text-muted);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-hover);
 }
 
 .sidebar-nav {
@@ -973,8 +980,9 @@ html, body {
 .sidebar-item {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 5px 8px;
+  gap: 6px;
+  height: var(--menu-item-height);
+  padding: 0 8px;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.1s;
@@ -982,15 +990,15 @@ html, body {
 }
 
 .sidebar-item:hover {
-  background: var(--color-bg-muted);
+  background: var(--color-bg-hover);
 }
 
 .sidebar-item-active {
-  background: var(--color-bg-accent-light);
+  background: var(--color-bg-hover);
 }
 
 .sidebar-item-active:hover {
-  background: var(--color-bg-accent-light);
+  background: var(--color-bg-hover);
 }
 
 .sidebar-expand-btn {
@@ -1020,10 +1028,11 @@ html, body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 400;
 }
 
 .sidebar-item-active .sidebar-item-title {
-  color: var(--color-accent);
+  color: var(--color-text);
   font-weight: 500;
 }
 
@@ -1080,7 +1089,8 @@ html, body {
   align-items: center;
   gap: 8px;
   width: 100%;
-  padding: 6px 10px;
+  height: var(--menu-item-height);
+  padding: 0 10px;
   border: none;
   background: transparent;
   border-radius: 5px;
@@ -1091,7 +1101,7 @@ html, body {
 }
 
 .sidebar-context-menu button:hover {
-  background: var(--color-bg-muted);
+  background: var(--color-bg-hover);
 }
 
 .sidebar-context-menu .sidebar-context-delete {

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import type { Editor } from '@tiptap/react';
-import { ChevronUp, ChevronDown, Link2, Check, Send, X } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowUp01Icon, ArrowDown01Icon, Link01Icon, Tick01Icon, MailSend01Icon, Cancel01Icon } from '@hugeicons/core-free-icons';
 import { useCommentStore, type CommentAuthor } from '../../stores/commentStore';
 
 export function formatTime(isoString: string): string {
@@ -162,26 +163,26 @@ export function CommentPanel({ editor }: CommentPanelProps) {
               className="comment-panel-action-btn"
               title="Next comment"
             >
-              <ChevronDown size={16} />
+              <HugeiconsIcon icon={ArrowDown01Icon} size={16} />
             </button>
             <button
               onClick={() => navigateComment('prev')}
               className="comment-panel-action-btn"
               title="Previous comment"
             >
-              <ChevronUp size={16} />
+              <HugeiconsIcon icon={ArrowUp01Icon} size={16} />
             </button>
           </div>
           <div className="comment-panel-nav">
             <button className="comment-panel-action-btn" title="Copy link">
-              <Link2 size={16} />
+              <HugeiconsIcon icon={Link01Icon} size={16} />
             </button>
             <button
               onClick={handleResolve}
               className="comment-panel-action-btn"
               title="Resolve"
             >
-              <Check size={16} />
+              <HugeiconsIcon icon={Tick01Icon} size={16} />
             </button>
           </div>
         </div>
@@ -204,7 +205,7 @@ export function CommentPanel({ editor }: CommentPanelProps) {
           </div>
           <div className="comment-panel-draft-actions">
             <button onClick={handleDelete} className="comment-panel-cancel-btn">
-              <X size={14} />
+              <HugeiconsIcon icon={Cancel01Icon} size={14} />
               <span>Cancel</span>
             </button>
             <button
@@ -274,7 +275,7 @@ export function CommentPanel({ editor }: CommentPanelProps) {
               className="comment-panel-reply-btn"
               disabled={!replyText.trim()}
             >
-              <Send size={14} />
+              <HugeiconsIcon icon={MailSend01Icon} size={14} />
             </button>
           </div>
         </>

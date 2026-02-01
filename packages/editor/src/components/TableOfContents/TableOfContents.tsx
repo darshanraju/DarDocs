@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { ChevronsLeft, AlignLeft } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { ArrowLeft01Icon, SidebarLeft01Icon } from '@hugeicons/core-free-icons';
 
 interface TocHeading {
   domIndex: number;
@@ -156,7 +157,7 @@ export function TableOfContents() {
           className="toc-toggle-btn"
           title="Show table of contents"
         >
-          <AlignLeft className="w-5 h-5" />
+          <HugeiconsIcon icon={SidebarLeft01Icon} size={20} />
         </button>
       </div>
     );
@@ -170,7 +171,7 @@ export function TableOfContents() {
           className="toc-collapse-btn"
           title="Hide table of contents"
         >
-          <ChevronsLeft className="w-5 h-5" />
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={20} />
         </button>
       </div>
 

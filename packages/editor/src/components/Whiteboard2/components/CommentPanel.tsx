@@ -8,7 +8,8 @@
  *   - Comments show author, timestamp, resolve button
  */
 import { useCallback, useState } from 'react';
-import { MessageSquare, Check, X } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Comment01Icon, Tick01Icon, Cancel01Icon } from '@hugeicons/core-free-icons';
 import type { ICommentSystem, ISceneGraph, SelectionState } from '../types';
 
 interface CommentPanelProps {
@@ -73,7 +74,7 @@ export function CommentPanel({ comments, scene, selection }: CommentPanelProps) 
           gap: 8,
         }}
       >
-        <MessageSquare size={16} />
+        <HugeiconsIcon icon={Comment01Icon} size={16} />
         Comments ({relevantComments.length})
       </div>
 
@@ -124,7 +125,7 @@ export function CommentPanel({ comments, scene, selection }: CommentPanelProps) 
                       color: '#9ca3af',
                     }}
                   >
-                    <Check size={14} />
+                    <HugeiconsIcon icon={Tick01Icon} size={14} />
                   </button>
                 )}
                 <button
@@ -138,7 +139,7 @@ export function CommentPanel({ comments, scene, selection }: CommentPanelProps) 
                     color: '#9ca3af',
                   }}
                 >
-                  <X size={14} />
+                  <HugeiconsIcon icon={Cancel01Icon} size={14} />
                 </button>
               </div>
             </div>

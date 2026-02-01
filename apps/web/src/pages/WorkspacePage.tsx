@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import { Plus, FileText, Clock } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { PlusSignIcon, File01Icon, Clock01Icon } from '@hugeicons/core-free-icons';
 import { useWorkspaceStore } from '@dardocs/editor';
 
 export function WorkspacePage() {
@@ -27,7 +28,7 @@ export function WorkspacePage() {
           Create a new document or pick up where you left off.
         </p>
         <button className="workspace-create-btn" onClick={handleCreate}>
-          <Plus className="w-5 h-5" />
+          <HugeiconsIcon icon={PlusSignIcon} size={20} />
           New document
         </button>
       </div>
@@ -35,7 +36,7 @@ export function WorkspacePage() {
       {recentDocs.length > 0 && (
         <div className="workspace-recent">
           <h2 className="workspace-section-title">
-            <Clock className="w-4 h-4" />
+            <HugeiconsIcon icon={Clock01Icon} size={16} />
             Recent documents
           </h2>
           <div className="workspace-grid">
@@ -48,7 +49,7 @@ export function WorkspacePage() {
                   navigate(`/doc/${doc.id}`);
                 }}
               >
-                <FileText className="w-5 h-5 text-[var(--color-accent)]" />
+                <HugeiconsIcon icon={File01Icon} size={20} color="var(--color-accent)" />
                 <span className="workspace-card-title">
                   {doc.title || 'Untitled'}
                 </span>

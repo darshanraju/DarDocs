@@ -1,4 +1,5 @@
-import { Moon, Sun } from 'lucide-react';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Moon02Icon, Sun01Icon } from '@hugeicons/core-free-icons';
 import { useThemeStore } from '../../stores/themeStore';
 
 export function DarkModeToggle() {
@@ -11,9 +12,9 @@ export function DarkModeToggle() {
       title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
     >
       {theme === 'light' ? (
-        <Moon className="w-4 h-4" />
+        <HugeiconsIcon icon={Moon02Icon} size={16} />
       ) : (
-        <Sun className="w-4 h-4" />
+        <HugeiconsIcon icon={Sun01Icon} size={16} />
       )}
     </button>
   );
