@@ -19,9 +19,9 @@ import {
   Github,
   FileCode2,
   Workflow,
-  BarChart3,
   Braces,
   Table2,
+  Activity,
 } from 'lucide-react';
 import { useBoardStore } from '../../stores/boardStore';
 import { useWhiteboard2Store } from '../Whiteboard2/whiteboardStore';
@@ -214,11 +214,11 @@ const commands: SlashCommand[] = [
     action: (editor) => editor.chain().focus().insertMermaid().run(),
   },
   {
-    name: 'Grafana',
-    icon: <BarChart3 className="w-5 h-5" style={{ color: '#f46800' }} />,
-    keywords: ['grafana', 'dashboard', 'metrics', 'monitoring', 'graph', 'embed'],
-    category: 'Embeds',
-    action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'grafana' }).run(),
+    name: 'Monitor',
+    icon: <Activity className="w-5 h-5" style={{ color: '#3370ff' }} />,
+    keywords: ['monitor', 'grafana', 'sentry', 'datadog', 'pagerduty', 'metrics', 'monitoring', 'observability', 'dashboard', 'alerts'],
+    category: 'Blocks',
+    action: (editor) => editor.chain().focus().insertMonitor().run(),
   },
   {
     name: 'Swagger',

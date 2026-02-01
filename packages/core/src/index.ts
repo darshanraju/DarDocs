@@ -58,3 +58,7 @@ export {
 
 // Docx converter
 export { convertDocxToTipTap } from './docxConverter';
+
+// Monitor providers
+export type { MonitorProviderId, MonitorProviderConfig } from './monitors';
+export { MONITOR_PROVIDERS, MONITOR_PROVIDER_LIST } from './monitors';
