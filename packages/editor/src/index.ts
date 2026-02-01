@@ -5,6 +5,7 @@ export { useCommentStore } from './stores/commentStore';
 export { useThemeStore } from './stores/themeStore';
 export { useWorkspaceStore } from './stores/workspaceStore';
 export type { TreeNode } from './stores/workspaceStore';
+export { useWorkspaceConfigStore } from './stores/workspaceConfigStore';
 export { useAuthStore } from './stores/authStore';
 
 // API client

@@ -217,11 +217,11 @@ const commands: SlashCommand[] = [
     action: (editor) => editor.chain().focus().insertMermaid().run(),
   },
   {
-    name: 'Grafana',
-    icon: <HugeiconsIcon icon={AnalyticsIcon} size={20} color="#f46800" />,
-    keywords: ['grafana', 'dashboard', 'metrics', 'monitoring', 'graph', 'embed'],
-    category: 'Embeds',
-    action: (editor) => editor.chain().focus().insertEmbed({ embedType: 'grafana' }).run(),
+    name: 'Monitor',
+    icon: <HugeiconsIcon icon={AnalyticsIcon} size={20} color="#3370ff" />,
+    keywords: ['monitor', 'grafana', 'sentry', 'datadog', 'pagerduty', 'metrics', 'monitoring', 'observability', 'dashboard', 'alerts'],
+    category: 'Blocks',
+    action: (editor) => editor.chain().focus().insertMonitor().run(),
   },
   {
     name: 'Swagger',

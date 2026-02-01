@@ -13,11 +13,14 @@ import {
   SidebarLeft01Icon,
   Logout01Icon,
   UserGroupIcon,
+  Setting07Icon,
 } from '@hugeicons/core-free-icons';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
+import { useWorkspaceConfigStore } from '../../stores/workspaceConfigStore';
 import type { TreeNode } from '../../stores/workspaceStore';
 import { useAuthStore } from '../../stores/authStore';
 import { DarkModeToggle } from '../TableOfContents/DarkModeToggle';
+import { SettingsModal } from '../Settings/SettingsModal';
 import { ShareModal } from './ShareModal';
 import { useNavigate, useParams } from 'react-router';
 
@@ -35,6 +38,8 @@ export function Sidebar() {
   } = useWorkspaceStore();
   const { user, signOut } = useAuthStore();
 
+  const { openSettings, loadConfig } = useWorkspaceConfigStore();
+
   const navigate = useNavigate();
   const params = useParams<{ docId: string }>();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -50,7 +55,8 @@ export function Sidebar() {
 
   useEffect(() => {
     loadTree();
-  }, [loadTree]);
+    loadConfig();
+  }, [loadTree, loadConfig]);
 
   // Sync activeDocId with route
   useEffect(() => {
@@ -249,6 +255,13 @@ export function Sidebar() {
           <span>New page</span>
         </button>
         <button
+          className="sidebar-settings-btn"
+          onClick={openSettings}
+          title="Workspace settings"
+        >
+          <HugeiconsIcon icon={Setting07Icon} size={16} />
+        </button>
+        <button
           className="sidebar-share-btn"
           onClick={() => setShowShareModal(true)}
           title="Share workspace"
@@ -268,6 +281,8 @@ export function Sidebar() {
           tree.map((node) => renderNode(node, 0))
         )}
       </nav>
+
+      <SettingsModal />
 
       {user && (
         <div className="sidebar-footer">
