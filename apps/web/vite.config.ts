@@ -12,4 +12,12 @@ export default defineConfig({
       '@dardocs/editor': path.resolve(__dirname, '../../packages/editor/src'),
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3456',
+        changeOrigin: true,
+      },
+    },
+  },
 })

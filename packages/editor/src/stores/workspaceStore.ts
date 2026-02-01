@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import type { DocTreeNode, DarDocsDocument } from '@dardocs/core';
-import { IndexedDBPersistence } from '@dardocs/core';
-
-const persistence = new IndexedDBPersistence();
+import type { JSONContent } from '@tiptap/react';
+import type { TLEditorSnapshot } from 'tldraw';
+import { workspacesApi, documentsApi } from '../lib/api.js';
+import type { DocFull } from '../lib/api.js';
 
 export interface TreeNode extends DocTreeNode {
   children: TreeNode[];
@@ -13,6 +14,7 @@ interface WorkspaceStore {
   tree: TreeNode[];
   loading: boolean;
   activeDocId: string | null;
+  workspaceId: string | null;
 
   // Init
   loadTree: () => Promise<void>;
@@ -99,28 +101,82 @@ function toggleInTree(tree: TreeNode[], id: string): TreeNode[] {
   });
 }
 
+/** Convert API DocFull to the client-side DarDocsDocument format */
+function toDocument(doc: DocFull): DarDocsDocument {
+  return {
+    version: '1.0',
+    metadata: {
+      id: doc.id,
+      title: doc.title,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+    },
+    content: (doc.content as JSONContent) || {
+      type: 'doc',
+      content: [{ type: 'paragraph' }],
+    },
+    boards: (doc.boards as Record<string, TLEditorSnapshot>) || {},
+    comments: [],
+  };
+}
+
+/** Map API tree items to DocTreeNode shape */
+function toTreeNodes(items: { id: string; parentId: string; position: number; title: string; createdAt: string; updatedAt: string }[]): DocTreeNode[] {
+  return items.map((n) => ({
+    id: n.id,
+    parentId: n.parentId,
+    position: n.position,
+    title: n.title,
+    createdAt: n.createdAt,
+    updatedAt: n.updatedAt,
+  }));
+}
+
 export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   tree: [],
   loading: true,
   activeDocId: null,
+  workspaceId: null,
 
   loadTree: async () => {
     set({ loading: true });
-    const flatNodes = await persistence.getTree();
-    const expandedIds = collectExpandedIds(get().tree);
-    const tree = buildTree(flatNodes, expandedIds);
-    set({ tree, loading: false });
+    try {
+      // Ensure we have a workspace
+      let wsId = get().workspaceId;
+      if (!wsId) {
+        const workspaces = await workspacesApi.list();
+        if (workspaces.length > 0) {
+          wsId = workspaces[0].id;
+        } else {
+          const ws = await workspacesApi.create('Personal');
+          wsId = ws.id;
+        }
+        set({ workspaceId: wsId });
+      }
+
+      const flatNodes = await documentsApi.tree(wsId);
+      const expandedIds = collectExpandedIds(get().tree);
+      const tree = buildTree(toTreeNodes(flatNodes), expandedIds);
+      set({ tree, loading: false });
+    } catch {
+      set({ loading: false });
+    }
   },
 
   createDocument: async (title, parentId) => {
-    const doc = await persistence.createDocument(title, parentId);
+    const wsId = get().workspaceId;
+    if (!wsId) throw new Error('No workspace loaded');
+
+    const docFull = await documentsApi.create(wsId, title, parentId);
+    const doc = toDocument(docFull);
+
     // If creating under a parent, auto-expand it
     if (parentId) {
       const current = get().tree;
       const expanded = collectExpandedIds(current);
       expanded.add(parentId);
-      const flatNodes = await persistence.getTree();
-      set({ tree: buildTree(flatNodes, expanded) });
+      const flatNodes = await documentsApi.tree(wsId);
+      set({ tree: buildTree(toTreeNodes(flatNodes), expanded) });
     } else {
       await get().loadTree();
     }
@@ -128,7 +184,7 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   },
 
   deleteDocument: async (id) => {
-    await persistence.delete(id);
+    await documentsApi.delete(id);
     const state = get();
     if (state.activeDocId === id) {
       set({ activeDocId: null });
@@ -137,16 +193,7 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   },
 
   renameDocument: async (id, title) => {
-    await persistence.updateTreeNodeTitle(id, title);
-    // Also update the document metadata
-    try {
-      const doc = await persistence.load(id);
-      doc.metadata.title = title;
-      doc.metadata.updatedAt = new Date().toISOString();
-      await persistence.save(doc);
-    } catch {
-      // Document might not be saved yet
-    }
+    await documentsApi.update(id, { title });
     await get().loadTree();
   },
 
@@ -157,7 +204,10 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   },
 
   moveDocument: async (id, newParentId, newPosition) => {
-    await persistence.moveNode(id, newParentId, newPosition);
+    await documentsApi.update(id, {
+      parentId: newParentId,
+      position: newPosition,
+    });
     await get().loadTree();
   },
 
@@ -166,7 +216,11 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   },
 
   saveDocument: async (doc) => {
-    await persistence.save(doc);
+    await documentsApi.update(doc.metadata.id, {
+      title: doc.metadata.title,
+      content: doc.content,
+      boards: doc.boards,
+    });
     // Sync tree title if changed
     const node = get().tree;
     const findNode = (nodes: TreeNode[]): TreeNode | undefined => {
@@ -179,15 +233,12 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
     };
     const existing = findNode(node);
     if (existing && existing.title !== doc.metadata.title) {
-      await persistence.updateTreeNodeTitle(
-        doc.metadata.id,
-        doc.metadata.title
-      );
       await get().loadTree();
     }
   },
 
   loadDocument: async (id) => {
-    return persistence.load(id);
+    const docFull = await documentsApi.get(id);
+    return toDocument(docFull);
   },
 }));

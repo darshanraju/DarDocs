@@ -8,7 +8,12 @@
   ],
   "scripts": {
     "dev": "npm run dev -w @dardocs/web",
+    "dev:api": "npm run dev -w @dardocs/api",
+    "dev:all": "npm run dev:api & npm run dev",
     "build": "npm run build -w @dardocs/web",
+    "db:push": "npm run db:push -w @dardocs/api",
+    "db:generate": "npm run db:generate -w @dardocs/api",
+    "db:migrate": "npm run db:migrate -w @dardocs/api",
     "lint": "eslint .",
     "test": "vitest --config vite.config.ts",
     "test:run": "vitest run --config vite.config.ts",

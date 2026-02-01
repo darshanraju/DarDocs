@@ -10,9 +10,11 @@ import {
   FilePlus,
   ChevronsLeft,
   AlignLeft,
+  LogOut,
 } from 'lucide-react';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
 import type { TreeNode } from '../../stores/workspaceStore';
+import { useAuthStore } from '../../stores/authStore';
 import { DarkModeToggle } from '../TableOfContents/DarkModeToggle';
 import { useNavigate, useParams } from 'react-router';
 
@@ -28,6 +30,7 @@ export function Sidebar() {
     toggleExpanded,
     setActiveDocId,
   } = useWorkspaceStore();
+  const { user, signOut } = useAuthStore();
 
   const navigate = useNavigate();
   const params = useParams<{ docId: string }>();
@@ -250,6 +253,22 @@ export function Sidebar() {
           tree.map((node) => renderNode(node, 0))
         )}
       </nav>
+
+      {user && (
+        <div className="sidebar-footer">
+          <span className="sidebar-user-name" title={user.email}>
+            {user.name}
+          </span>
+          <button
+            className="sidebar-more-btn"
+            style={{ opacity: 1 }}
+            onClick={signOut}
+            title="Sign out"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* Context menu */}
       {contextMenu && (

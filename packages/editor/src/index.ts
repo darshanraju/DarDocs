@@ -5,6 +5,11 @@ export { useCommentStore } from './stores/commentStore';
 export { useThemeStore } from './stores/themeStore';
 export { useWorkspaceStore } from './stores/workspaceStore';
 export type { TreeNode } from './stores/workspaceStore';
+export { useAuthStore } from './stores/authStore';
+
+// API client
+export { authApi, workspacesApi, documentsApi, ApiError } from './lib/api';
+export type { AuthUser, Workspace, DocTreeItem, DocFull } from './lib/api';
 
 // Hooks
 export { useDocument } from './hooks/useDocument';
