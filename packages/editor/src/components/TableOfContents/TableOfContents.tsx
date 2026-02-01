@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronsLeft, AlignLeft } from 'lucide-react';
-import { DarkModeToggle } from './DarkModeToggle';
 
 interface TocHeading {
   domIndex: number;
@@ -141,7 +140,7 @@ export function TableOfContents() {
 
   if (!isExpanded) {
     return (
-      <div className="toc-collapsed-strip">
+      <div className="toc-inline-collapsed">
         <button
           onClick={() => setIsExpanded(true)}
           className="toc-toggle-btn"
@@ -149,14 +148,13 @@ export function TableOfContents() {
         >
           <AlignLeft className="w-5 h-5" />
         </button>
-        <DarkModeToggle />
       </div>
     );
   }
 
   return (
-    <div className="toc-sidebar">
-      <div className="toc-header">
+    <div className="toc-inline">
+      <div className="toc-inline-header">
         <button
           onClick={() => setIsExpanded(false)}
           className="toc-collapse-btn"
@@ -164,7 +162,6 @@ export function TableOfContents() {
         >
           <ChevronsLeft className="w-5 h-5" />
         </button>
-        <DarkModeToggle />
       </div>
 
       <nav className="toc-nav">

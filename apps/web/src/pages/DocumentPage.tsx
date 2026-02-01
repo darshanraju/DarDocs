@@ -7,6 +7,7 @@ import {
   CommentSection,
   CommentsSidebar,
   SearchBar,
+  TableOfContents,
   useDocumentStore,
   useCommentStore,
   useBoardStore,
@@ -177,6 +178,7 @@ export function DocumentPage() {
         className="h-full overflow-y-auto overflow-x-hidden"
       >
         <div className="flex min-h-full">
+          <TableOfContents />
           <div className="flex-1 min-w-0">
             <div className="max-w-[720px] mx-auto px-6 py-8">
               <input
