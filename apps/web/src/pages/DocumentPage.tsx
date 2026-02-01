@@ -144,10 +144,11 @@ export function DocumentPage() {
                 tr.insert(0, schema.nodes.paragraph.create());
                 return true;
               })
-              .focus('start')
+              .setTextSelection(1)
+              .focus()
               .run();
           } else {
-            editorInstance.commands.focus('start');
+            editorInstance.chain().setTextSelection(1).focus().run();
           }
         }
       }
