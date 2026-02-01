@@ -3544,6 +3544,25 @@ html, body {
   font-weight: 600;
   font-size: 0.8rem;
   color: var(--color-text);
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 1px 4px;
+}
+
+.program-block-title:hover {
+  background: var(--color-bg);
+}
+
+.program-block-title-input {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-primary);
+  border-radius: 3px;
+  padding: 1px 4px;
+  outline: none;
+  min-width: 120px;
 }
 
 .program-block-count {
@@ -3594,6 +3613,23 @@ html, body {
 .program-block-run-btn:disabled {
   background: #c4b5fd;
   cursor: default;
+}
+
+.program-block-fullscreen-btn {
+  display: flex;
+  align-items: center;
+  padding: 3px 6px;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.program-block-fullscreen-btn:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
 }
 
 .program-block-delete-btn {
@@ -4086,4 +4122,34 @@ html, body {
   color: var(--color-text-muted);
   font-style: italic;
   font-size: 0.8rem;
+}
+
+/* ── Fullscreen ────────────────────────────────────────── */
+
+.program-block-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+  border: none;
+  margin: 0;
+}
+
+.program-block-fullscreen .program-block-header {
+  border-radius: 0;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+}
+
+.program-block-canvas-fullscreen {
+  flex: 1;
+  height: auto !important;
+  border-bottom: none;
 }

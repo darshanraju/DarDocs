@@ -13,9 +13,9 @@ import {
   BackgroundVariant,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { Play, Loader2, Plus, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
+import { Play, Loader2, Plus, Trash2, ChevronDown, ChevronUp, Maximize2, Minimize2 } from 'lucide-react';
 import { useProgramStore } from './programStore';
-import { getAllNodeTypes, getNodeTypesByCategory, getNodeType, type ProgramNode } from './registry';
+import { getNodeTypesByCategory, getNodeType, type ProgramNode } from './registry';
 import { ProgramFlowNode } from './components/ProgramFlowNode';
 import { NodeConfigPanel } from './components/NodeConfigPanel';
 import { OutputPreview } from './components/OutputPreview';
@@ -40,7 +40,13 @@ export function ProgramBlockComponent(props: NodeViewProps) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState('');
+  const titleInputRef = useRef<HTMLInputElement>(null);
   const initializedRef = useRef(false);
+
+  const programName = program?.name || 'Untitled Program';
 
   // Init program in store
   useEffect(() => {
@@ -75,7 +81,6 @@ export function ProgramBlockComponent(props: NodeViewProps) {
   useEffect(() => {
     const p = store.getProgram(programId);
     if (!p) return;
-    // Only update if lastOutput/lastError changed
     const needsUpdate = p.nodes.some((pn) => {
       const localNode = nodes.find((n) => n.id === pn.id);
       return localNode && (localNode.data.lastOutput !== pn.data.lastOutput || localNode.data.lastError !== pn.data.lastError);
@@ -90,6 +95,24 @@ export function ProgramBlockComponent(props: NodeViewProps) {
       );
     }
   }, [store.runResults]);
+
+  // Focus title input when entering edit mode
+  useEffect(() => {
+    if (isEditingTitle && titleInputRef.current) {
+      titleInputRef.current.focus();
+      titleInputRef.current.select();
+    }
+  }, [isEditingTitle]);
+
+  // Escape key exits fullscreen
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsFullscreen(false);
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [isFullscreen]);
 
   const onConnect: OnConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -162,12 +185,45 @@ export function ProgramBlockComponent(props: NodeViewProps) {
     [programId, store]
   );
 
+  const handleTitleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setTitleDraft(programName);
+    setIsEditingTitle(true);
+  }, [programName]);
+
+  const handleTitleCommit = useCallback(() => {
+    const trimmed = titleDraft.trim();
+    if (trimmed && trimmed !== programName) {
+      store.renameProgram(programId, trimmed);
+    }
+    setIsEditingTitle(false);
+  }, [titleDraft, programName, programId, store]);
+
+  const handleTitleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleTitleCommit();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setIsEditingTitle(false);
+    }
+  }, [handleTitleCommit]);
+
+  const toggleFullscreen = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsFullscreen((prev) => !prev);
+  }, []);
+
   const selectedNode = nodes.find((n) => n.id === selectedNodeId);
   const selectedPlugin = selectedNode ? getNodeType(selectedNode.data.pluginType) : undefined;
   const categorized = useMemo(() => getNodeTypesByCategory(), []);
 
+  const wrapperClass = isFullscreen ? 'program-block program-block-fullscreen' : 'program-block';
+
   return (
-    <NodeViewWrapper className="program-block">
+    <NodeViewWrapper className={wrapperClass}>
       <div className="program-block-header" contentEditable={false}>
         <div className="program-block-header-left">
           <button
@@ -177,7 +233,26 @@ export function ProgramBlockComponent(props: NodeViewProps) {
           >
             {collapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
           </button>
-          <span className="program-block-title">Program</span>
+          {isEditingTitle ? (
+            <input
+              ref={titleInputRef}
+              className="program-block-title-input"
+              value={titleDraft}
+              onChange={(e) => setTitleDraft(e.target.value)}
+              onBlur={handleTitleCommit}
+              onKeyDown={handleTitleKeyDown}
+              onMouseDown={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <span
+              className="program-block-title"
+              onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
+              onClick={handleTitleClick}
+              title="Click to rename"
+            >
+              {programName}
+            </span>
+          )}
           <span className="program-block-count">{nodes.length} nodes</span>
         </div>
         <div className="program-block-header-right">
@@ -197,6 +272,14 @@ export function ProgramBlockComponent(props: NodeViewProps) {
           >
             {isRunning ? <Loader2 size={14} className="exec-spin" /> : <Play size={14} />}
             {isRunning ? 'Running...' : 'Run'}
+          </button>
+          <button
+            className="program-block-fullscreen-btn"
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            onClick={toggleFullscreen}
+            title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+          >
+            {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
           </button>
           <button
             className="program-block-delete-btn"
@@ -231,7 +314,7 @@ export function ProgramBlockComponent(props: NodeViewProps) {
       )}
 
       {!collapsed && (
-        <div className="program-block-canvas" contentEditable={false}>
+        <div className={`program-block-canvas ${isFullscreen ? 'program-block-canvas-fullscreen' : ''}`} contentEditable={false}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -273,7 +356,7 @@ export function ProgramBlockComponent(props: NodeViewProps) {
         </div>
       )}
 
-      {runResult && (
+      {runResult && !isFullscreen && (
         <div contentEditable={false}>
           <OutputPreview result={runResult} nodes={nodes as ProgramNode[]} />
         </div>

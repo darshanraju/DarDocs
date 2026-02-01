@@ -13,6 +13,7 @@ interface ProgramStore {
   updateEdges: (programId: string, edges: Edge[]) => void;
   updateNodeConfig: (programId: string, nodeId: string, config: Record<string, any>) => void;
 
+  renameProgram: (programId: string, name: string) => void;
   setRunning: (programId: string, running: boolean) => void;
   setRunResult: (programId: string, result: ProgramRunResult) => void;
   getRunResult: (programId: string) => ProgramRunResult | undefined;
@@ -74,6 +75,16 @@ export const useProgramStore = create<ProgramStore>((set, get) => ({
         n.id === nodeId ? { ...n, data: { ...n.data, config: { ...n.data.config, ...config } } } : n
       );
       programs.set(programId, { ...program, nodes });
+      return { programs };
+    });
+  },
+
+  renameProgram: (programId, name) => {
+    set((state) => {
+      const programs = new Map(state.programs);
+      const program = programs.get(programId);
+      if (!program) return state;
+      programs.set(programId, { ...program, name });
       return { programs };
     });
   },
