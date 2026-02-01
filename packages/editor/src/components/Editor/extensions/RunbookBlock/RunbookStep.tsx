@@ -3,6 +3,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { Delete01Icon, PencilEdit01Icon } from '@hugeicons/core-free-icons';
 import type { RunbookStep, StepAutomation } from '@dardocs/core';
 import type { StepExecutionState } from '../../../../hooks/useRunbookExecution';
+import { QueryTestPanel } from './QueryTestPanel';
 
 interface RunbookStepItemProps {
   step: RunbookStep;
@@ -29,6 +30,9 @@ const CONNECTOR_OPTIONS = [
   { value: 'grafana', label: 'Grafana' },
   { value: 'datadog', label: 'Datadog' },
   { value: 'sentry', label: 'Sentry' },
+  { value: 'cloudwatch', label: 'AWS CloudWatch' },
+  { value: 'prometheus', label: 'Prometheus' },
+  { value: 'pagerduty', label: 'PagerDuty' },
   { value: 'http', label: 'HTTP Endpoint' },
 ];
 
@@ -51,6 +55,7 @@ export function RunbookStepItem({
   const [editQuery, setEditQuery] = useState(step.automation?.query || '');
   const [editTimeRange, setEditTimeRange] = useState(step.automation?.timeRange || '1h');
   const [showAutomation, setShowAutomation] = useState(!!step.automation?.connector);
+  const [showQueryTest, setShowQueryTest] = useState(false);
 
   const handleSaveEdit = useCallback(() => {
     if (!editLabel.trim()) return;
@@ -134,15 +139,37 @@ export function RunbookStepItem({
                         editConnector === 'grafana' ? 'PromQL query or /api/... path' :
                         editConnector === 'datadog' ? 'Datadog metric query' :
                         editConnector === 'sentry' ? 'Issue search query or /api/... path' :
+                        editConnector === 'cloudwatch' ? 'MetricName e.g. CPUUtilization' :
+                        editConnector === 'prometheus' ? 'PromQL expression' :
+                        editConnector === 'pagerduty' ? 'incidents, oncall, or search query' :
                         'Full URL to query'
                       }
                     />
-                    <input
-                      className="runbook-step-input runbook-step-input-sm"
-                      value={editTimeRange}
-                      onChange={e => setEditTimeRange(e.target.value)}
-                      placeholder="Time range (e.g. 15m, 1h, 24h)"
-                    />
+                    <div className="runbook-automation-row">
+                      <input
+                        className="runbook-step-input runbook-step-input-sm"
+                        value={editTimeRange}
+                        onChange={e => setEditTimeRange(e.target.value)}
+                        placeholder="Time range (e.g. 15m, 1h, 24h)"
+                      />
+                      {editQuery && (
+                        <button
+                          type="button"
+                          className="runbook-test-query-btn"
+                          onClick={() => setShowQueryTest(true)}
+                        >
+                          Test Query
+                        </button>
+                      )}
+                    </div>
+                    {showQueryTest && (
+                      <QueryTestPanel
+                        connector={editConnector}
+                        query={editQuery}
+                        timeRange={editTimeRange}
+                        onClose={() => setShowQueryTest(false)}
+                      />
+                    )}
                   </>
                 )}
               </div>

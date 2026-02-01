@@ -8,6 +8,9 @@ import { HTTPConnector } from './connectors/HTTPConnector.js';
 import { GrafanaConnector } from './connectors/GrafanaConnector.js';
 import { DatadogConnector } from './connectors/DatadogConnector.js';
 import { SentryConnector } from './connectors/SentryConnector.js';
+import { CloudWatchConnector } from './connectors/CloudWatchConnector.js';
+import { PrometheusConnector } from './connectors/PrometheusConnector.js';
+import { PagerDutyConnector } from './connectors/PagerDutyConnector.js';
 import { ReasoningEngine } from './reasoning/ReasoningEngine.js';
 import { RunbookExecutor } from './executor/RunbookExecutor.js';
 
@@ -25,16 +28,41 @@ connectorRegistry.register(new HTTPConnector());
 connectorRegistry.register(new GrafanaConnector());
 connectorRegistry.register(new DatadogConnector());
 connectorRegistry.register(new SentryConnector());
+connectorRegistry.register(new CloudWatchConnector());
+connectorRegistry.register(new PrometheusConnector());
+connectorRegistry.register(new PagerDutyConnector());
 
 // Track active executions for cancellation
 const activeExecutors = new Map<string, RunbookExecutor>();
 
-// Health check
+// Health check with connector info
 app.get('/health', async () => ({
   status: 'ok',
   service: 'dardocs-agent',
-  connectors: connectorRegistry.list(),
+  mockMode: connectorRegistry.isMockMode(),
+  connectors: connectorRegistry.getConnectorInfo(),
 }));
+
+// Test a connector query (used by the frontend preview feature)
+app.post('/test-query', async (request) => {
+  const body = request.body as {
+    connector: string;
+    query: string;
+    timeRange?: string;
+    credentials?: Record<string, unknown>;
+    metadata?: Record<string, string>;
+  };
+
+  const result = await connectorRegistry.testQuery(
+    body.connector,
+    body.query,
+    body.timeRange || '1h',
+    body.credentials || {},
+    body.metadata,
+  );
+
+  return result;
+});
 
 // WebSocket endpoint
 app.register(async function (fastify) {
@@ -49,7 +77,6 @@ app.register(async function (fastify) {
           const payload = message.payload as ExecuteRunbookPayload;
           const { runbookId } = message;
 
-          // Create reasoning engine with provided config
           const reasoning = new ReasoningEngine({
             provider: payload.config.aiProvider,
             apiKey: payload.config.aiApiKey,
@@ -59,7 +86,6 @@ app.register(async function (fastify) {
           const executor = new RunbookExecutor(connectorRegistry, reasoning);
           activeExecutors.set(runbookId, executor);
 
-          // Execute asynchronously, streaming results via WebSocket
           executor
             .execute(
               runbookId,
@@ -108,5 +134,5 @@ app.listen({ port: PORT, host: '0.0.0.0' }, (err) => {
     app.log.error(err);
     process.exit(1);
   }
-  app.log.info(`Agent server running on port ${PORT}`);
+  app.log.info(`Agent server running on port ${PORT} (mock mode: ${connectorRegistry.isMockMode()})`);
 });
