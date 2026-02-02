@@ -39,6 +39,7 @@ interface SlashCommand {
   icon: React.ReactNode;
   keywords: string[];
   category: string;
+  shortcut?: string;
   action: (editor: Editor) => void;
 }
 
@@ -56,6 +57,7 @@ const commands: SlashCommand[] = [
     icon: <HugeiconsIcon icon={TextAlignLeftIcon} size={20} color="#3370ff" />,
     keywords: ['text', 'paragraph', 'plain'],
     category: 'Basics',
+    shortcut: undefined,
     action: (editor) => editor.chain().focus().setParagraph().run(),
   },
   {
@@ -63,6 +65,7 @@ const commands: SlashCommand[] = [
     icon: <HugeiconsIcon icon={Heading01Icon} size={20} color="#3370ff" />,
     keywords: ['heading1', 'h1', 'title', 'large'],
     category: 'Basics',
+    shortcut: '#',
     action: (editor) => editor.chain().focus().toggleHeading({ level: 1 }).run(),
   },
   {
@@ -70,6 +73,7 @@ const commands: SlashCommand[] = [
     icon: <HugeiconsIcon icon={Heading02Icon} size={20} color="#00b386" />,
     keywords: ['heading2', 'h2', 'subtitle', 'medium'],
     category: 'Basics',
+    shortcut: '##',
     action: (editor) => editor.chain().focus().toggleHeading({ level: 2 }).run(),
   },
   {
@@ -77,6 +81,7 @@ const commands: SlashCommand[] = [
     icon: <HugeiconsIcon icon={Heading03Icon} size={20} color="#3370ff" />,
     keywords: ['heading3', 'h3', 'small'],
     category: 'Basics',
+    shortcut: '###',
     action: (editor) => editor.chain().focus().toggleHeading({ level: 3 }).run(),
   },
   {
@@ -84,6 +89,7 @@ const commands: SlashCommand[] = [
     icon: <HugeiconsIcon icon={LeftToRightListNumberIcon} size={20} color="#cf8a00" />,
     keywords: ['numbered', 'list', 'ordered', 'ol', 'number'],
     category: 'Basics',
+    shortcut: '1.',
     action: (editor) => editor.chain().focus().toggleOrderedList().run(),
   },
   {
@@ -91,6 +97,7 @@ const commands: SlashCommand[] = [
     icon: <HugeiconsIcon icon={LeftToRightListBulletIcon} size={20} color="#3370ff" />,
     keywords: ['bullet', 'list', 'unordered', 'ul'],
     category: 'Basics',
+    shortcut: '-',
     action: (editor) => editor.chain().focus().toggleBulletList().run(),
   },
   {
@@ -98,6 +105,7 @@ const commands: SlashCommand[] = [
     icon: <HugeiconsIcon icon={SourceCodeIcon} size={20} color="#3370ff" />,
     keywords: ['code', 'codeblock', 'programming', 'snippet'],
     category: 'Basics',
+    shortcut: '```',
     action: (editor) => editor.chain().focus().toggleCodeBlock().run(),
   },
   {
@@ -105,6 +113,7 @@ const commands: SlashCommand[] = [
     icon: <HugeiconsIcon icon={LeftToRightBlockQuoteIcon} size={20} color="#3370ff" />,
     keywords: ['quote', 'blockquote', 'citation'],
     category: 'Basics',
+    shortcut: '>',
     action: (editor) => editor.chain().focus().toggleBlockquote().run(),
   },
   {
@@ -112,6 +121,7 @@ const commands: SlashCommand[] = [
     icon: <HugeiconsIcon icon={MinusSignIcon} size={20} color="#cf8a00" />,
     keywords: ['divider', 'horizontal', 'rule', 'hr', 'line'],
     category: 'Basics',
+    shortcut: '---',
     action: (editor) => editor.chain().focus().setHorizontalRule().run(),
   },
   {
@@ -309,24 +319,6 @@ export function SlashCommandMenu({
     );
   }, [query]);
 
-  const groupedCommands = useMemo(() => {
-    const groups: { category: string; items: SlashCommand[] }[] = [];
-    const categoryMap = new Map<string, SlashCommand[]>();
-
-    for (const cmd of filteredCommands) {
-      const existing = categoryMap.get(cmd.category);
-      if (existing) {
-        existing.push(cmd);
-      } else {
-        const items = [cmd];
-        categoryMap.set(cmd.category, items);
-        groups.push({ category: cmd.category, items });
-      }
-    }
-
-    return groups;
-  }, [filteredCommands]);
-
   useEffect(() => {
     setSelectedIndex(0);
   }, [filteredCommands]);
@@ -384,32 +376,48 @@ export function SlashCommandMenu({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, selectedIndex, filteredCommands, executeCommand, onClose]);
 
-  if (!isOpen || filteredCommands.length === 0) return null;
+  if (!isOpen) return null;
 
   return (
     <div
       className="slash-command-menu fixed"
       style={{ top: position.top, left: position.left }}
     >
-      {groupedCommands.map((group) => (
-        <div key={group.category}>
-          <div className="slash-command-category">{group.category}</div>
-          {group.items.map((command) => {
-            const index = filteredCommands.indexOf(command);
-            return (
-              <div
-                key={command.name}
-                className={`slash-command-item ${index === selectedIndex ? 'is-selected' : ''}`}
-                onClick={() => executeCommand(command)}
-                onMouseEnter={() => setSelectedIndex(index)}
-              >
-                <div className="slash-command-item-icon">{command.icon}</div>
-                <div className="slash-command-item-title">{command.name}</div>
-              </div>
-            );
-          })}
-        </div>
-      ))}
+      {/* Search header */}
+      <div className="slash-command-search">
+        <span className="slash-command-search-prefix">/</span>
+        <span className="slash-command-search-text">
+          {query || 'Type to search'}
+        </span>
+      </div>
+
+      {/* Command list */}
+      <div className="slash-command-list">
+        {filteredCommands.length === 0 ? (
+          <div className="slash-command-empty">No results</div>
+        ) : (
+          filteredCommands.map((command, index) => (
+            <div
+              key={command.name}
+              className={`slash-command-item ${index === selectedIndex ? 'is-selected' : ''}`}
+              onClick={() => executeCommand(command)}
+              onMouseEnter={() => setSelectedIndex(index)}
+            >
+              <div className="slash-command-item-icon">{command.icon}</div>
+              <div className="slash-command-item-title">{command.name}</div>
+              {command.shortcut && (
+                <div className="slash-command-item-shortcut">{command.shortcut}</div>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="slash-command-footer" onClick={onClose}>
+        <span>Close menu</span>
+        <kbd className="slash-command-footer-key">esc</kbd>
+      </div>
     </div>
   );
 }
