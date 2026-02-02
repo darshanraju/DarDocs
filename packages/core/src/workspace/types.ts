@@ -61,5 +61,6 @@ export const DEFAULT_WORKSPACE_CONFIG: WorkspaceConfig = {
 export function parseGitHubRepoUrl(url: string): { owner: string; repo: string; name: string } | null {
   const match = url.match(/github\.com\/([\w.-]+)\/([\w.-]+)/);
   if (!match) return null;
-  return { owner: match[1], repo: match[2], name: match[2] };
+  const repo = match[2].replace(/\.git$/, '');
+  return { owner: match[1], repo, name: repo };
 }
