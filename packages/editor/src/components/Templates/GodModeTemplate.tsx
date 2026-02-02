@@ -20,7 +20,7 @@ import {
 } from '@hugeicons/core-free-icons';
 import { useGodModeStore } from '../../stores/godModeStore';
 import type { RepoRole, TeamMember } from '@dardocs/core';
-import { GOD_MODE_USE_MOCK_DATA, generateGodModeDocument } from '@dardocs/core';
+import { generateGodModeDocument } from '@dardocs/core';
 
 interface GodModeTemplateProps {
   onCreateDocument: (content: JSONContent, title: string) => void;
@@ -60,9 +60,6 @@ export function GodModeTemplate({ onCreateDocument, onCancel }: GodModeTemplateP
               {phase === 'preview'
                 ? 'Preview your generated document. Click "Create Document" to save it to your workspace.'
                 : 'Auto-generate comprehensive system documentation from your repositories.'}
-              {GOD_MODE_USE_MOCK_DATA && (
-                <span className="godmode-mock-badge">MOCK DATA</span>
-              )}
             </p>
           </div>
           <button className="godmode-cancel-btn" onClick={onCancel}>
@@ -465,6 +462,7 @@ function phaseLabel(phase: string): string {
     'analyzing-contributors': 'Analyzing Contributors',
     'analyzing-connections': 'Detecting Connections',
     'analyzing-glossary': 'Building Glossary',
+    'enriching-ai': 'Enriching with AI',
     'generating-document': 'Generating Document',
     'complete': 'Complete',
     'error': 'Error',

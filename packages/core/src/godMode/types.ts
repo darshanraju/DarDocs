@@ -1,6 +1,3 @@
-// ─── Feature Flag ─────────────────────────────────────────────
-export const GOD_MODE_USE_MOCK_DATA = true;
-
 // ─── Configuration Types ──────────────────────────────────────
 
 export type RepoRole = 'primary' | 'secondary';
@@ -126,6 +123,7 @@ export type AnalysisPhase =
   | 'analyzing-contributors'
   | 'analyzing-connections'
   | 'analyzing-glossary'
+  | 'enriching-ai'
   | 'generating-document'
   | 'complete'
   | 'error';

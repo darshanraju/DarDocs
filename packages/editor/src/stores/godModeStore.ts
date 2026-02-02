@@ -9,8 +9,6 @@ import type {
   RepoRole,
 } from '@dardocs/core';
 import {
-  GOD_MODE_USE_MOCK_DATA,
-  runMockAnalysis,
   generateGodModeDocument,
   parseGitHubRepoUrl,
 } from '@dardocs/core';
@@ -132,18 +130,9 @@ export const useGodModeStore = create<GodModeStore>((set, get) => ({
     set({ phase: 'analyzing', error: null });
 
     try {
-      let result: GodModeAnalysisResult;
-
-      if (GOD_MODE_USE_MOCK_DATA) {
-        result = await runMockAnalysis(config, (progress) => {
-          set({ progress });
-        });
-      } else {
-        // Real analysis: stream from the backend SSE endpoint
-        result = await runRealAnalysis(config, (progress) => {
-          set({ progress });
-        });
-      }
+      const result = await runRealAnalysis(config, (progress) => {
+        set({ progress });
+      });
 
       // Generate the document content from results (preview mode, no swagger yet)
       const content = generateGodModeDocument(result, [], true);

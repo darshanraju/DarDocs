@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { requireAuth } from '../lib/requireAuth.js';
 import { ensureClone, evictStaleClones } from '../services/repoCloneService.js';
 import { analyzeRepo } from '../services/repoAnalyzer.js';
+import { createDefaultProviders } from '../services/providers/index.js';
 import type {
   GodModeConfig,
   GodModeAnalysisResult,
@@ -38,6 +39,7 @@ export async function godModeRoutes(app: FastifyInstance) {
     };
 
     try {
+      const providers = createDefaultProviders();
       const repoAnalyses: RepoAnalysis[] = [];
       const totalRepos = config.repos.length;
 
@@ -108,7 +110,7 @@ export async function godModeRoutes(app: FastifyInstance) {
           .filter((r) => r.id !== repo.id)
           .map((r) => r.repo);
 
-        const analysis = await analyzeRepo(repo, clone.diskPath, otherRepos);
+        const analysis = await analyzeRepo(repo, clone.diskPath, otherRepos, providers);
         repoAnalyses.push(analysis);
 
         send({
