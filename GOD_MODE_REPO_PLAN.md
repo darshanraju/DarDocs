@@ -1,6 +1,6 @@
 # God Mode: Ideal Repository Plan
 
-This document describes everything a repository should have to fully leverage all 12 analysis dimensions of the DarDocs God Mode template. God Mode scans your repo and auto-generates a comprehensive system document. The richer your repo's structure, the richer the output.
+This document describes everything a repository should have to fully leverage all 11 analysis dimensions of the DarDocs God Mode template. God Mode scans your repo and auto-generates a comprehensive system document. The richer your repo's structure, the richer the output.
 
 ---
 
@@ -14,12 +14,11 @@ God Mode takes one or more GitHub repository URLs, analyzes their contents via c
 4. **Environment Setup** — step-by-step local dev setup
 5. **API Surface** — REST endpoints (with optional Swagger embed)
 6. **Domain Glossary** — jargon and abbreviations explained
-7. **Hot Zones** — highest-churn files in the last 6 months
-8. **Error Taxonomy** — custom error classes and their meanings
-9. **Architecture Decisions** — key technical decisions from PRs/ADRs/commits
-10. **System Interaction Map** — cross-repo connections (multi-repo only)
-11. **Test Frameworks** — testing tools in use
-12. **CI/CD Platform** — deployment pipeline
+7. **Error Taxonomy** — custom error classes and their meanings
+8. **Architecture Decisions** — key technical decisions from PRs/ADRs/commits
+9. **System Interaction Map** — cross-repo connections (multi-repo only)
+10. **Test Frameworks** — testing tools in use
+11. **CI/CD Platform** — deployment pipeline
 
 ---
 
@@ -153,23 +152,7 @@ src/
 
 ---
 
-## 7. Hot Zones (High-Churn Files)
-
-**What God Mode extracts:** Files with the most changes in the last 6 months, with change counts, contributors, and reasons.
-
-**What your repo needs:**
-- At least 6 months of commit history (not a fresh repo with one initial commit)
-- Multiple contributors touching the same files
-
-**Recommendations:**
-- Don't squash all history into a single commit when importing code
-- Preserve full git history — this is the primary data source
-- Files that evolve frequently (core business logic, API routes, config) produce the best hot zone data
-- Commit messages that explain *why* a file changed help God Mode describe the reason for churn
-
----
-
-## 8. Error Taxonomy
+## 7. Error Taxonomy
 
 **What God Mode extracts:** Custom error class names, HTTP status codes, error messages, and source file locations.
 
@@ -200,7 +183,7 @@ src/
 
 ---
 
-## 9. Architecture Decisions
+## 8. Architecture Decisions
 
 **What God Mode extracts:** Date, summary, source (PR/ADR/commit), and context for each decision.
 
@@ -242,7 +225,7 @@ src/
 
 ---
 
-## 10. System Interaction Map (Multi-Repo)
+## 9. System Interaction Map (Multi-Repo)
 
 **What God Mode extracts:** Connections between repositories — type (API, event, shared-db, import, webhook), description, and endpoints.
 
@@ -276,7 +259,7 @@ src/
 
 ---
 
-## 11. Test Frameworks
+## 10. Test Frameworks
 
 **What God Mode extracts:** Testing tools in use.
 
@@ -300,7 +283,7 @@ src/
 
 ---
 
-## 12. CI/CD Platform
+## 11. CI/CD Platform
 
 **What God Mode extracts:** The CI/CD platform name.
 
@@ -401,7 +384,6 @@ your-repo/
 | Setup | `README` with steps | `.nvmrc` + `.env.example` + `docker-compose.yml` + migration scripts |
 | API Surface | Route files exist | Organized `src/api/routes/` + OpenAPI spec for Swagger embed |
 | Glossary | Domain terms in code | Consistent abbreviations across 3+ files each |
-| Hot Zones | 6+ months of git history | Multiple contributors modifying same core files |
 | Errors | Custom error classes | `src/errors/` directory with `httpStatus` on each class |
 | Arch Decisions | Descriptive PR descriptions | `docs/decisions/` with dated ADRs |
 | Connections | References to other services | Service clients + event schemas + env vars for URLs |

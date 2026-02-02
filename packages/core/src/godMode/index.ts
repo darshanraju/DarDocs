@@ -7,7 +7,6 @@ export type {
   Contributor,
   SystemConnection,
   GlossaryTerm,
-  HotZone,
   ApiEndpoint,
   ErrorPattern,
   SetupStep,

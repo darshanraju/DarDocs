@@ -80,13 +80,10 @@ export function generateGodModeDocument(
     // 6. Domain Glossary
     content.push(...glossarySection(repo));
 
-    // 7. Hot Zones
-    content.push(...hotZonesSection(repo));
-
-    // 8. Error Taxonomy
+    // 7. Error Taxonomy
     content.push(...errorSection(repo));
 
-    // 9. Architecture Decisions
+    // 8. Architecture Decisions
     content.push(...archDecisionsSection(repo));
 
     content.push(horizontalRule());
@@ -189,24 +186,6 @@ function glossarySection(repo: RepoAnalysis): JSONContent[] {
         g.inferredDefinition,
         String(g.occurrences),
         g.files.slice(0, 2).join(', '),
-      ]),
-    ),
-  ];
-}
-
-function hotZonesSection(repo: RepoAnalysis): JSONContent[] {
-  if (repo.hotZones.length === 0) return [];
-  return [
-    heading(2, 'Hot Zones (High-Churn Files)'),
-    paragraph('Files with the most changes in the last 6 months — likely areas you will touch first:'),
-    table(
-      ['File', 'Changes', 'Last Changed', 'Top Contributors', 'Why It Changes'],
-      repo.hotZones.map((h) => [
-        h.filePath,
-        String(h.changeCount),
-        h.lastChanged,
-        h.contributors.join(', '),
-        h.description,
       ]),
     ),
   ];
