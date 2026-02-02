@@ -29,6 +29,7 @@ import {
   ListViewIcon,
   SlackIcon,
   Rocket01Icon,
+  FileEditIcon,
 } from '@hugeicons/core-free-icons';
 import { useBoardStore } from '../../stores/boardStore';
 import { useWhiteboard2Store } from '../Whiteboard2/whiteboardStore';
@@ -285,6 +286,15 @@ const commands: SlashCommand[] = [
     category: 'Templates',
     action: (_editor) => {
       window.location.href = '/templates/god-mode';
+    },
+  },
+  {
+    name: 'Tech Docs',
+    icon: <HugeiconsIcon icon={FileEditIcon} size={20} color="#0891b2" />,
+    keywords: ['techdocs', 'tech', 'design', 'prd', 'requirements', 'technical', 'document', 'architecture', 'spec'],
+    category: 'Templates',
+    action: (_editor) => {
+      window.location.href = '/templates/tech-docs';
     },
   },
 ];

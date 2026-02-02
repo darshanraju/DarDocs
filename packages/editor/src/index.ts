@@ -52,3 +52,5 @@ export { Button, Dropdown, Modal, Tooltip, EmojiPicker, DocumentIcon } from './c
 // Templates
 export { GodModeTemplate } from './components/Templates/GodModeTemplate';
 export { useGodModeStore } from './stores/godModeStore';
+export { TechDocsTemplate } from './components/Templates/TechDocsTemplate';
+export { useTechDocsStore } from './stores/techDocsStore';

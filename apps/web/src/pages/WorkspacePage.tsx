@@ -49,6 +49,16 @@ export function WorkspacePage() {
               Auto-generate system docs from your repos
             </span>
           </button>
+          <button
+            className="workspace-card workspace-card-template"
+            onClick={() => navigate('/templates/tech-docs')}
+          >
+            <span className="workspace-card-icon">📐</span>
+            <span className="workspace-card-title">Tech Docs</span>
+            <span className="workspace-card-desc">
+              Turn a PRD into a technical design document
+            </span>
+          </button>
         </div>
       </div>
 

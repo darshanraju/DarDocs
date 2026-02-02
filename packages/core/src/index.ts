@@ -123,3 +123,33 @@ export {
   runMockAnalysis,
   generateGodModeDocument,
 } from './godMode';
+
+// Tech Docs templates
+export type {
+  TechDocsRepoConfig,
+  TechDocsConfig,
+  QuestionRound,
+  QAQuestion,
+  QAAnswer,
+  ExistingPattern,
+  AffectedModule,
+  SchemaChange,
+  SchemaField,
+  APIChange,
+  SequenceStep,
+  SecurityConsideration,
+  TestPlan,
+  RolloutStep,
+  Risk,
+  Alternative,
+  TechDocsAnalysisResult,
+  TechDocsAnalysisPhase,
+  TechDocsAnalysisProgress,
+} from './techDocs';
+export {
+  TECH_DOCS_USE_MOCK_DATA,
+  TECH_DOCS_QUESTIONS,
+  QUESTION_ROUNDS,
+  runTechDocsAnalysis,
+  generateTechDocsDocument,
+} from './techDocs';

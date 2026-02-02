@@ -5,6 +5,7 @@ import { Sidebar, useAuthStore } from '@dardocs/editor';
 import { WorkspacePage } from './pages/WorkspacePage';
 import { DocumentPage } from './pages/DocumentPage';
 import { GodModePage } from './pages/GodModePage';
+import { TechDocsPage } from './pages/TechDocsPage';
 import { AuthPage } from './pages/AuthPage';
 
 function AuthenticatedLayout() {
@@ -15,6 +16,7 @@ function AuthenticatedLayout() {
         <Route path="/" element={<WorkspacePage />} />
         <Route path="/doc/:docId" element={<DocumentPage />} />
         <Route path="/templates/god-mode" element={<GodModePage />} />
+        <Route path="/templates/tech-docs" element={<TechDocsPage />} />
       </Routes>
     </div>
   );

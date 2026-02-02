@@ -8412,3 +8412,136 @@ div[data-node-view-wrapper]:hover > .roadmap-tooltip-anchor > .roadmap-badge,
   background: #3bb87e;
   border-color: #3bb87e;
 }
+
+/* ─── Tech Docs Template ─────────────────────────────────────── */
+
+.techdocs-section {
+  margin-bottom: 24px;
+}
+
+.techdocs-hint {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin: 0 0 8px;
+  line-height: 1.4;
+}
+
+.techdocs-prd-textarea {
+  min-height: 240px;
+  font-family: inherit;
+}
+
+/* Q&A Progress Steps */
+.techdocs-qa-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 28px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.techdocs-qa-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: var(--color-bg-muted);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.techdocs-qa-step-active {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.techdocs-qa-step-done {
+  background: rgba(0, 179, 134, 0.12);
+  color: #00b386;
+}
+
+.dark .techdocs-qa-step-done {
+  background: rgba(0, 179, 134, 0.15);
+  color: #34d399;
+}
+
+.techdocs-qa-step-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.08);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.techdocs-qa-step-active .techdocs-qa-step-num {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.techdocs-qa-step-done .techdocs-qa-step-num {
+  background: rgba(0, 179, 134, 0.2);
+}
+
+.techdocs-qa-step-label {
+  font-weight: 500;
+}
+
+.techdocs-round-title {
+  font-size: 1.125rem;
+  margin-bottom: 20px;
+  color: var(--color-text);
+}
+
+/* Questions */
+.techdocs-questions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.techdocs-question {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.techdocs-question-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+
+.techdocs-required {
+  color: #ef4444;
+  margin-left: 2px;
+}
+
+.techdocs-question-hint {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin: 0 0 4px;
+  line-height: 1.4;
+}
+
+/* Q&A Navigation */
+.techdocs-qa-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.godmode-buidl-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
