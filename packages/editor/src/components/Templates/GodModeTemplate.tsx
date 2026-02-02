@@ -127,6 +127,12 @@ function DocumentPreview({
 }) {
   const docRef = useRef<HTMLDivElement>(null);
 
+  console.log('[GodMode:Preview] Rendering with content:', {
+    type: content?.type,
+    topLevelNodes: content?.content?.length ?? 0,
+    nodeTypes: content?.content?.slice(0, 10).map((n: JSONContent) => n.type).join(', '),
+  });
+
   const editor = useEditor(
     {
       extensions: [
@@ -153,7 +159,16 @@ function DocumentPreview({
   // Update content if it changes (e.g. after swagger toggle)
   useEffect(() => {
     if (editor && content) {
-      editor.commands.setContent(content);
+      try {
+        console.log('[GodMode:Preview] Calling setContent, editor exists:', !!editor);
+        const success = editor.commands.setContent(content);
+        console.log('[GodMode:Preview] setContent result:', success);
+        console.log('[GodMode:Preview] Editor HTML length after setContent:', editor.getHTML().length);
+      } catch (err) {
+        console.error('[GodMode:Preview] setContent FAILED:', err);
+      }
+    } else {
+      console.log('[GodMode:Preview] Skipping setContent — editor:', !!editor, 'content:', !!content);
     }
   }, [editor, content]);
 

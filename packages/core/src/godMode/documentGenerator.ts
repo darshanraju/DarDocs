@@ -247,18 +247,29 @@ function archDecisionsSection(repo: RepoAnalysis): JSONContent[] {
 
 // ─── TipTap Node Helpers ──────────────────────────────────────
 
+/**
+ * ProseMirror text nodes require a non-empty string.
+ * Null, undefined, or empty-string values cause the entire document to
+ * silently fail to render, so we coerce them to a dash placeholder.
+ */
+function safeText(value: unknown): string {
+  if (value === null || value === undefined) return '—';
+  const s = String(value).trim();
+  return s.length > 0 ? s : '—';
+}
+
 function heading(level: number, text: string): JSONContent {
   return {
     type: 'heading',
     attrs: { level },
-    content: [{ type: 'text', text }],
+    content: [{ type: 'text', text: safeText(text) }],
   };
 }
 
 function paragraph(text: string): JSONContent {
   return {
     type: 'paragraph',
-    content: [{ type: 'text', text }],
+    content: [{ type: 'text', text: safeText(text) }],
   };
 }
 
@@ -271,7 +282,7 @@ function bulletList(items: string[]): JSONContent {
     type: 'bulletList',
     content: items.map((item) => ({
       type: 'listItem',
-      content: [{ type: 'paragraph', content: [{ type: 'text', text: item }] }],
+      content: [{ type: 'paragraph', content: [{ type: 'text', text: safeText(item) }] }],
     })),
   };
 }
@@ -282,7 +293,7 @@ function orderedList(items: string[]): JSONContent {
     attrs: { start: 1 },
     content: items.map((item) => ({
       type: 'listItem',
-      content: [{ type: 'paragraph', content: [{ type: 'text', text: item }] }],
+      content: [{ type: 'paragraph', content: [{ type: 'text', text: safeText(item) }] }],
     })),
   };
 }
@@ -290,7 +301,7 @@ function orderedList(items: string[]): JSONContent {
 function blockquote(text: string): JSONContent {
   return {
     type: 'blockquote',
-    content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+    content: [{ type: 'paragraph', content: [{ type: 'text', text: safeText(text) }] }],
   };
 }
 
@@ -331,7 +342,7 @@ function table(headers: string[], rows: string[][]): JSONContent {
         content: headers.map((h) => ({
           type: 'tableHeader',
           attrs: { colspan: 1, rowspan: 1 },
-          content: [{ type: 'paragraph', content: [{ type: 'text', text: h }] }],
+          content: [{ type: 'paragraph', content: [{ type: 'text', text: safeText(h) }] }],
         })),
       },
       ...dataRows.map((row) => ({
@@ -339,7 +350,7 @@ function table(headers: string[], rows: string[][]): JSONContent {
         content: row.map((cell) => ({
           type: 'tableCell',
           attrs: { colspan: 1, rowspan: 1 },
-          content: [{ type: 'paragraph', content: [{ type: 'text', text: cell }] }],
+          content: [{ type: 'paragraph', content: [{ type: 'text', text: safeText(cell) }] }],
         })),
       })),
     ],

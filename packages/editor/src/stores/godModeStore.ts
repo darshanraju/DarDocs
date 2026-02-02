@@ -135,8 +135,29 @@ export const useGodModeStore = create<GodModeStore>((set, get) => ({
         set({ progress });
       });
 
+      console.log('[GodMode] Analysis result received:', {
+        repoCount: result.repos.length,
+        repos: result.repos.map((r) => ({
+          name: r.repoName,
+          contributors: r.contributors.length,
+          endpoints: r.apiEndpoints.length,
+          glossary: r.glossary.length,
+          hotZones: r.hotZones.length,
+          errors: r.errorPatterns.length,
+          archDecisions: r.archDecisions.length,
+          setupSteps: r.setupSteps.length,
+        })),
+      });
+
       // Generate the document content from results (preview mode, no swagger yet)
       const content = generateGodModeDocument(result, [], true);
+
+      console.log('[GodMode] Generated document content:', {
+        type: content.type,
+        topLevelNodes: content.content?.length ?? 0,
+        nodeTypes: content.content?.map((n) => n.type).join(', '),
+      });
+
       const primaryRepo = config.repos.find((r) => r.role === 'primary');
       const title = `God Mode — ${primaryRepo?.repo || 'System Overview'}`;
 
