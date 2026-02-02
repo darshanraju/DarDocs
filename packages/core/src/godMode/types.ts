@@ -136,3 +136,15 @@ export interface AnalysisProgress {
   percent: number;
   message: string;
 }
+
+// ─── API Request/Response Types ──────────────────────────────
+
+export interface GodModeAnalyzeRequest {
+  config: GodModeConfig;
+  githubToken?: string;
+}
+
+/** SSE event: either a progress update or the final result */
+export type GodModeSSEEvent =
+  | AnalysisProgress
+  | { type: 'result'; result: GodModeAnalysisResult };

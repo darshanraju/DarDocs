@@ -4,6 +4,7 @@ import {
   timestamp,
   boolean,
   integer,
+  bigint,
   jsonb,
   pgEnum,
 } from 'drizzle-orm/pg-core';
@@ -123,6 +124,31 @@ export const comments = pgTable('comments', {
   quotedText: text('quoted_text'),
   resolved: boolean('resolved').notNull().default(false),
   parentCommentId: text('parent_comment_id'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+// ─── Repo clone tracking ─────────────────────────────────────
+
+export const cloneStatusEnum = pgEnum('clone_status', [
+  'pending',
+  'cloning',
+  'ready',
+  'error',
+  'evicted',
+]);
+
+export const repoClones = pgTable('repo_clones', {
+  id: text('id').primaryKey(),
+  owner: text('owner').notNull(),
+  repo: text('repo').notNull(),
+  cloneUrl: text('clone_url').notNull(),
+  diskPath: text('disk_path').notNull(),
+  status: cloneStatusEnum('status').notNull().default('pending'),
+  cloneDepth: integer('clone_depth').notNull().default(500),
+  diskSizeBytes: bigint('disk_size_bytes', { mode: 'number' }),
+  lastSyncedAt: timestamp('last_synced_at'),
+  errorMessage: text('error_message'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });

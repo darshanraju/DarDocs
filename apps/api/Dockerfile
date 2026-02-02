@@ -1,5 +1,8 @@
 FROM node:20-slim
 
+# Install git for repo cloning (God Mode analysis)
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Copy root workspace files
@@ -30,5 +33,9 @@ EXPOSE 3456
 
 ENV NODE_ENV=production
 ENV PORT=3456
+ENV CLONE_DIR=/data/repos
+
+# Create default clone directory (mount a volume here for persistence)
+RUN mkdir -p /data/repos
 
 CMD ["node", "--import", "tsx", "apps/api/src/index.ts"]

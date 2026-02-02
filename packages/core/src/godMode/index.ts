@@ -16,6 +16,8 @@ export type {
   GodModeAnalysisResult,
   AnalysisPhase,
   AnalysisProgress,
+  GodModeAnalyzeRequest,
+  GodModeSSEEvent,
 } from './types';
 
 // Feature flag
