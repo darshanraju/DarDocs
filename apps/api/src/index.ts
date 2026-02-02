@@ -10,6 +10,7 @@ import { memberRoutes } from './routes/members.js';
 import { executeRoutes } from './routes/execute.js';
 import { programRoutes } from './routes/programs.js';
 import { godModeRoutes } from './routes/godMode.js';
+import { teamRoutes } from './routes/teams.js';
 
 const app = Fastify({ logger: true });
 
@@ -32,6 +33,7 @@ await app.register(memberRoutes);
 await app.register(executeRoutes);
 await app.register(programRoutes);
 await app.register(godModeRoutes);
+await app.register(teamRoutes);
 
 try {
   await app.listen({ port: env.PORT, host: '0.0.0.0' });

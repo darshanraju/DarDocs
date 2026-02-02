@@ -2,16 +2,18 @@ import { create } from 'zustand';
 import type { DocTreeNode, DarDocsDocument } from '@dardocs/core';
 import type { JSONContent } from '@tiptap/react';
 import type { TLEditorSnapshot } from 'tldraw';
-import { workspacesApi, documentsApi } from '../lib/api.js';
-import type { DocFull } from '../lib/api.js';
+import { workspacesApi, documentsApi, teamsApi } from '../lib/api.js';
+import type { DocFull, Team } from '../lib/api.js';
 
 export interface TreeNode extends DocTreeNode {
+  teamId: string | null;
   children: TreeNode[];
   isExpanded: boolean;
 }
 
 interface WorkspaceStore {
   tree: TreeNode[];
+  teams: Team[];
   loading: boolean;
   activeDocId: string | null;
   workspaceId: string | null;
@@ -20,7 +22,7 @@ interface WorkspaceStore {
   loadTree: () => Promise<void>;
 
   // Document CRUD
-  createDocument: (title: string, parentId: string | null) => Promise<DarDocsDocument>;
+  createDocument: (title: string, parentId: string | null, teamId?: string | null) => Promise<DarDocsDocument>;
   deleteDocument: (id: string) => Promise<void>;
   renameDocument: (id: string, title: string) => Promise<void>;
 
@@ -37,7 +39,7 @@ interface WorkspaceStore {
   loadDocument: (id: string) => Promise<DarDocsDocument>;
 }
 
-function buildTree(nodes: DocTreeNode[], expandedIds: Set<string>): TreeNode[] {
+function buildTree(nodes: (DocTreeNode & { teamId: string | null })[], expandedIds: Set<string>): TreeNode[] {
   const map = new Map<string, TreeNode>();
   const roots: TreeNode[] = [];
 
@@ -133,11 +135,14 @@ function toDocument(doc: DocFull): DarDocsDocument {
   };
 }
 
-/** Map API tree items to DocTreeNode shape */
-function toTreeNodes(items: { id: string; parentId: string; position: number; title: string; createdAt: string; updatedAt: string }[]): DocTreeNode[] {
+/** Map API tree items to tree node shape (with teamId) */
+function toTreeNodes(
+  items: { id: string; parentId: string; teamId?: string | null; position: number; title: string; createdAt: string; updatedAt: string }[]
+): (DocTreeNode & { teamId: string | null })[] {
   return items.map((n) => ({
     id: n.id,
     parentId: n.parentId,
+    teamId: n.teamId ?? null,
     position: n.position,
     title: n.title,
     createdAt: n.createdAt,
@@ -147,6 +152,7 @@ function toTreeNodes(items: { id: string; parentId: string; position: number; ti
 
 export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   tree: [],
+  teams: [],
   loading: true,
   activeDocId: null,
   workspaceId: null,
@@ -167,20 +173,25 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
         set({ workspaceId: wsId });
       }
 
-      const flatNodes = await documentsApi.tree(wsId);
+      // Load documents and teams in parallel
+      const [flatNodes, teamsList] = await Promise.all([
+        documentsApi.tree(wsId),
+        teamsApi.list(wsId),
+      ]);
+
       const expandedIds = collectExpandedIds(get().tree);
       const tree = buildTree(toTreeNodes(flatNodes), expandedIds);
-      set({ tree, loading: false });
+      set({ tree, teams: teamsList, loading: false });
     } catch {
       set({ loading: false });
     }
   },
 
-  createDocument: async (title, parentId) => {
+  createDocument: async (title, parentId, teamId) => {
     const wsId = get().workspaceId;
     if (!wsId) throw new Error('No workspace loaded');
 
-    const docFull = await documentsApi.create(wsId, title, parentId);
+    const docFull = await documentsApi.create(wsId, title, parentId, teamId);
     const doc = toDocument(docFull);
 
     // If creating under a parent, auto-expand it

@@ -71,6 +71,14 @@ export const workspaceRoleEnum = pgEnum('workspace_role', [
   'viewer',
 ]);
 
+export const teamVisibilityEnum = pgEnum('team_visibility', [
+  'open',
+  'closed',
+  'private',
+]);
+
+export const teamRoleEnum = pgEnum('team_role', ['owner', 'member']);
+
 export const workspaces = pgTable('workspaces', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -93,11 +101,44 @@ export const workspaceMembers = pgTable('workspace_members', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
+// ─── Teams ───────────────────────────────────────────────────
+
+export const teams = pgTable('teams', {
+  id: text('id').primaryKey(),
+  workspaceId: text('workspace_id')
+    .notNull()
+    .references(() => workspaces.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  description: text('description'),
+  visibility: teamVisibilityEnum('visibility').notNull().default('open'),
+  icon: text('icon'),
+  createdBy: text('created_by')
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const teamMembers = pgTable('team_members', {
+  id: text('id').primaryKey(),
+  teamId: text('team_id')
+    .notNull()
+    .references(() => teams.id, { onDelete: 'cascade' }),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  role: teamRoleEnum('role').notNull().default('member'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+// ─── Documents ───────────────────────────────────────────────
+
 export const documents = pgTable('documents', {
   id: text('id').primaryKey(),
   workspaceId: text('workspace_id')
     .notNull()
     .references(() => workspaces.id, { onDelete: 'cascade' }),
+  teamId: text('team_id').references(() => teams.id, { onDelete: 'set null' }),
   parentId: text('parent_id'),
   position: integer('position').notNull().default(0),
   title: text('title').notNull().default('Untitled'),
