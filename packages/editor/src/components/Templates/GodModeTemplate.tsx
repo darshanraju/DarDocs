@@ -21,6 +21,8 @@ import {
 import { useGodModeStore } from '../../stores/godModeStore';
 import type { RepoRole, TeamMember } from '@dardocs/core';
 import { generateGodModeDocument } from '@dardocs/core';
+import { TableOfContentsExtension } from '../Editor/extensions/TableOfContents/TableOfContentsExtension';
+import { ArchDiagramExtension } from '../ArchDiagram/ArchDiagramExtension';
 
 interface GodModeTemplateProps {
   onCreateDocument: (content: JSONContent, title: string) => void;
@@ -144,9 +146,11 @@ function DocumentPreview({
         TableRow,
         TableCell,
         TableHeader,
+        TableOfContentsExtension,
+        ArchDiagramExtension,
       ],
       content,
-      editable: false,
+      editable: true,
       editorProps: {
         attributes: {
           class: 'prose prose-sm focus:outline-none max-w-none',

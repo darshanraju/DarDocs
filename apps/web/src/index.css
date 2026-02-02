@@ -8412,3 +8412,144 @@ div[data-node-view-wrapper]:hover > .roadmap-tooltip-anchor > .roadmap-badge,
   background: #3bb87e;
   border-color: #3bb87e;
 }
+
+/* ─── Architecture Diagram ─────────────────────────── */
+
+.arch-diagram-container {
+  width: 100%;
+  height: 380px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 12px 0 20px;
+  background: #fafbfc;
+}
+
+.dark .arch-diagram-container {
+  background: #1a1d23;
+}
+
+.arch-diagram-empty {
+  padding: 32px;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  background: var(--color-bg-subtle);
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  margin: 12px 0 20px;
+}
+
+/* Architecture diagram nodes */
+.arch-node {
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid;
+  min-width: 180px;
+  max-width: 260px;
+  font-family: inherit;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.arch-node-primary {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+
+.dark .arch-node-primary {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: #60a5fa;
+}
+
+.arch-node-secondary {
+  background: #f5f3ff;
+  border-color: #8b5cf6;
+}
+
+.dark .arch-node-secondary {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: #a78bfa;
+}
+
+.arch-node-external {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  border-style: dashed;
+  min-width: 140px;
+}
+
+.dark .arch-node-external {
+  background: rgba(148, 163, 184, 0.1);
+  border-color: #64748b;
+}
+
+.arch-node-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.arch-node-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.arch-node-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arch-node-desc {
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.arch-node-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.arch-node-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  font-size: 0.625rem;
+  font-weight: 500;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--color-text-secondary);
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.dark .arch-node-tag {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Hide ReactFlow controls in the arch diagram */
+.arch-diagram-container .react-flow__controls {
+  display: none;
+}
+
+/* Style edge labels */
+.arch-diagram-container .react-flow__edge-text {
+  font-size: 11px;
+}
+
+.dark .arch-diagram-container .react-flow__edge-text {
+  fill: #9ca3af;
+}
+
+.dark .arch-diagram-container .react-flow__edge-textbg {
+  fill: #1a1d23;
+}
