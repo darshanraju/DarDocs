@@ -57,6 +57,21 @@ export const authApi = {
 
   signOut: () =>
     request('/api/auth/sign-out', { method: 'POST' }),
+
+  signInWithOkta: async () => {
+    const data = await request<{ url: string; redirect: boolean }>(
+      '/api/auth/sign-in/oauth2',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          providerId: 'okta',
+          callbackURL: '/',
+          disableRedirect: true,
+        }),
+      },
+    );
+    window.location.href = data.url;
+  },
 };
 
 // ─── Workspaces ────────────────────────────────────────────────
