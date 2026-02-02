@@ -52,14 +52,6 @@ export interface GlossaryTerm {
   context: string;
 }
 
-export interface HotZone {
-  filePath: string;
-  changeCount: number;
-  lastChanged: string;
-  contributors: string[];
-  description: string;
-}
-
 export interface ApiEndpoint {
   method: string;
   path: string;
@@ -98,7 +90,6 @@ export interface RepoAnalysis {
   pms: TeamMember[];
   connections: SystemConnection[];
   glossary: GlossaryTerm[];
-  hotZones: HotZone[];
   apiEndpoints: ApiEndpoint[];
   errorPatterns: ErrorPattern[];
   setupSteps: SetupStep[];

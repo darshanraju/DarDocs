@@ -151,30 +151,6 @@ function generateMockResult(config: GodModeConfig): GodModeAnalysisResult {
         },
       ],
 
-      hotZones: [
-        {
-          filePath: 'src/services/orderProcessor.ts',
-          changeCount: isPrimary ? 89 : 34,
-          lastChanged: '2026-01-29',
-          contributors: ['alexchen', 'jrivera', 'sampatel'],
-          description: 'Core order processing pipeline — frequently modified for new payment methods and fulfillment rules.',
-        },
-        {
-          filePath: 'src/api/routes/checkout.ts',
-          changeCount: isPrimary ? 67 : 21,
-          lastChanged: '2026-01-30',
-          contributors: ['jrivera', 'mtaylor'],
-          description: 'Checkout API routes — changes driven by A/B tests and new promo code integrations.',
-        },
-        {
-          filePath: 'src/middleware/auth.ts',
-          changeCount: isPrimary ? 45 : 18,
-          lastChanged: '2026-01-22',
-          contributors: ['alexchen', 'sampatel'],
-          description: 'Authentication middleware — updated for OAuth2 provider additions and token refresh logic.',
-        },
-      ],
-
       apiEndpoints: [
         { method: 'POST', path: '/api/v2/orders', description: 'Create a new order', sourceFile: 'src/api/routes/orders.ts' },
         { method: 'GET', path: '/api/v2/orders/:id', description: 'Get order by ID', sourceFile: 'src/api/routes/orders.ts' },
