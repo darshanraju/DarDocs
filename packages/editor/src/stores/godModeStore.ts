@@ -139,8 +139,10 @@ export const useGodModeStore = create<GodModeStore>((set, get) => ({
           set({ progress });
         });
       } else {
-        // TODO: Real analysis pipeline (Phase 1: API, Phase 2: shallow clone)
-        throw new Error('Real analysis not yet implemented');
+        // Real analysis: stream from the backend SSE endpoint
+        result = await runRealAnalysis(config, (progress) => {
+          set({ progress });
+        });
       }
 
       // Generate the document content from results (preview mode, no swagger yet)
@@ -203,3 +205,59 @@ export const useGodModeStore = create<GodModeStore>((set, get) => ({
     });
   },
 }));
+
+// ─── Real analysis via backend SSE ──────────────────────────
+
+async function runRealAnalysis(
+  config: GodModeConfig,
+  onProgress: (progress: AnalysisProgress) => void
+): Promise<GodModeAnalysisResult> {
+  const response = await fetch('/api/god-mode/analyze', {
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ config }),
+  });
+
+  if (!response.ok || !response.body) {
+    const text = await response.text().catch(() => '');
+    throw new Error(text || `Analysis failed (${response.status})`);
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let result: GodModeAnalysisResult | null = null;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const chunks = buffer.split('\n\n');
+    buffer = chunks.pop() || '';
+
+    for (const chunk of chunks) {
+      const line = chunk.trim();
+      if (!line.startsWith('data: ')) continue;
+
+      try {
+        const data = JSON.parse(line.slice(6));
+
+        if (data.type === 'result') {
+          result = data.result as GodModeAnalysisResult;
+        } else if (data.phase) {
+          onProgress(data as AnalysisProgress);
+        }
+      } catch {
+        // Skip malformed SSE chunks
+      }
+    }
+  }
+
+  if (!result) {
+    throw new Error('Analysis completed without returning results');
+  }
+
+  return result;
+}

@@ -117,6 +117,8 @@ export type {
   GodModeAnalysisResult,
   AnalysisPhase,
   AnalysisProgress,
+  GodModeAnalyzeRequest,
+  GodModeSSEEvent,
 } from './godMode';
 export {
   GOD_MODE_USE_MOCK_DATA,
