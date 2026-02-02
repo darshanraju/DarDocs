@@ -98,6 +98,9 @@ export function generateGodModeDocument(
 // ─── Section Generators ───────────────────────────────────────
 
 function contributorsSection(repo: RepoAnalysis): JSONContent[] {
+  if (repo.contributors.length === 0) {
+    return [heading(2, 'Contributors'), paragraph('No contributor data available.')];
+  }
   return [
     heading(2, 'Contributors'),
     table(
@@ -315,6 +318,11 @@ function swaggerPlaceholder(): JSONContent {
 }
 
 function table(headers: string[], rows: string[][]): JSONContent {
+  // TipTap requires at least one data row — add an empty row if needed
+  const dataRows = rows.length > 0
+    ? rows
+    : [headers.map(() => '—')];
+
   return {
     type: 'table',
     content: [
@@ -326,7 +334,7 @@ function table(headers: string[], rows: string[][]): JSONContent {
           content: [{ type: 'paragraph', content: [{ type: 'text', text: h }] }],
         })),
       },
-      ...rows.map((row) => ({
+      ...dataRows.map((row) => ({
         type: 'tableRow',
         content: row.map((cell) => ({
           type: 'tableCell',
