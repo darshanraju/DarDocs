@@ -20,7 +20,9 @@ import {
 } from '@hugeicons/core-free-icons';
 import { useGodModeStore } from '../../stores/godModeStore';
 import type { RepoRole, TeamMember } from '@dardocs/core';
-import { GOD_MODE_USE_MOCK_DATA, generateGodModeDocument } from '@dardocs/core';
+import { generateGodModeDocument } from '@dardocs/core';
+import { TableOfContentsExtension } from '../Editor/extensions/TableOfContents/TableOfContentsExtension';
+import { ArchDiagramExtension } from '../ArchDiagram/ArchDiagramExtension';
 
 interface GodModeTemplateProps {
   onCreateDocument: (content: JSONContent, title: string) => void;
@@ -60,9 +62,6 @@ export function GodModeTemplate({ onCreateDocument, onCancel }: GodModeTemplateP
               {phase === 'preview'
                 ? 'Preview your generated document. Click "Create Document" to save it to your workspace.'
                 : 'Auto-generate comprehensive system documentation from your repositories.'}
-              {GOD_MODE_USE_MOCK_DATA && (
-                <span className="godmode-mock-badge">MOCK DATA</span>
-              )}
             </p>
           </div>
           <button className="godmode-cancel-btn" onClick={onCancel}>
@@ -130,6 +129,12 @@ function DocumentPreview({
 }) {
   const docRef = useRef<HTMLDivElement>(null);
 
+  console.log('[GodMode:Preview] Rendering with content:', {
+    type: content?.type,
+    topLevelNodes: content?.content?.length ?? 0,
+    nodeTypes: content?.content?.slice(0, 10).map((n: JSONContent) => n.type).join(', '),
+  });
+
   const editor = useEditor(
     {
       extensions: [
@@ -141,9 +146,11 @@ function DocumentPreview({
         TableRow,
         TableCell,
         TableHeader,
+        TableOfContentsExtension,
+        ArchDiagramExtension,
       ],
       content,
-      editable: false,
+      editable: true,
       editorProps: {
         attributes: {
           class: 'prose prose-sm focus:outline-none max-w-none',
@@ -156,7 +163,16 @@ function DocumentPreview({
   // Update content if it changes (e.g. after swagger toggle)
   useEffect(() => {
     if (editor && content) {
-      editor.commands.setContent(content);
+      try {
+        console.log('[GodMode:Preview] Calling setContent, editor exists:', !!editor);
+        const success = editor.commands.setContent(content);
+        console.log('[GodMode:Preview] setContent result:', success);
+        console.log('[GodMode:Preview] Editor HTML length after setContent:', editor.getHTML().length);
+      } catch (err) {
+        console.error('[GodMode:Preview] setContent FAILED:', err);
+      }
+    } else {
+      console.log('[GodMode:Preview] Skipping setContent — editor:', !!editor, 'content:', !!content);
     }
   }, [editor, content]);
 
@@ -465,6 +481,7 @@ function phaseLabel(phase: string): string {
     'analyzing-contributors': 'Analyzing Contributors',
     'analyzing-connections': 'Detecting Connections',
     'analyzing-glossary': 'Building Glossary',
+    'enriching-ai': 'Enriching with AI',
     'generating-document': 'Generating Document',
     'complete': 'Complete',
     'error': 'Error',

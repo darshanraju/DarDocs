@@ -9,11 +9,10 @@ import type {
   RepoRole,
 } from '@dardocs/core';
 import {
-  GOD_MODE_USE_MOCK_DATA,
-  runMockAnalysis,
   generateGodModeDocument,
   parseGitHubRepoUrl,
 } from '@dardocs/core';
+import { useWorkspaceConfigStore } from './workspaceConfigStore';
 
 export type GodModePhase = 'configuring' | 'analyzing' | 'preview' | 'error';
 
@@ -132,21 +131,33 @@ export const useGodModeStore = create<GodModeStore>((set, get) => ({
     set({ phase: 'analyzing', error: null });
 
     try {
-      let result: GodModeAnalysisResult;
+      const result = await runRealAnalysis(config, (progress) => {
+        set({ progress });
+      });
 
-      if (GOD_MODE_USE_MOCK_DATA) {
-        result = await runMockAnalysis(config, (progress) => {
-          set({ progress });
-        });
-      } else {
-        // Real analysis: stream from the backend SSE endpoint
-        result = await runRealAnalysis(config, (progress) => {
-          set({ progress });
-        });
-      }
+      console.log('[GodMode] Analysis result received:', {
+        repoCount: result.repos.length,
+        repos: result.repos.map((r) => ({
+          name: r.repoName,
+          contributors: r.contributors.length,
+          endpoints: r.apiEndpoints.length,
+          glossary: r.glossary.length,
+          hotZones: r.hotZones.length,
+          errors: r.errorPatterns.length,
+          archDecisions: r.archDecisions.length,
+          setupSteps: r.setupSteps.length,
+        })),
+      });
 
       // Generate the document content from results (preview mode, no swagger yet)
       const content = generateGodModeDocument(result, [], true);
+
+      console.log('[GodMode] Generated document content:', {
+        type: content.type,
+        topLevelNodes: content.content?.length ?? 0,
+        nodeTypes: content.content?.map((n) => n.type).join(', '),
+      });
+
       const primaryRepo = config.repos.find((r) => r.role === 'primary');
       const title = `God Mode — ${primaryRepo?.repo || 'System Overview'}`;
 
@@ -216,7 +227,10 @@ async function runRealAnalysis(
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ config }),
+    body: JSON.stringify({
+      config,
+      aiConfig: useWorkspaceConfigStore.getState().config.ai || undefined,
+    }),
   });
 
   if (!response.ok || !response.body) {

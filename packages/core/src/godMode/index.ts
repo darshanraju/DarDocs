@@ -20,11 +20,14 @@ export type {
   GodModeSSEEvent,
 } from './types';
 
-// Feature flag
-export { GOD_MODE_USE_MOCK_DATA } from './types';
-
-// Mock analysis runner
-export { runMockAnalysis } from './mockData';
+// Provider interfaces
+export type {
+  GitProvider,
+  CodeProvider,
+  EnrichmentProvider,
+  ContextProvider,
+  AnalysisProviders,
+} from './providers';
 
 // Document generator
 export { generateGodModeDocument } from './documentGenerator';

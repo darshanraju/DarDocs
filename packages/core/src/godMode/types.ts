@@ -1,5 +1,4 @@
-// ─── Feature Flag ─────────────────────────────────────────────
-export const GOD_MODE_USE_MOCK_DATA = true;
+import type { AIConfig } from '../workspace/types';
 
 // ─── Configuration Types ──────────────────────────────────────
 
@@ -126,6 +125,7 @@ export type AnalysisPhase =
   | 'analyzing-contributors'
   | 'analyzing-connections'
   | 'analyzing-glossary'
+  | 'enriching-ai'
   | 'generating-document'
   | 'complete'
   | 'error';
@@ -142,6 +142,7 @@ export interface AnalysisProgress {
 export interface GodModeAnalyzeRequest {
   config: GodModeConfig;
   githubToken?: string;
+  aiConfig?: AIConfig;
 }
 
 /** SSE event: either a progress update or the final result */

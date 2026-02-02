@@ -119,9 +119,12 @@ export type {
   AnalysisProgress,
   GodModeAnalyzeRequest,
   GodModeSSEEvent,
+  GitProvider,
+  CodeProvider,
+  EnrichmentProvider,
+  ContextProvider,
+  AnalysisProviders,
 } from './godMode';
 export {
-  GOD_MODE_USE_MOCK_DATA,
-  runMockAnalysis,
   generateGodModeDocument,
 } from './godMode';
