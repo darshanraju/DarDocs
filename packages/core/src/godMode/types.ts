@@ -1,3 +1,5 @@
+import type { AIConfig } from '../workspace/types';
+
 // ─── Configuration Types ──────────────────────────────────────
 
 export type RepoRole = 'primary' | 'secondary';
@@ -140,6 +142,7 @@ export interface AnalysisProgress {
 export interface GodModeAnalyzeRequest {
   config: GodModeConfig;
   githubToken?: string;
+  aiConfig?: AIConfig;
 }
 
 /** SSE event: either a progress update or the final result */

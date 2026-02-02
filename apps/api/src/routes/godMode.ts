@@ -8,11 +8,13 @@ import type {
   GodModeAnalysisResult,
   AnalysisProgress,
   RepoAnalysis,
+  AIConfig,
 } from '@dardocs/core';
 
 interface AnalyzeBody {
   config: GodModeConfig;
   githubToken?: string;
+  aiConfig?: AIConfig;
 }
 
 export async function godModeRoutes(app: FastifyInstance) {
@@ -20,7 +22,7 @@ export async function godModeRoutes(app: FastifyInstance) {
 
   // POST /api/god-mode/analyze — clone repos and run full analysis (SSE stream)
   app.post('/api/god-mode/analyze', async (request, reply) => {
-    const { config, githubToken } = request.body as AnalyzeBody;
+    const { config, githubToken, aiConfig } = request.body as AnalyzeBody;
 
     if (!config?.repos?.length) {
       return reply.status(400).send({ error: 'No repos configured' });
@@ -39,7 +41,7 @@ export async function godModeRoutes(app: FastifyInstance) {
     };
 
     try {
-      const providers = createDefaultProviders();
+      const providers = createDefaultProviders(aiConfig);
       const repoAnalyses: RepoAnalysis[] = [];
       const totalRepos = config.repos.length;
 
@@ -110,7 +112,14 @@ export async function godModeRoutes(app: FastifyInstance) {
           .filter((r) => r.id !== repo.id)
           .map((r) => r.repo);
 
-        const analysis = await analyzeRepo(repo, clone.diskPath, otherRepos, providers);
+        const analysis = await analyzeRepo(repo, clone.diskPath, otherRepos, providers, (phase, message) => {
+          send({
+            phase,
+            currentRepo: repo.repo,
+            percent: basePercent + 65,
+            message,
+          } satisfies AnalysisProgress);
+        });
         repoAnalyses.push(analysis);
 
         send({

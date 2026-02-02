@@ -4,7 +4,8 @@ export async function analyzeRepo(
   config: GodModeRepoConfig,
   clonePath: string,
   otherRepoNames: string[],
-  providers: AnalysisProviders
+  providers: AnalysisProviders,
+  onPhase?: (phase: string, message: string) => void
 ): Promise<RepoAnalysis> {
   const { git, code, enrichment, context } = providers;
 
@@ -32,6 +33,7 @@ export async function analyzeRepo(
   ]);
 
   // Phase 2: Enrich (LLM-augmented, optional — no-op with default providers)
+  onPhase?.('enriching-ai', `Enriching ${config.repo} with AI...`);
   const repoContext = await context.getRepoContext(clonePath);
   const [enrichedEndpoints, enrichedGlossary, enrichedZones, enrichedErrors] =
     await Promise.all([
