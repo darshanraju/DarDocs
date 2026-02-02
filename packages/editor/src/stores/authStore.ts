@@ -9,6 +9,7 @@ interface AuthStore {
   checkSession: () => Promise<void>;
   signUp: (name: string, email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithOkta: () => Promise<void>;
   signOut: () => Promise<void>;
   clearError: () => void;
 }
@@ -54,6 +55,18 @@ export const useAuthStore = create<AuthStore>((set) => ({
         err instanceof ApiError ? err.message : 'Sign in failed';
       set({ error: msg, loading: false });
       throw err;
+    }
+  },
+
+  signInWithOkta: async () => {
+    set({ error: null, loading: true });
+    try {
+      await authApi.signInWithOkta();
+      // Browser navigates away to Okta; no further action needed
+    } catch (err) {
+      const msg =
+        err instanceof ApiError ? err.message : 'Okta sign in failed';
+      set({ error: msg, loading: false });
     }
   },
 

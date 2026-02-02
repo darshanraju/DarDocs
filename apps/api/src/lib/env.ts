@@ -7,4 +7,7 @@ export const env = {
   CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:5173',
   PORT: parseInt(process.env.PORT || '3456', 10),
   CLONE_DIR: process.env.CLONE_DIR || '/tmp/dardocs-repos',
+  OKTA_CLIENT_ID: process.env.OKTA_CLIENT_ID || '',
+  OKTA_CLIENT_SECRET: process.env.OKTA_CLIENT_SECRET || '',
+  OKTA_ISSUER: process.env.OKTA_ISSUER || '',
 };

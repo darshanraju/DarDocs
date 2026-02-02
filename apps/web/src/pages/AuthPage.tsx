@@ -3,7 +3,7 @@ import { useAuthStore } from '@dardocs/editor';
 
 export function AuthPage() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
-  const { signIn, signUp, error, loading, clearError } = useAuthStore();
+  const { signIn, signUp, signInWithOkta, error, loading, clearError } = useAuthStore();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -102,6 +102,23 @@ export function AuthPage() {
                 : 'Create account'}
           </button>
         </form>
+
+        {mode === 'signin' && (
+          <>
+            <div className="auth-divider">
+              <span>or</span>
+            </div>
+
+            <button
+              type="button"
+              className="auth-okta-btn"
+              onClick={signInWithOkta}
+              disabled={loading}
+            >
+              Sign in with Okta
+            </button>
+          </>
+        )}
 
         <p className="auth-toggle">
           {mode === 'signin' ? (
