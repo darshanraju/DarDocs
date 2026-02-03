@@ -208,11 +208,18 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   },
 
   deleteDocument: async (id) => {
+    // Optimistically remove from local tree immediately
+    const removeNode = (nodes: TreeNode[]): TreeNode[] =>
+      nodes.filter((n) => n.id !== id).map((n) => ({
+        ...n,
+        children: removeNode(n.children),
+      }));
+    set((state) => ({
+      tree: removeNode(state.tree),
+      activeDocId: state.activeDocId === id ? null : state.activeDocId,
+    }));
+
     await documentsApi.delete(id);
-    const state = get();
-    if (state.activeDocId === id) {
-      set({ activeDocId: null });
-    }
     await get().loadTree();
   },
 

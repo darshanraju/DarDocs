@@ -429,31 +429,22 @@ export function Sidebar() {
           <HugeiconsIcon icon={PlusSignIcon} size={16} />
           <span>New page</span>
         </button>
-        <button
-          className="sidebar-settings-btn"
-          onClick={openSettings}
-          title="Workspace settings"
-        >
-          <HugeiconsIcon icon={Setting07Icon} size={16} />
-        </button>
-        <button
-          className="sidebar-share-btn"
-          onClick={() => setShowShareModal(true)}
-          title="Share workspace"
-        >
-          <HugeiconsIcon icon={UserGroupIcon} size={16} />
-        </button>
-      </div>
-
-      <div className="sidebar-templates">
-        <div className="sidebar-templates-label">Templates</div>
-        <button
-          className="sidebar-template-btn"
-          onClick={() => navigate('/templates/god-mode')}
-        >
-          <span className="sidebar-template-icon">🔮</span>
-          <span>God Mode</span>
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <button
+            className="sidebar-settings-btn"
+            onClick={openSettings}
+            title="Workspace settings"
+          >
+            <HugeiconsIcon icon={Setting07Icon} size={16} />
+          </button>
+          <button
+            className="sidebar-share-btn"
+            onClick={() => setShowShareModal(true)}
+            title="Share workspace"
+          >
+            <HugeiconsIcon icon={UserGroupIcon} size={16} />
+          </button>
+        </div>
       </div>
 
       <nav className="sidebar-nav">
