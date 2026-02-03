@@ -13,6 +13,7 @@ import {
   parseGitHubRepoUrl,
 } from '@dardocs/core';
 import { useWorkspaceConfigStore } from './workspaceConfigStore';
+import { useWorkspaceStore } from './workspaceStore';
 
 export type GodModePhase = 'configuring' | 'analyzing' | 'preview' | 'error';
 
@@ -229,6 +230,7 @@ async function runRealAnalysis(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       config,
+      workspaceId: useWorkspaceStore.getState().workspaceId || undefined,
       aiConfig: useWorkspaceConfigStore.getState().config.ai || undefined,
     }),
   });

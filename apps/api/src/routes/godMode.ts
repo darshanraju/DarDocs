@@ -1,8 +1,15 @@
 import type { FastifyInstance } from 'fastify';
+import { eq, and } from 'drizzle-orm';
 import { requireAuth } from '../lib/requireAuth.js';
+import { db } from '../lib/db.js';
+import { workspaceMembers } from '../lib/schema.js';
 import { ensureClone, evictStaleClones } from '../services/repoCloneService.js';
 import { analyzeRepo } from '../services/repoAnalyzer.js';
 import { createDefaultProviders } from '../services/providers/index.js';
+import {
+  getInstallationTokenForWorkspace,
+  isGitHubAppConfigured,
+} from '../services/githubAppService.js';
 import type {
   GodModeConfig,
   GodModeAnalysisResult,
@@ -14,6 +21,7 @@ import type {
 interface AnalyzeBody {
   config: GodModeConfig;
   githubToken?: string;
+  workspaceId?: string;
   aiConfig?: AIConfig;
 }
 
@@ -22,10 +30,31 @@ export async function godModeRoutes(app: FastifyInstance) {
 
   // POST /api/god-mode/analyze — clone repos and run full analysis (SSE stream)
   app.post('/api/god-mode/analyze', async (request, reply) => {
-    const { config, githubToken, aiConfig } = request.body as AnalyzeBody;
+    const { config, githubToken, workspaceId, aiConfig } = request.body as AnalyzeBody;
+    const userId = (request as any).userId as string;
 
     if (!config?.repos?.length) {
       return reply.status(400).send({ error: 'No repos configured' });
+    }
+
+    // Resolve GitHub token: explicit token > workspace GitHub App installation
+    let resolvedToken = githubToken;
+    if (!resolvedToken && workspaceId && isGitHubAppConfigured()) {
+      // Verify user has access to this workspace
+      const [membership] = await db
+        .select()
+        .from(workspaceMembers)
+        .where(
+          and(
+            eq(workspaceMembers.workspaceId, workspaceId),
+            eq(workspaceMembers.userId, userId)
+          )
+        )
+        .limit(1);
+
+      if (membership) {
+        resolvedToken = await getInstallationTokenForWorkspace(workspaceId) ?? undefined;
+      }
     }
 
     // Set up SSE streaming
@@ -65,7 +94,7 @@ export async function godModeRoutes(app: FastifyInstance) {
           message: `Cloning ${repo.owner}/${repo.repo}...`,
         } satisfies AnalysisProgress);
 
-        const clone = await ensureClone(repo.owner, repo.repo, githubToken);
+        const clone = await ensureClone(repo.owner, repo.repo, resolvedToken);
 
         if (clone.fromCache) {
           send({
