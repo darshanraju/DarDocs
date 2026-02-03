@@ -208,6 +208,10 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
   },
 
   deleteDocument: async (id) => {
+    // Snapshot current tree so we can roll back on failure
+    const prevTree = get().tree;
+    const prevActiveDocId = get().activeDocId;
+
     // Optimistically remove from local tree immediately
     const removeNode = (nodes: TreeNode[]): TreeNode[] =>
       nodes.filter((n) => n.id !== id).map((n) => ({
@@ -219,8 +223,14 @@ export const useWorkspaceStore = create<WorkspaceStore>((set, get) => ({
       activeDocId: state.activeDocId === id ? null : state.activeDocId,
     }));
 
-    await documentsApi.delete(id);
-    await get().loadTree();
+    try {
+      await documentsApi.delete(id);
+      await get().loadTree();
+    } catch {
+      // Roll back optimistic removal — the API call failed
+      set({ tree: prevTree, activeDocId: prevActiveDocId });
+      throw new Error('Failed to delete document');
+    }
   },
 
   renameDocument: async (id, title) => {

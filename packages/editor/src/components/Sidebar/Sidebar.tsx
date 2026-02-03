@@ -16,6 +16,7 @@ import {
   Setting07Icon,
 } from '@hugeicons/core-free-icons';
 import { Users, Lock, Globe, Eye, PlusCircle, Settings, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
 import { useWorkspaceConfigStore } from '../../stores/workspaceConfigStore';
 import type { TreeNode } from '../../stores/workspaceStore';
@@ -149,9 +150,13 @@ export function Sidebar() {
   const handleDelete = useCallback(
     async (id: string) => {
       setContextMenu(null);
-      await deleteDocument(id);
-      if (activeDocId === id) {
-        navigate('/');
+      try {
+        await deleteDocument(id);
+        if (activeDocId === id) {
+          navigate('/');
+        }
+      } catch {
+        toast.error('Failed to delete document');
       }
     },
     [deleteDocument, activeDocId, navigate]
