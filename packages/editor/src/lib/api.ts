@@ -294,6 +294,52 @@ export interface TeamMember {
   joinedAt: string;
 }
 
+// ─── GitHub Integration ──────────────────────────────────────
+
+export interface GitHubInstallationStatus {
+  configured: boolean;
+  installed: boolean;
+  githubOrg?: string;
+  installationId?: number;
+  accountType?: string;
+  avatarUrl?: string;
+  repoSelection?: 'all' | 'selected';
+  stale?: boolean;
+}
+
+export interface GitHubRepo {
+  id: number;
+  fullName: string;
+  name: string;
+  owner: string;
+  private: boolean;
+  url: string;
+  description: string | null;
+}
+
+export const githubIntegrationApi = {
+  status: (workspaceId: string) =>
+    request<GitHubInstallationStatus>(
+      `/api/integrations/github/status?workspaceId=${workspaceId}`
+    ),
+
+  getInstallUrl: (workspaceId: string) =>
+    `/api/integrations/github/install?workspaceId=${workspaceId}`,
+
+  listRepos: (workspaceId: string) =>
+    request<GitHubRepo[]>(
+      `/api/integrations/github/repos?workspaceId=${workspaceId}`
+    ),
+
+  disconnect: (workspaceId: string) =>
+    request<{ ok: boolean }>(
+      `/api/integrations/github?workspaceId=${workspaceId}`,
+      { method: 'DELETE' }
+    ),
+};
+
+// ─── Teams ──────────────────────────────────────────────────
+
 export const teamsApi = {
   list: (workspaceId: string) =>
     request<Team[]>(`/api/workspaces/${workspaceId}/teams`),

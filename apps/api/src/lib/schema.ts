@@ -169,6 +169,22 @@ export const comments = pgTable('comments', {
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
+// ─── GitHub App installations ────────────────────────────────
+
+export const githubAppInstallations = pgTable('github_app_installations', {
+  id: text('id').primaryKey(),
+  workspaceId: text('workspace_id')
+    .notNull()
+    .references(() => workspaces.id, { onDelete: 'cascade' }),
+  installationId: bigint('installation_id', { mode: 'number' }).notNull(),
+  githubOrg: text('github_org').notNull(),
+  installedBy: text('installed_by')
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
 // ─── Repo clone tracking ─────────────────────────────────────
 
 export const cloneStatusEnum = pgEnum('clone_status', [

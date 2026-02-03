@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   X,
   GitBranch,
@@ -10,9 +10,21 @@ import {
   Eye,
   EyeOff,
   Check,
+  Github,
+  ExternalLink,
+  Loader2,
+  AlertTriangle,
+  Unplug,
+  Lock,
 } from 'lucide-react';
 import { useWorkspaceConfigStore } from '../../stores/workspaceConfigStore';
+import { useWorkspaceStore } from '../../stores/workspaceStore';
 import { AutoUpdateSettings } from './AutoUpdateSettings';
+import {
+  githubIntegrationApi,
+  type GitHubInstallationStatus,
+  type GitHubRepo,
+} from '../../lib/api';
 import type {
   GrafanaCredentials,
   SentryCredentials,
@@ -21,7 +33,7 @@ import type {
   AIConfig,
 } from '@dardocs/core';
 
-type Tab = 'repos' | 'providers' | 'ai' | 'auto-update';
+type Tab = 'repos' | 'providers' | 'ai' | 'github' | 'auto-update';
 
 export function SettingsModal() {
   const { config, settingsOpen, closeSettings } = useWorkspaceConfigStore();
@@ -62,6 +74,13 @@ export function SettingsModal() {
             AI
           </button>
           <button
+            className={`settings-tab ${activeTab === 'github' ? 'is-active' : ''}`}
+            onClick={() => setActiveTab('github')}
+          >
+            <Github className="w-4 h-4" />
+            GitHub
+          </button>
+          <button
             className={`settings-tab ${activeTab === 'auto-update' ? 'is-active' : ''}`}
             onClick={() => setActiveTab('auto-update')}
           >
@@ -75,6 +94,7 @@ export function SettingsModal() {
           {activeTab === 'repos' && <RepoSettings />}
           {activeTab === 'providers' && <ProviderSettings />}
           {activeTab === 'ai' && <AISettings />}
+          {activeTab === 'github' && <GitHubSettings />}
           {activeTab === 'auto-update' && <AutoUpdateSettings />}
         </div>
       </div>
@@ -466,6 +486,201 @@ function AISettings() {
             Clear
           </button>
         )}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  GitHub tab                                                           */
+/* ------------------------------------------------------------------ */
+
+function GitHubSettings() {
+  const workspaceId = useWorkspaceStore((s) => s.workspaceId);
+  const [status, setStatus] = useState<GitHubInstallationStatus | null>(null);
+  const [repos, setRepos] = useState<GitHubRepo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [reposLoading, setReposLoading] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
+  const [error, setError] = useState('');
+
+  const loadStatus = useCallback(async () => {
+    if (!workspaceId) return;
+    setLoading(true);
+    setError('');
+    try {
+      const s = await githubIntegrationApi.status(workspaceId);
+      setStatus(s);
+
+      if (s.installed && !s.stale) {
+        setReposLoading(true);
+        try {
+          const r = await githubIntegrationApi.listRepos(workspaceId);
+          setRepos(r);
+        } catch {
+          // non-fatal — repos list may fail if installation is being set up
+        }
+        setReposLoading(false);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to check GitHub status');
+    }
+    setLoading(false);
+  }, [workspaceId]);
+
+  useEffect(() => { loadStatus(); }, [loadStatus]);
+
+  // Check URL params for post-install redirect
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('github_installed') || params.has('github_error')) {
+      // Clean up URL params
+      const url = new URL(window.location.href);
+      url.searchParams.delete('github_installed');
+      url.searchParams.delete('github_error');
+      window.history.replaceState({}, '', url.toString());
+      // Refresh status
+      loadStatus();
+    }
+  }, [loadStatus]);
+
+  const handleDisconnect = useCallback(async () => {
+    if (!workspaceId) return;
+    setDisconnecting(true);
+    try {
+      await githubIntegrationApi.disconnect(workspaceId);
+      setStatus({ configured: true, installed: false });
+      setRepos([]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to disconnect');
+    }
+    setDisconnecting(false);
+  }, [workspaceId]);
+
+  if (loading) {
+    return (
+      <div className="settings-section">
+        <div className="settings-section-desc" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Loader2 className="w-4 h-4" style={{ animation: 'spin 1s linear infinite' }} />
+          Checking GitHub integration status...
+        </div>
+      </div>
+    );
+  }
+
+  if (!status?.configured) {
+    return (
+      <div className="settings-section">
+        <div className="settings-section-desc">
+          GitHub App integration is not configured on this server.
+          The server administrator needs to set <code>GITHUB_APP_ID</code> and <code>GITHUB_APP_PRIVATE_KEY</code> environment variables.
+        </div>
+      </div>
+    );
+  }
+
+  if (!status.installed) {
+    return (
+      <div className="settings-section">
+        <div className="settings-section-desc">
+          Connect a GitHub App to give DarFocs read access to your organization's private repositories.
+          Only workspace admins can install the app.
+        </div>
+        <div className="settings-section-desc" style={{ fontSize: '0.8rem', opacity: 0.7 }}>
+          The app only requests <strong>Contents (Read)</strong> and <strong>Metadata (Read)</strong> permissions.
+          No write access is granted.
+        </div>
+        {error && <div className="settings-error">{error}</div>}
+        <a
+          href={githubIntegrationApi.getInstallUrl(workspaceId!)}
+          className="settings-add-btn"
+          style={{ display: 'inline-flex', textDecoration: 'none' }}
+        >
+          <Github className="w-4 h-4" />
+          Install GitHub App
+          <ExternalLink className="w-3.5 h-3.5" />
+        </a>
+      </div>
+    );
+  }
+
+  return (
+    <div className="settings-section">
+      <div className="settings-section-desc">
+        GitHub App is connected to your workspace. DarFocs can clone private repos from this organization.
+      </div>
+
+      {error && <div className="settings-error">{error}</div>}
+
+      {status.stale && (
+        <div className="settings-error" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <AlertTriangle className="w-4 h-4" />
+          The GitHub App installation may have been removed from GitHub. Try reinstalling.
+        </div>
+      )}
+
+      <div className="settings-provider-card">
+        <div className="settings-provider-card-header" style={{ cursor: 'default' }}>
+          <div className="settings-provider-card-left">
+            {status.avatarUrl ? (
+              <img
+                src={status.avatarUrl}
+                alt={status.githubOrg}
+                style={{ width: 20, height: 20, borderRadius: 4 }}
+              />
+            ) : (
+              <Github className="w-5 h-5" />
+            )}
+            <span className="settings-provider-card-name">{status.githubOrg}</span>
+            <span className="settings-provider-configured-badge">Connected</span>
+          </div>
+        </div>
+        <div className="settings-provider-card-body">
+          <div style={{ fontSize: '0.8rem', opacity: 0.7, marginBottom: 8 }}>
+            {status.accountType === 'Organization' ? 'Organization' : 'User'} account
+            {status.repoSelection === 'all' ? ' — All repositories' : ' — Selected repositories'}
+          </div>
+
+          {reposLoading ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.85rem' }}>
+              <Loader2 className="w-3.5 h-3.5" style={{ animation: 'spin 1s linear infinite' }} />
+              Loading repos...
+            </div>
+          ) : repos.length > 0 ? (
+            <div className="settings-list" style={{ maxHeight: 200, overflow: 'auto' }}>
+              {repos.map((repo) => (
+                <div key={repo.id} className="settings-list-item">
+                  <div className="settings-list-item-info">
+                    <span className="settings-list-item-name">{repo.fullName}</span>
+                    <span className="settings-list-item-meta">
+                      {repo.private ? (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                          <Lock className="w-3 h-3" /> Private
+                        </span>
+                      ) : (
+                        'Public'
+                      )}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          <button
+            onClick={handleDisconnect}
+            disabled={disconnecting}
+            className="settings-clear-btn"
+            style={{ marginTop: 12, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            {disconnecting ? (
+              <Loader2 className="w-3.5 h-3.5" style={{ animation: 'spin 1s linear infinite' }} />
+            ) : (
+              <Unplug className="w-3.5 h-3.5" />
+            )}
+            Disconnect
+          </button>
+        </div>
       </div>
     </div>
   );
