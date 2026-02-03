@@ -81,6 +81,10 @@ export { convertDocxToTipTap } from './docxConverter';
 // Markdown converter
 export { convertMarkdownToTipTap } from './markdownConverter';
 
+// Document templates
+export type { DocumentTemplate } from './documentTemplates';
+export { DOCUMENT_TEMPLATES } from './documentTemplates';
+
 // Monitor providers
 export type { MonitorProviderId, MonitorProviderConfig } from './monitors';
 export { MONITOR_PROVIDERS, MONITOR_PROVIDER_LIST } from './monitors';

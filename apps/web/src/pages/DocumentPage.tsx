@@ -17,7 +17,8 @@ import {
   useAuthStore,
 } from '@dardocs/editor';
 import type { SearchResult } from '@dardocs/editor';
-import { convertDocxToTipTap, convertMarkdownToTipTap, ACCEPTED_FILE_TYPES } from '@dardocs/core';
+import { convertDocxToTipTap, convertMarkdownToTipTap, ACCEPTED_FILE_TYPES, DOCUMENT_TEMPLATES } from '@dardocs/core';
+import type { DocumentTemplate } from '@dardocs/core';
 import { toast } from 'sonner';
 
 export function DocumentPage() {
@@ -273,6 +274,12 @@ export function DocumentPage() {
     }
   }, [isImportableFile, updateContent, updateMetadata]);
 
+  const handleApplyTemplate = useCallback((template: DocumentTemplate) => {
+    updateContent(template.content);
+    updateMetadata({ title: template.title });
+    toast.success(`Applied template: ${template.title}`);
+  }, [updateContent, updateMetadata]);
+
   const handleFilePick = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -382,18 +389,40 @@ export function DocumentPage() {
                       onChange={handleFilePick}
                       className="hidden"
                     />
-                    <div className="doc-empty-state-icon">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+
+                    <div className="doc-empty-state-section">
+                      <span className="doc-empty-state-label">Start from a template</span>
+                      <div className="doc-empty-state-templates">
+                        {DOCUMENT_TEMPLATES.map((t) => (
+                          <button
+                            key={t.id}
+                            className="doc-template-card"
+                            onClick={() => handleApplyTemplate(t)}
+                          >
+                            <span className="doc-template-card-icon">{t.icon}</span>
+                            <span className="doc-template-card-title">{t.title}</span>
+                            <span className="doc-template-card-desc">{t.description}</span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <p className="doc-empty-state-text">
-                      Drag a <strong>.md</strong> or <strong>.docx</strong> file here to import
-                    </p>
-                    <button
-                      className="doc-empty-state-btn"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      Choose a file
-                    </button>
+
+                    <div className="doc-empty-state-divider">
+                      <span>or</span>
+                    </div>
+
+                    <div className="doc-empty-state-section">
+                      <span className="doc-empty-state-label">Import a file</span>
+                      <p className="doc-empty-state-text">
+                        Drag a <strong>.md</strong> or <strong>.docx</strong> file anywhere on the page
+                      </p>
+                      <button
+                        className="doc-empty-state-btn"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        Choose a file
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
