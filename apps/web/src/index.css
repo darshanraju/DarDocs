@@ -1522,7 +1522,7 @@ html, body {
   50% { opacity: 0.4; }
 }
 
-/* ---- Empty-state (import prompt on new docs) ---- */
+/* ---- Empty-state (template + import cards on new docs) ---- */
 
 .doc-empty-state {
   position: absolute;
@@ -1531,9 +1531,8 @@ html, body {
   right: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 20px;
-  padding: 28px 24px;
+  gap: 32px;
+  padding: 0 4px;
   user-select: none;
   pointer-events: none;
   z-index: 5;
@@ -1542,121 +1541,78 @@ html, body {
 .doc-empty-state-section {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
 }
 
-.doc-empty-state-label {
-  font-size: 0.75rem;
-  font-weight: 600;
+.doc-empty-state-heading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--color-text-muted);
 }
 
-.doc-empty-state-templates {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 8px;
-  width: 100%;
-  max-width: 560px;
+.doc-empty-state-heading svg {
+  color: var(--color-accent);
+  flex-shrink: 0;
 }
 
-.doc-template-card {
+.doc-empty-state-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+/* Workspace-style card */
+.doc-ws-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 14px 8px 12px;
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
-  background: var(--color-bg);
+  align-items: flex-start;
+  gap: 2px;
+  padding: 16px;
+  min-height: 100px;
+  border: 1.5px dashed rgba(51, 112, 255, 0.35);
+  border-radius: 12px;
+  background: rgba(51, 112, 255, 0.04);
   cursor: pointer;
   transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
   pointer-events: auto;
+  text-align: left;
 }
 
-.doc-template-card:hover {
+.doc-ws-card:hover {
   border-color: var(--color-accent);
-  box-shadow: 0 2px 8px rgba(51, 112, 255, 0.10);
-  background: rgba(51, 112, 255, 0.03);
+  box-shadow: 0 2px 10px rgba(51, 112, 255, 0.12);
+  background: rgba(51, 112, 255, 0.07);
 }
 
-.doc-template-card-accent {
-  border-color: rgba(51, 112, 255, 0.25);
-  background: rgba(51, 112, 255, 0.04);
-}
-
-.doc-template-card-icon {
-  font-size: 1.25rem;
+.doc-ws-card-icon {
+  font-size: 1.5rem;
   line-height: 1;
+  margin-bottom: 8px;
 }
 
-.doc-template-card-title {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-}
-
-.doc-template-card-desc {
-  font-size: 0.6875rem;
-  color: var(--color-text-muted);
-  text-align: center;
-  line-height: 1.3;
-}
-
-.doc-empty-state-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 320px;
-  pointer-events: none;
-}
-
-.doc-empty-state-divider::before,
-.doc-empty-state-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--color-border);
-}
-
-.doc-empty-state-divider span {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-}
-
-.doc-empty-state-text {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  text-align: center;
-}
-
-.doc-empty-state-text strong {
-  color: var(--color-text-secondary);
-  font-weight: 600;
-}
-
-.doc-empty-state-btn {
-  margin-top: 4px;
-  padding: 6px 16px;
-  font-size: 0.8125rem;
-  font-weight: 500;
+.doc-ws-card-upload-icon {
   color: var(--color-accent);
-  background: transparent;
-  border: 1px solid var(--color-accent);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  pointer-events: auto;
+  margin-bottom: 8px;
 }
 
-.doc-empty-state-btn:hover {
-  background: var(--color-accent);
-  color: #fff;
+.doc-ws-card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.doc-ws-card-desc {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
 }
 
 /* ---- Drop overlay ---- */

@@ -46,7 +46,8 @@ export function DocumentPage() {
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const dragCounterRef = useRef(0);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const mdInputRef = useRef<HTMLInputElement>(null);
+  const docxInputRef = useRef<HTMLInputElement>(null);
 
   // Ctrl+F / Cmd+F to open in-doc search, Ctrl+K / Cmd+K to open doc search
   useEffect(() => {
@@ -382,54 +383,60 @@ export function DocumentPage() {
 
                 {isDocEmpty && !isViewMode && (
                   <div className="doc-empty-state">
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept={`${ACCEPTED_FILE_TYPES.markdown},${ACCEPTED_FILE_TYPES.docx}`}
-                      onChange={handleFilePick}
-                      className="hidden"
-                    />
+                    <input ref={mdInputRef} type="file" accept={ACCEPTED_FILE_TYPES.markdown} onChange={handleFilePick} className="hidden" />
+                    <input ref={docxInputRef} type="file" accept={ACCEPTED_FILE_TYPES.docx} onChange={handleFilePick} className="hidden" />
 
+                    {/* ── TEMPLATES ── */}
                     <div className="doc-empty-state-section">
-                      <span className="doc-empty-state-label">Start from a template</span>
-                      <div className="doc-empty-state-templates">
+                      <h3 className="doc-empty-state-heading">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                        Templates
+                      </h3>
+                      <div className="doc-empty-state-grid">
                         <button
-                          className="doc-template-card doc-template-card-accent"
+                          className="doc-ws-card"
                           onClick={() => navigate('/templates/god-mode')}
                         >
-                          <span className="doc-template-card-icon">{'\uD83D\uDD2E'}</span>
-                          <span className="doc-template-card-title">God Mode</span>
-                          <span className="doc-template-card-desc">Auto-generate system docs from repos</span>
+                          <span className="doc-ws-card-icon">{'\uD83D\uDD2E'}</span>
+                          <span className="doc-ws-card-title">God Mode</span>
+                          <span className="doc-ws-card-desc">Auto-generate system docs from your repos</span>
                         </button>
                         {DOCUMENT_TEMPLATES.map((t) => (
                           <button
                             key={t.id}
-                            className="doc-template-card"
+                            className="doc-ws-card"
                             onClick={() => handleApplyTemplate(t)}
                           >
-                            <span className="doc-template-card-icon">{t.icon}</span>
-                            <span className="doc-template-card-title">{t.title}</span>
-                            <span className="doc-template-card-desc">{t.description}</span>
+                            <span className="doc-ws-card-icon">{t.icon}</span>
+                            <span className="doc-ws-card-title">{t.title}</span>
+                            <span className="doc-ws-card-desc">{t.description}</span>
                           </button>
                         ))}
                       </div>
                     </div>
 
-                    <div className="doc-empty-state-divider">
-                      <span>or</span>
-                    </div>
-
+                    {/* ── IMPORT ── */}
                     <div className="doc-empty-state-section">
-                      <span className="doc-empty-state-label">Import a file</span>
-                      <p className="doc-empty-state-text">
-                        Drag a <strong>.md</strong> or <strong>.docx</strong> file anywhere on the page
-                      </p>
-                      <button
-                        className="doc-empty-state-btn"
-                        onClick={() => fileInputRef.current?.click()}
-                      >
-                        Choose a file
-                      </button>
+                      <h3 className="doc-empty-state-heading">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        Import
+                      </h3>
+                      <div className="doc-empty-state-grid">
+                        <button className="doc-ws-card" onClick={() => mdInputRef.current?.click()}>
+                          <span className="doc-ws-card-upload-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                          </span>
+                          <span className="doc-ws-card-title">Markdown</span>
+                          <span className="doc-ws-card-desc">Import .md files into DarDocs</span>
+                        </button>
+                        <button className="doc-ws-card" onClick={() => docxInputRef.current?.click()}>
+                          <span className="doc-ws-card-upload-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                          </span>
+                          <span className="doc-ws-card-title">Word (.docx)</span>
+                          <span className="doc-ws-card-desc">Import Word documents into DarDocs</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
