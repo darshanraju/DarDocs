@@ -1,0 +1,55 @@
+# DarDocs SOC Regeneration — GitHub Action
+#
+# Copy this workflow into your repository at .github/workflows/regenerate-soc.yml
+# Then configure the required secrets in your repo settings.
+#
+# Required secrets:
+#   DARDOCS_API_URL      — Base URL of your DarDocs API (e.g. https://api.dardocs.com)
+#   DARDOCS_API_KEY      — API key created in DarDocs workspace settings
+#   DARDOCS_SOC_CONFIG_ID — ID of the SOC config to regenerate
+#
+# Triggers:
+#   - Push to main/master — regenerate after every merge
+#   - Weekly schedule     — catch changes from other sources
+#   - Manual dispatch     — on-demand regeneration
+
+name: Regenerate DarDocs SOC
+
+on:
+  push:
+    branches: [main, master]
+  schedule:
+    - cron: '0 6 * * 1' # Every Monday at 06:00 UTC
+  workflow_dispatch: # Manual trigger from GitHub UI
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger SOC regeneration
+        id: trigger
+        run: |
+          response=$(curl -s -w "\n%{http_code}" \
+            --max-time 180 \
+            -X POST \
+            -H "Authorization: Bearer ${{ secrets.DARDOCS_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            "${{ secrets.DARDOCS_API_URL }}/api/socs/${{ secrets.DARDOCS_SOC_CONFIG_ID }}/regenerate")
+
+          http_code=$(echo "$response" | tail -1)
+          body=$(echo "$response" | sed '$d')
+
+          echo "http_code=$http_code" >> "$GITHUB_OUTPUT"
+          echo "body<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$body" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+            echo "SOC regeneration completed successfully"
+            echo "$body" | jq . 2>/dev/null || echo "$body"
+          else
+            echo "::error::SOC regeneration failed (HTTP $http_code)"
+            echo "$body"
+            exit 1
+          fi

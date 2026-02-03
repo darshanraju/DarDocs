@@ -128,3 +128,15 @@ export type {
 export {
   generateGodModeDocument,
 } from './godMode';
+
+// SOC types
+export type {
+  SocType,
+  SocConfig,
+  CreateSocConfigRequest,
+  UpdateSocConfigRequest,
+  SocRegenerationResult,
+  ApiKeyInfo,
+  CreateApiKeyRequest,
+  CreateApiKeyResponse,
+} from './soc';
