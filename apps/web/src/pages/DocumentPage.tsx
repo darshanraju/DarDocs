@@ -366,35 +366,37 @@ export function DocumentPage() {
                 />
               </div>
 
-              {isViewMode ? (
-                <DocumentViewer />
-              ) : (
-                <Editor isViewMode={false} onEditorReady={handleEditorReady} />
-              )}
+              <div className="relative">
+                {isViewMode ? (
+                  <DocumentViewer />
+                ) : (
+                  <Editor isViewMode={false} onEditorReady={handleEditorReady} />
+                )}
 
-              {isDocEmpty && !isViewMode && (
-                <div className="doc-empty-state">
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept={`${ACCEPTED_FILE_TYPES.markdown},${ACCEPTED_FILE_TYPES.docx}`}
-                    onChange={handleFilePick}
-                    className="hidden"
-                  />
-                  <div className="doc-empty-state-icon">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                {isDocEmpty && !isViewMode && (
+                  <div className="doc-empty-state">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept={`${ACCEPTED_FILE_TYPES.markdown},${ACCEPTED_FILE_TYPES.docx}`}
+                      onChange={handleFilePick}
+                      className="hidden"
+                    />
+                    <div className="doc-empty-state-icon">
+                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <p className="doc-empty-state-text">
+                      Drag a <strong>.md</strong> or <strong>.docx</strong> file here to import
+                    </p>
+                    <button
+                      className="doc-empty-state-btn"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      Choose a file
+                    </button>
                   </div>
-                  <p className="doc-empty-state-text">
-                    Drag a <strong>.md</strong> or <strong>.docx</strong> file here to import
-                  </p>
-                  <button
-                    className="doc-empty-state-btn"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    Choose a file
-                  </button>
-                </div>
-              )}
+                )}
+              </div>
 
               <CommentSection />
             </div>
