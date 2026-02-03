@@ -393,6 +393,14 @@ export function DocumentPage() {
                     <div className="doc-empty-state-section">
                       <span className="doc-empty-state-label">Start from a template</span>
                       <div className="doc-empty-state-templates">
+                        <button
+                          className="doc-template-card doc-template-card-accent"
+                          onClick={() => navigate('/templates/god-mode')}
+                        >
+                          <span className="doc-template-card-icon">{'\uD83D\uDD2E'}</span>
+                          <span className="doc-template-card-title">God Mode</span>
+                          <span className="doc-template-card-desc">Auto-generate system docs from repos</span>
+                        </button>
                         {DOCUMENT_TEMPLATES.map((t) => (
                           <button
                             key={t.id}

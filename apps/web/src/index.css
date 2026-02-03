@@ -1583,6 +1583,11 @@ html, body {
   background: rgba(51, 112, 255, 0.03);
 }
 
+.doc-template-card-accent {
+  border-color: rgba(51, 112, 255, 0.25);
+  background: rgba(51, 112, 255, 0.04);
+}
+
 .doc-template-card-icon {
   font-size: 1.25rem;
   line-height: 1;
