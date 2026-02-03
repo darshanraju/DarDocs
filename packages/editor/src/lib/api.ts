@@ -5,13 +5,16 @@ async function request<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const url = path.startsWith('/api') ? path : `${API_BASE}${path}`;
+  const headers: Record<string, string> = {
+    ...((options.headers as Record<string, string>) || {}),
+  };
+  if (options.body) {
+    headers['Content-Type'] = 'application/json';
+  }
   const res = await fetch(url, {
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
     ...options,
+    headers,
   });
 
   if (res.status === 204) return undefined as T;
