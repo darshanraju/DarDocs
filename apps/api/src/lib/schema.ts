@@ -209,3 +209,44 @@ export const repoClones = pgTable('repo_clones', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
+
+// ─── SOC Configs ────────────────────────────────────────────
+
+export const socConfigs = pgTable('soc_configs', {
+  id: text('id').primaryKey(),
+  workspaceId: text('workspace_id')
+    .notNull()
+    .references(() => workspaces.id, { onDelete: 'cascade' }),
+  documentId: text('document_id').references(() => documents.id, {
+    onDelete: 'set null',
+  }),
+  name: text('name').notNull(),
+  type: text('type').notNull().default('godmode'),
+  config: jsonb('config').notNull(), // GodModeConfig JSON
+  aiConfig: jsonb('ai_config'),
+  lastGeneratedAt: timestamp('last_generated_at'),
+  createdBy: text('created_by')
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+// ─── API Keys ───────────────────────────────────────────────
+
+export const apiKeys = pgTable('api_keys', {
+  id: text('id').primaryKey(),
+  workspaceId: text('workspace_id')
+    .notNull()
+    .references(() => workspaces.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  keyHash: text('key_hash').notNull(),
+  keyPrefix: text('key_prefix').notNull(),
+  scopes: jsonb('scopes').notNull().default(['soc:regenerate']),
+  lastUsedAt: timestamp('last_used_at'),
+  expiresAt: timestamp('expires_at'),
+  createdBy: text('created_by')
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});

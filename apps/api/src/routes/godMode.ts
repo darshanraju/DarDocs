@@ -1,8 +1,9 @@
 import type { FastifyInstance } from 'fastify';
+import { randomUUID } from 'node:crypto';
 import { eq, and } from 'drizzle-orm';
 import { requireAuth } from '../lib/requireAuth.js';
 import { db } from '../lib/db.js';
-import { workspaceMembers } from '../lib/schema.js';
+import { workspaceMembers, socConfigs } from '../lib/schema.js';
 import { ensureClone, evictStaleClones } from '../services/repoCloneService.js';
 import { analyzeRepo } from '../services/repoAnalyzer.js';
 import { createDefaultProviders } from '../services/providers/index.js';
@@ -23,6 +24,12 @@ interface AnalyzeBody {
   githubToken?: string;
   workspaceId?: string;
   aiConfig?: AIConfig;
+  /** When true, persist the config as a SOC for future regeneration */
+  saveSocConfig?: boolean;
+  /** Human-readable name for the saved SOC config */
+  socName?: string;
+  /** Link to an existing document that will be updated on regeneration */
+  documentId?: string;
 }
 
 export async function godModeRoutes(app: FastifyInstance) {
@@ -30,7 +37,7 @@ export async function godModeRoutes(app: FastifyInstance) {
 
   // POST /api/god-mode/analyze — clone repos and run full analysis (SSE stream)
   app.post('/api/god-mode/analyze', async (request, reply) => {
-    const { config, githubToken, workspaceId, aiConfig } = request.body as AnalyzeBody;
+    const { config, githubToken, workspaceId, aiConfig, saveSocConfig, socName, documentId } = request.body as AnalyzeBody;
     const userId = (request as any).userId as string;
 
     if (!config?.repos?.length) {
@@ -173,6 +180,40 @@ export async function godModeRoutes(app: FastifyInstance) {
       };
 
       send({ type: 'result', result });
+
+      // Persist SOC config for future regeneration if requested
+      if (saveSocConfig && workspaceId) {
+        try {
+          const socId = randomUUID();
+          const now = new Date();
+          const name =
+            socName ||
+            `SOC — ${config.repos.map((r) => r.repo).join(' / ')}`;
+
+          await db.insert(socConfigs).values({
+            id: socId,
+            workspaceId,
+            documentId: documentId ?? null,
+            name,
+            type: 'godmode',
+            config,
+            aiConfig: aiConfig ?? null,
+            lastGeneratedAt: now,
+            createdBy: userId,
+            createdAt: now,
+            updatedAt: now,
+          });
+
+          send({ type: 'soc-saved', socConfigId: socId, socName: name });
+        } catch (socErr) {
+          // Non-fatal — analysis succeeded, SOC save failed
+          send({
+            type: 'soc-save-error',
+            message:
+              socErr instanceof Error ? socErr.message : 'Failed to save SOC config',
+          });
+        }
+      }
 
       send({
         phase: 'complete',

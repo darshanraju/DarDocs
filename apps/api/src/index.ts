@@ -12,6 +12,8 @@ import { programRoutes } from './routes/programs.js';
 import { godModeRoutes } from './routes/godMode.js';
 import { teamRoutes } from './routes/teams.js';
 import { githubIntegrationRoutes } from './routes/githubIntegration.js';
+import { socRoutes } from './routes/socs.js';
+import { apiKeyRoutes } from './routes/apiKeys.js';
 
 const app = Fastify({ logger: true });
 
@@ -36,6 +38,8 @@ await app.register(programRoutes);
 await app.register(godModeRoutes);
 await app.register(teamRoutes);
 await app.register(githubIntegrationRoutes);
+await app.register(socRoutes);
+await app.register(apiKeyRoutes);
 
 try {
   await app.listen({ port: env.PORT, host: '0.0.0.0' });
