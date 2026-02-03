@@ -101,6 +101,7 @@ export const workspacesApi = {
 export interface DocTreeItem {
   id: string;
   parentId: string;
+  teamId: string | null;
   position: number;
   title: string;
   createdAt: string;
@@ -118,10 +119,15 @@ export const documentsApi = {
   tree: (workspaceId: string) =>
     request<DocTreeItem[]>(`/api/workspaces/${workspaceId}/documents`),
 
-  create: (workspaceId: string, title: string, parentId: string | null) =>
+  create: (
+    workspaceId: string,
+    title: string,
+    parentId: string | null,
+    teamId?: string | null
+  ) =>
     request<DocFull>(`/api/workspaces/${workspaceId}/documents`, {
       method: 'POST',
-      body: JSON.stringify({ title, parentId }),
+      body: JSON.stringify({ title, parentId, teamId }),
     }),
 
   get: (id: string) => request<DocFull>(`/api/documents/${id}`),
@@ -134,6 +140,7 @@ export const documentsApi = {
       boards?: unknown;
       parentId?: string | null;
       position?: number;
+      teamId?: string | null;
     }
   ) =>
     request<DocFull>(`/api/documents/${id}`, {
@@ -257,4 +264,91 @@ export const membersApi = {
       `/api/workspaces/${workspaceId}/members/${memberId}`,
       { method: 'DELETE' }
     ),
+};
+
+// ─── Teams ──────────────────────────────────────────────────
+
+export type TeamVisibility = 'open' | 'closed' | 'private';
+export type TeamRole = 'owner' | 'member';
+
+export interface Team {
+  id: string;
+  name: string;
+  description: string | null;
+  visibility: TeamVisibility;
+  icon: string | null;
+  memberCount: number;
+  isMember: boolean;
+  role: TeamRole | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface TeamMember {
+  id: string;
+  userId: string;
+  name: string;
+  email: string;
+  image: string | null;
+  role: TeamRole;
+  joinedAt: string;
+}
+
+export const teamsApi = {
+  list: (workspaceId: string) =>
+    request<Team[]>(`/api/workspaces/${workspaceId}/teams`),
+
+  create: (
+    workspaceId: string,
+    data: {
+      name: string;
+      description?: string;
+      visibility?: TeamVisibility;
+      icon?: string;
+    }
+  ) =>
+    request<Team>(`/api/workspaces/${workspaceId}/teams`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  update: (
+    teamId: string,
+    data: {
+      name?: string;
+      description?: string;
+      visibility?: TeamVisibility;
+      icon?: string;
+    }
+  ) =>
+    request<Team>(`/api/teams/${teamId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+
+  delete: (teamId: string) =>
+    request<void>(`/api/teams/${teamId}`, { method: 'DELETE' }),
+
+  join: (teamId: string) =>
+    request<TeamMember>(`/api/teams/${teamId}/join`, { method: 'POST' }),
+
+  listMembers: (teamId: string) =>
+    request<TeamMember[]>(`/api/teams/${teamId}/members`),
+
+  addMember: (teamId: string, userId: string, role?: TeamRole) =>
+    request<TeamMember>(`/api/teams/${teamId}/members`, {
+      method: 'POST',
+      body: JSON.stringify({ userId, role }),
+    }),
+
+  updateMemberRole: (teamId: string, memberId: string, role: TeamRole) =>
+    request<{ ok: boolean }>(`/api/teams/${teamId}/members/${memberId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ role }),
+    }),
+
+  removeMember: (teamId: string, memberId: string) =>
+    request<void>(`/api/teams/${teamId}/members/${memberId}`, {
+      method: 'DELETE',
+    }),
 };

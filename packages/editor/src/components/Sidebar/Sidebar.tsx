@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { HugeiconsIcon } from '@hugeicons/react';
 import {
   PlusSignIcon,
@@ -15,20 +15,33 @@ import {
   UserGroupIcon,
   Setting07Icon,
 } from '@hugeicons/core-free-icons';
+import { Users, Lock, Globe, Eye, PlusCircle, Settings, Trash2 } from 'lucide-react';
 import { useWorkspaceStore } from '../../stores/workspaceStore';
 import { useWorkspaceConfigStore } from '../../stores/workspaceConfigStore';
 import type { TreeNode } from '../../stores/workspaceStore';
+import type { Team, TeamVisibility } from '../../lib/api';
+import { useTeamStore } from '../../stores/teamStore';
 import { useAuthStore } from '../../stores/authStore';
 import { DarkModeToggle } from '../TableOfContents/DarkModeToggle';
 import { SettingsModal } from '../Settings/SettingsModal';
 import { ShareModal } from './ShareModal';
+import { TeamModal } from './TeamModal';
+import { TeamMembersModal } from './TeamMembersModal';
 import { useNavigate, useParams } from 'react-router';
+
+const VISIBILITY_ICONS = {
+  open: Globe,
+  closed: Eye,
+  private: Lock,
+};
 
 export function Sidebar() {
   const {
     tree,
+    teams,
     loading,
     activeDocId,
+    workspaceId,
     loadTree,
     createDocument,
     deleteDocument,
@@ -37,6 +50,7 @@ export function Sidebar() {
     setActiveDocId,
   } = useWorkspaceStore();
   const { user, signOut } = useAuthStore();
+  const { createTeam, updateTeam, deleteTeam, joinTeam } = useTeamStore();
 
   const { openSettings, loadConfig } = useWorkspaceConfigStore();
 
@@ -44,8 +58,17 @@ export function Sidebar() {
   const params = useParams<{ docId: string }>();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showTeamModal, setShowTeamModal] = useState(false);
+  const [editingTeam, setEditingTeam] = useState<Team | null>(null);
+  const [membersTeam, setMembersTeam] = useState<Team | null>(null);
+  const [collapsedTeams, setCollapsedTeams] = useState<Set<string>>(new Set());
   const [contextMenu, setContextMenu] = useState<{
     id: string;
+    x: number;
+    y: number;
+  } | null>(null);
+  const [teamContextMenu, setTeamContextMenu] = useState<{
+    team: Team;
     x: number;
     y: number;
   } | null>(null);
@@ -65,12 +88,29 @@ export function Sidebar() {
     }
   }, [params.docId, activeDocId, setActiveDocId]);
 
+  // Group docs by teamId
+  const { generalDocs, docsByTeam } = useMemo(() => {
+    const general: TreeNode[] = [];
+    const byTeam = new Map<string, TreeNode[]>();
+
+    for (const node of tree) {
+      if (!node.teamId) {
+        general.push(node);
+      } else {
+        const existing = byTeam.get(node.teamId) || [];
+        existing.push(node);
+        byTeam.set(node.teamId, existing);
+      }
+    }
+
+    return { generalDocs: general, docsByTeam: byTeam };
+  }, [tree]);
+
   const handleCreateDocument = useCallback(
-    async (parentId: string | null = null) => {
-      const doc = await createDocument('Untitled', parentId);
+    async (parentId: string | null = null, teamId?: string | null) => {
+      const doc = await createDocument('Untitled', parentId, teamId);
       setActiveDocId(doc.metadata.id);
       navigate(`/doc/${doc.metadata.id}`);
-      // Start renaming immediately
       setRenamingId(doc.metadata.id);
       setRenameValue('Untitled');
     },
@@ -91,6 +131,17 @@ export function Sidebar() {
       e.preventDefault();
       e.stopPropagation();
       setContextMenu({ id, x: e.clientX, y: e.clientY });
+      setTeamContextMenu(null);
+    },
+    []
+  );
+
+  const handleTeamContextMenu = useCallback(
+    (e: React.MouseEvent, team: Team) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setTeamContextMenu({ team, x: e.clientX, y: e.clientY });
+      setContextMenu(null);
     },
     []
   );
@@ -125,6 +176,58 @@ export function Sidebar() {
     [renameValue, renameDocument]
   );
 
+  const handleCreateTeam = useCallback(
+    async (data: { name: string; description: string; visibility: TeamVisibility }) => {
+      if (!workspaceId) return;
+      await createTeam(workspaceId, data.name, data.visibility);
+      setShowTeamModal(false);
+      loadTree();
+    },
+    [workspaceId, createTeam, loadTree]
+  );
+
+  const handleUpdateTeam = useCallback(
+    async (data: { name: string; description: string; visibility: TeamVisibility }) => {
+      if (!editingTeam) return;
+      await updateTeam(editingTeam.id, data);
+      setEditingTeam(null);
+      loadTree();
+    },
+    [editingTeam, updateTeam, loadTree]
+  );
+
+  const handleDeleteTeam = useCallback(
+    async (team: Team) => {
+      if (!workspaceId) return;
+      setTeamContextMenu(null);
+      await deleteTeam(team.id, workspaceId);
+      loadTree();
+    },
+    [workspaceId, deleteTeam, loadTree]
+  );
+
+  const handleJoinTeam = useCallback(
+    async (team: Team) => {
+      if (!workspaceId) return;
+      setTeamContextMenu(null);
+      await joinTeam(team.id, workspaceId);
+      loadTree();
+    },
+    [workspaceId, joinTeam, loadTree]
+  );
+
+  const toggleTeamCollapse = useCallback((teamId: string) => {
+    setCollapsedTeams((prev) => {
+      const next = new Set(prev);
+      if (next.has(teamId)) {
+        next.delete(teamId);
+      } else {
+        next.add(teamId);
+      }
+      return next;
+    });
+  }, []);
+
   // Focus rename input when it appears
   useEffect(() => {
     if (renamingId && renameInputRef.current) {
@@ -133,13 +236,16 @@ export function Sidebar() {
     }
   }, [renamingId]);
 
-  // Close context menu on click outside
+  // Close context menus on click outside
   useEffect(() => {
-    if (!contextMenu) return;
-    const handleClick = () => setContextMenu(null);
+    if (!contextMenu && !teamContextMenu) return;
+    const handleClick = () => {
+      setContextMenu(null);
+      setTeamContextMenu(null);
+    };
     window.addEventListener('click', handleClick);
     return () => window.removeEventListener('click', handleClick);
-  }, [contextMenu]);
+  }, [contextMenu, teamContextMenu]);
 
   const renderNode = (node: TreeNode, depth: number = 0) => {
     const isActive = node.id === activeDocId;
@@ -215,6 +321,75 @@ export function Sidebar() {
     );
   };
 
+  const renderTeamSection = (team: Team) => {
+    const teamDocs = docsByTeam.get(team.id) || [];
+    const isCollapsedTeam = collapsedTeams.has(team.id);
+    const VisIcon = VISIBILITY_ICONS[team.visibility];
+
+    return (
+      <div key={team.id} className="sidebar-team-section">
+        <div
+          className="sidebar-team-header"
+          onClick={() => toggleTeamCollapse(team.id)}
+          onContextMenu={(e) => handleTeamContextMenu(e, team)}
+        >
+          <button
+            className="sidebar-expand-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleTeamCollapse(team.id);
+            }}
+          >
+            {isCollapsedTeam ? (
+              <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
+            ) : (
+              <HugeiconsIcon icon={ArrowDown01Icon} size={14} />
+            )}
+          </button>
+
+          <span className="sidebar-team-icon">
+            {team.icon || <Users size={14} />}
+          </span>
+          <span className="sidebar-team-name">{team.name}</span>
+          <VisIcon size={12} className="sidebar-team-vis-icon" />
+
+          <button
+            className="sidebar-more-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleTeamContextMenu(e, team);
+            }}
+          >
+            <HugeiconsIcon icon={MoreHorizontalIcon} size={14} />
+          </button>
+
+          <button
+            className="sidebar-team-add-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCreateDocument(null, team.id);
+            }}
+            title="New page in team"
+          >
+            <HugeiconsIcon icon={PlusSignIcon} size={12} />
+          </button>
+        </div>
+
+        {!isCollapsedTeam && (
+          <div className="sidebar-team-docs">
+            {teamDocs.length === 0 ? (
+              <div className="sidebar-empty" style={{ paddingLeft: '28px', fontSize: '11px' }}>
+                No pages yet
+              </div>
+            ) : (
+              teamDocs.map((node) => renderNode(node, 1))
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   if (isCollapsed) {
     return (
       <div className="sidebar-collapsed">
@@ -284,12 +459,49 @@ export function Sidebar() {
       <nav className="sidebar-nav">
         {loading ? (
           <div className="sidebar-empty">Loading...</div>
-        ) : tree.length === 0 ? (
-          <div className="sidebar-empty">
-            No documents yet. Create one to get started.
-          </div>
         ) : (
-          tree.map((node) => renderNode(node, 0))
+          <>
+            {/* General (workspace-level) docs */}
+            {generalDocs.length > 0 && (
+              <div className="sidebar-general-section">
+                <div className="sidebar-section-label">General</div>
+                {generalDocs.map((node) => renderNode(node, 0))}
+              </div>
+            )}
+
+            {/* Teams section */}
+            <div className="sidebar-teams-container">
+              <div className="sidebar-section-label">
+                <span>Teams</span>
+                <button
+                  className="sidebar-team-create-btn"
+                  onClick={() => setShowTeamModal(true)}
+                  title="Create team"
+                >
+                  <PlusCircle size={14} />
+                </button>
+              </div>
+              {teams.length === 0 ? (
+                <div className="sidebar-empty" style={{ fontSize: '11px' }}>
+                  No teams yet.{' '}
+                  <button
+                    className="sidebar-inline-link"
+                    onClick={() => setShowTeamModal(true)}
+                  >
+                    Create one
+                  </button>
+                </div>
+              ) : (
+                teams.map((team) => renderTeamSection(team))
+              )}
+            </div>
+
+            {generalDocs.length === 0 && teams.length === 0 && (
+              <div className="sidebar-empty">
+                No documents yet. Create one to get started.
+              </div>
+            )}
+          </>
         )}
       </nav>
 
@@ -311,7 +523,7 @@ export function Sidebar() {
         </div>
       )}
 
-      {/* Context menu */}
+      {/* Document context menu */}
       {contextMenu && (
         <div
           className="sidebar-context-menu"
@@ -346,8 +558,77 @@ export function Sidebar() {
         </div>
       )}
 
+      {/* Team context menu */}
+      {teamContextMenu && (
+        <div
+          className="sidebar-context-menu"
+          style={{ top: teamContextMenu.y, left: teamContextMenu.x }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {!teamContextMenu.team.isMember && teamContextMenu.team.visibility === 'open' && (
+            <button onClick={() => handleJoinTeam(teamContextMenu.team)}>
+              <Users size={14} />
+              Join team
+            </button>
+          )}
+          {(teamContextMenu.team.role === 'owner' || teamContextMenu.team.isMember) && (
+            <button
+              onClick={() => {
+                setMembersTeam(teamContextMenu.team);
+                setTeamContextMenu(null);
+              }}
+            >
+              <Users size={14} />
+              Manage members
+            </button>
+          )}
+          {teamContextMenu.team.role === 'owner' && (
+            <button
+              onClick={() => {
+                setEditingTeam(teamContextMenu.team);
+                setTeamContextMenu(null);
+              }}
+            >
+              <Settings size={14} />
+              Edit team
+            </button>
+          )}
+          {teamContextMenu.team.role === 'owner' && (
+            <button
+              className="sidebar-context-delete"
+              onClick={() => handleDeleteTeam(teamContextMenu.team)}
+            >
+              <Trash2 size={14} />
+              Delete team
+            </button>
+          )}
+        </div>
+      )}
+
       {showShareModal && (
         <ShareModal onClose={() => setShowShareModal(false)} />
+      )}
+
+      {showTeamModal && (
+        <TeamModal
+          onSave={handleCreateTeam}
+          onClose={() => setShowTeamModal(false)}
+        />
+      )}
+
+      {editingTeam && (
+        <TeamModal
+          team={editingTeam}
+          onSave={handleUpdateTeam}
+          onClose={() => setEditingTeam(null)}
+        />
+      )}
+
+      {membersTeam && (
+        <TeamMembersModal
+          team={membersTeam}
+          onClose={() => setMembersTeam(null)}
+        />
       )}
     </div>
   );

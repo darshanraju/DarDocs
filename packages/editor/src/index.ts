@@ -7,10 +7,11 @@ export { useWorkspaceStore } from './stores/workspaceStore';
 export type { TreeNode } from './stores/workspaceStore';
 export { useWorkspaceConfigStore } from './stores/workspaceConfigStore';
 export { useAuthStore } from './stores/authStore';
+export { useTeamStore } from './stores/teamStore';
 
 // API client
-export { authApi, workspacesApi, documentsApi, commentsApi, membersApi, executeApi, ApiError } from './lib/api';
-export type { AuthUser, Workspace, DocTreeItem, DocFull, ApiComment, ApiCommentReply, WorkspaceMember, ExecResult } from './lib/api';
+export { authApi, workspacesApi, documentsApi, commentsApi, membersApi, executeApi, teamsApi, ApiError } from './lib/api';
+export type { AuthUser, Workspace, DocTreeItem, DocFull, ApiComment, ApiCommentReply, WorkspaceMember, ExecResult, Team, TeamMember, TeamVisibility, TeamRole } from './lib/api';
 
 // Hooks
 export { useDocument } from './hooks/useDocument';
