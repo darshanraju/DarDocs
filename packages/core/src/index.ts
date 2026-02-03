@@ -78,6 +78,9 @@ export { createRunbookStep, generateRunbookSummary } from './runbookSchema';
 // Docx converter
 export { convertDocxToTipTap } from './docxConverter';
 
+// Markdown converter
+export { convertMarkdownToTipTap } from './markdownConverter';
+
 // Monitor providers
 export type { MonitorProviderId, MonitorProviderConfig } from './monitors';
 export { MONITOR_PROVIDERS, MONITOR_PROVIDER_LIST } from './monitors';
