@@ -41,7 +41,7 @@ export function TeamModal({ team, onSave, onClose }: TeamModalProps) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px 20px' }}>
           <div>
             <label className="team-modal-label">Name</label>
             <input
