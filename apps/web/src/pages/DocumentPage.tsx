@@ -17,7 +17,7 @@ import {
   useAuthStore,
 } from '@dardocs/editor';
 import type { SearchResult } from '@dardocs/editor';
-import { convertDocxToTipTap, convertMarkdownToTipTap } from '@dardocs/core';
+import { convertDocxToTipTap, convertMarkdownToTipTap, ACCEPTED_FILE_TYPES } from '@dardocs/core';
 import { toast } from 'sonner';
 
 export function DocumentPage() {
@@ -45,6 +45,7 @@ export function DocumentPage() {
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const dragCounterRef = useRef(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Ctrl+F / Cmd+F to open in-doc search, Ctrl+K / Cmd+K to open doc search
   useEffect(() => {
@@ -192,19 +193,28 @@ export function DocumentPage() {
   }, []);
 
   // ── Drag-and-drop file import ─────────────────────────────
+  // Use the live editor instance as the source of truth for emptiness.
+  // editorInstance is null until onEditorReady fires, so we also check
+  // the raw document content as a fallback for the first render.
   const isDocEmpty = useMemo(() => {
+    if (editorInstance) {
+      return editorInstance.isEmpty;
+    }
+    // Fallback before editor mounts: check raw content
     if (!document) return false;
     const c = document.content;
-    if (!c || !c.content) return true;
-    if (c.content.length === 0) return true;
+    if (!c || !c.content || c.content.length === 0) return true;
     if (c.content.length === 1) {
       const node = c.content[0];
-      if (node.type === 'paragraph' && (!node.content || node.content.length === 0)) {
-        return true;
+      if (node.type === 'paragraph') {
+        if (!node.content || node.content.length === 0) return true;
+        // TipTap sometimes stores empty text nodes
+        if (node.content.every((n: any) => n.type === 'text' && (!n.text || n.text.trim() === ''))) return true;
       }
     }
     return false;
-  }, [document]);
+    // Re-evaluate when the editor updates the document
+  }, [editorInstance, document]);
 
   const IMPORT_EXTENSIONS = ['md', 'markdown', 'mdown', 'mkd', 'mdx', 'docx'];
 
@@ -262,6 +272,32 @@ export function DocumentPage() {
       toast.error('Failed to import dropped file');
     }
   }, [isImportableFile, updateContent, updateMetadata]);
+
+  const handleFilePick = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    try {
+      const ext = file.name.split('.').pop()?.toLowerCase() || '';
+      const isDocx = ext === 'docx';
+      const result = isDocx
+        ? await convertDocxToTipTap(file)
+        : convertMarkdownToTipTap(await file.text());
+
+      updateContent(result.content);
+      const title = file.name.replace(/\.(docx|md|markdown|mdown|mkd|mdx)$/i, '');
+      updateMetadata({ title });
+
+      if (result.warnings.length > 0) {
+        toast.warning(`Imported with ${result.warnings.length} warning(s)`);
+      } else {
+        toast.success(`Imported: ${title}`);
+      }
+    } catch (err) {
+      console.error('File import failed:', err);
+      toast.error('Failed to import file');
+    }
+  }, [updateContent, updateMetadata]);
 
   if (loadError) {
     return (
@@ -337,9 +373,26 @@ export function DocumentPage() {
               )}
 
               {isDocEmpty && !isViewMode && (
-                <div className="doc-import-hint">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  <span>Drag a <strong>.md</strong> or <strong>.docx</strong> file anywhere on this page to import it</span>
+                <div className="doc-empty-state">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept={`${ACCEPTED_FILE_TYPES.markdown},${ACCEPTED_FILE_TYPES.docx}`}
+                    onChange={handleFilePick}
+                    className="hidden"
+                  />
+                  <div className="doc-empty-state-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  </div>
+                  <p className="doc-empty-state-text">
+                    Drag a <strong>.md</strong> or <strong>.docx</strong> file here to import
+                  </p>
+                  <button
+                    className="doc-empty-state-btn"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    Choose a file
+                  </button>
                 </div>
               )}
 
