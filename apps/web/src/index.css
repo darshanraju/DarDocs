@@ -1561,6 +1561,67 @@ html, body {
   50% { opacity: 0.4; }
 }
 
+/* ---- Import hint (empty document) ---- */
+
+.doc-import-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 32px;
+  padding: 14px 18px;
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  user-select: none;
+}
+
+.doc-import-hint svg {
+  flex-shrink: 0;
+  opacity: 0.55;
+}
+
+.doc-import-hint strong {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+/* ---- Drop overlay ---- */
+
+.doc-drop-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(51, 112, 255, 0.06);
+  pointer-events: none;
+}
+
+.doc-drop-overlay-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 32px 48px;
+  border: 2px dashed var(--color-accent);
+  border-radius: 14px;
+  background: var(--color-bg);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+}
+
+.doc-drop-overlay-icon {
+  color: var(--color-accent);
+}
+
+.doc-drop-overlay-label {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-accent);
+}
+
 /* ---- Dark Mode Toggle ---- */
 
 .dark-mode-toggle {

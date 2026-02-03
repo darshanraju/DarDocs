@@ -46,6 +46,7 @@ export type { DocumentIndexEntry } from './stores/libraryStore';
 export { SaveDocument } from './components/FileHandler/SaveDocument';
 export { LoadDocument } from './components/FileHandler/LoadDocument';
 export { ImportDocx } from './components/FileHandler/ImportDocx';
+export { ImportMarkdown } from './components/FileHandler/ImportMarkdown';
 
 // UI primitives
 export { Button, Dropdown, Modal, Tooltip, EmojiPicker, DocumentIcon } from './components/UI';

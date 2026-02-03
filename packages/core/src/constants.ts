@@ -23,6 +23,7 @@ export const APP_NAME = 'DarDocs';
 export const ACCEPTED_FILE_TYPES = {
   dardocs: '.dardocs.json,.json',
   docx: '.docx',
+  markdown: '.md,.markdown,.mdown,.mkd,.mdx',
 };
 
 // Document max width (similar to Lark Docs)
